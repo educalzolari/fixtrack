@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nueva Reparacion | FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Menu principal">
+        <div class="brand">FixTrack</div>
+        <nav class="menu">
+          <p class="menu-title">Accesos Directos</p>
+          <a class="menu-link" href="index.html"><span class="icon home"></span>Inicio</a>
+          <a class="menu-link active" href="nueva-reparacion.html"><span class="icon plus"></span>Nueva Reparacion</a>
+          <a class="menu-link" href="reparaciones.html"><span class="icon clipboard"></span>Ver Reparaciones</a>
+          <a class="menu-link" href="clientes.html"><span class="icon user"></span>Clientes</a>
+          <a class="menu-link" href="reportes.html"><span class="icon chart"></span>Reportes</a>
+        </nav>
+        <nav class="menu secondary">
+          <a class="menu-link" href="inventario.html"><span class="icon box"></span>Inventario</a>
+          <a class="menu-link" href="proveedores.html"><span class="icon truck"></span>Proveedores</a>
+          <a class="menu-link" href="configuracion.html"><span class="icon gear"></span>Configuracion</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="help" href="ayuda.html">Centro de Ayuda</a>
+          <button class="logout" type="button">Salir</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+          <div>
+            <p class="date" id="currentDate">29/04/2026</p>
+            <h1>Nueva Reparacion</h1>
+          </div>
+        </header>
+
+        <section class="workspace">
+          <div class="panel form-panel">
+            <div class="section-heading">
+              <h2>Formulario de carga</h2>
+              <p>Registra los datos del cliente, dispositivo y trabajo a realizar.</p>
+            </div>
+
+            <form id="repairForm" class="repair-form">
+              <label>
+                Nombre y Apellido
+                <input required name="cliente" type="text" placeholder="Nombre y apellido" />
+              </label>
+              <label>
+                Tipo de dispositivo
+                <select required name="dispositivo">
+                  <option value="">Seleccionar</option>
+                  <option>Celular</option>
+                  <option>Tablet</option>
+                  <option>Laptop</option>
+                  <option>Otro</option>
+                </select>
+              </label>
+              <label>
+                Marca
+                <input required name="marca" type="text" placeholder="Samsung, Motorola, iPhone" />
+              </label>
+              <label>
+                Modelo
+                <input required name="modelo" type="text" placeholder="A32, G22, 11 Pro" />
+              </label>
+              <label>
+                IMEI/ESN/SN
+                <input name="identificador" type="text" placeholder="Numero de serie o IMEI" />
+              </label>
+              <label>
+                Contrasena dispositivo
+                <input name="passwordDispositivo" type="text" autocomplete="off" placeholder="PIN, patron o clave" />
+              </label>
+              <div class="pattern-field wide">
+                <div class="pattern-heading">
+                  <div>
+                    <span>Patron de desbloqueo</span>
+                    <small>Dibuja el recorrido si el equipo usa patron.</small>
+                  </div>
+                  <button class="ghost-button small-button" id="clearPattern" type="button">Limpiar patron</button>
+                </div>
+                <div class="pattern-card">
+                  <canvas id="patternCanvas" width="360" height="360" aria-label="Dibujar patron de desbloqueo"></canvas>
+                </div>
+                <input type="hidden" name="patronImagen" id="patronImagen" />
+                <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
+              </div>
+              <label class="wide">
+                Accesorios
+                <input name="accesorios" type="text" placeholder="Cargador, funda, SIM, memoria, caja..." />
+              </label>
+              <label>
+                Costo Aproximado
+                <input required name="costoAproximado" type="number" min="0" step="100" placeholder="0" />
+              </label>
+              <label>
+                Anticipo recibido
+                <input name="anticipo" type="number" min="0" step="100" placeholder="0" />
+              </label>
+              <label>
+                Fecha estimada de entrega
+                <input name="fechaEntrega" type="date" />
+              </label>
+              <label>
+                Estado
+                <select required name="estado">
+                  <option>En espera</option>
+                  <option>Activo</option>
+                  <option>Finalizado</option>
+                  <option>Cancelado</option>
+                </select>
+              </label>
+              <label class="wide">
+                Descripcion del problema
+                <textarea required name="problema" rows="4" placeholder="Detalle de la falla informada por el cliente"></textarea>
+              </label>
+              <label class="wide">
+                Observaciones adicionales
+                <textarea name="observaciones" rows="4" placeholder="Notas internas, estado fisico, condiciones de garantia..."></textarea>
+              </label>
+
+              <div class="form-actions">
+                <button class="ghost-button" type="reset">Limpiar</button>
+                <button class="primary-button" type="submit">Guardar Reparacion</button>
+              </div>
+            </form>
+          </div>
+
+          <aside class="panel ticket-panel">
+            <p class="mini-title">Ultima carga</p>
+            <div id="lastTicket" class="empty-ticket">Todavia no hay reparaciones cargadas.</div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

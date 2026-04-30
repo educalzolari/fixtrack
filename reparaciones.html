@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reparaciones | FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Menu principal">
+        <div class="brand">FixTrack</div>
+        <nav class="menu">
+          <p class="menu-title">Accesos Directos</p>
+          <a class="menu-link" href="index.html"><span class="icon home"></span>Inicio</a>
+          <a class="menu-link" href="nueva-reparacion.html"><span class="icon plus"></span>Nueva Reparacion</a>
+          <a class="menu-link active" href="reparaciones.html"><span class="icon clipboard"></span>Ver Reparaciones</a>
+          <a class="menu-link" href="clientes.html"><span class="icon user"></span>Clientes</a>
+          <a class="menu-link" href="reportes.html"><span class="icon chart"></span>Reportes</a>
+        </nav>
+        <nav class="menu secondary">
+          <a class="menu-link" href="inventario.html"><span class="icon box"></span>Inventario</a>
+          <a class="menu-link" href="proveedores.html"><span class="icon truck"></span>Proveedores</a>
+          <a class="menu-link" href="configuracion.html"><span class="icon gear"></span>Configuracion</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="help" href="ayuda.html">Centro de Ayuda</a>
+          <button class="logout" type="button">Salir</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+          <div>
+            <p class="date" id="currentDate">29/04/2026</p>
+            <h1>Reparaciones</h1>
+          </div>
+        </header>
+
+        <section class="panel repairs-panel">
+          <div class="section-heading table-heading">
+            <div>
+              <h2>Listado de trabajos</h2>
+              <p>Selecciona una reparacion para editar datos internos y cambiar su estado.</p>
+            </div>
+            <div class="table-tools">
+              <input id="searchInput" type="search" placeholder="Buscar por nombre" />
+              <select id="statusFilter">
+                <option value="todos">Todos</option>
+                <option>En espera</option>
+                <option>Activo</option>
+                <option>Finalizado</option>
+                <option>Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="jobs-table">
+              <colgroup>
+                <col class="col-id" />
+                <col class="col-name" />
+                <col class="col-service" />
+                <col class="col-date" />
+                <col class="col-status" />
+                <col class="col-action" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Nro</th>
+                  <th>Nombre</th>
+                  <th>Servicio</th>
+                  <th>Fecha de alta</th>
+                  <th>Estado</th>
+                  <th>Accion</th>
+                </tr>
+              </thead>
+              <tbody id="repairsTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Reparacion | FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Menu principal">
+        <div class="brand">FixTrack</div>
+        <nav class="menu">
+          <p class="menu-title">Accesos Directos</p>
+          <a class="menu-link" href="index.html"><span class="icon home"></span>Inicio</a>
+          <a class="menu-link" href="nueva-reparacion.html"><span class="icon plus"></span>Nueva Reparacion</a>
+          <a class="menu-link active" href="reparaciones.html"><span class="icon clipboard"></span>Ver Reparaciones</a>
+          <a class="menu-link" href="clientes.html"><span class="icon user"></span>Clientes</a>
+          <a class="menu-link" href="reportes.html"><span class="icon chart"></span>Reportes</a>
+        </nav>
+        <nav class="menu secondary">
+          <a class="menu-link" href="inventario.html"><span class="icon box"></span>Inventario</a>
+          <a class="menu-link" href="proveedores.html"><span class="icon truck"></span>Proveedores</a>
+          <a class="menu-link" href="configuracion.html"><span class="icon gear"></span>Configuracion</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="help" href="ayuda.html">Centro de Ayuda</a>
+          <button class="logout" type="button">Salir</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+          <div>
+            <p class="date" id="currentDate">29/04/2026</p>
+            <h1>Editar Reparacion</h1>
+          </div>
+        </header>
+
+        <section class="workspace edit-workspace">
+          <div class="panel form-panel">
+            <div class="section-heading edit-heading">
+              <div>
+                <h2 id="editTitle">Reparacion</h2>
+                <p>Actualiza datos internos, contrasena, estado y fechas.</p>
+              </div>
+              <a class="ghost-link" href="reparaciones.html">Volver al listado</a>
+            </div>
+
+            <form id="editRepairForm" class="repair-form">
+              <input type="hidden" name="id" />
+              <input type="hidden" name="fechaIngreso" />
+              <input type="hidden" name="patronImagen" id="patronImagen" />
+              <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
+              <input type="hidden" name="gastosJson" id="gastosJson" />
+
+              <label>
+                Nombre y Apellido
+                <input required name="cliente" type="text" />
+              </label>
+              <label>
+                Estado
+                <select required name="estado">
+                  <option>En espera</option>
+                  <option>Activo</option>
+                  <option>Finalizado</option>
+                  <option>Cancelado</option>
+                </select>
+              </label>
+              <label>
+                Tipo de dispositivo
+                <select required name="dispositivo">
+                  <option>Celular</option>
+                  <option>Tablet</option>
+                  <option>Laptop</option>
+                  <option>Otro</option>
+                </select>
+              </label>
+              <label>
+                Marca
+                <input required name="marca" type="text" />
+              </label>
+              <label>
+                Modelo
+                <input required name="modelo" type="text" />
+              </label>
+              <label>
+                IMEI/ESN/SN
+                <input name="identificador" type="text" />
+              </label>
+              <label>
+                Contrasena dispositivo
+                <input name="passwordDispositivo" type="text" autocomplete="off" />
+              </label>
+              <label class="wide">
+                Accesorios
+                <input name="accesorios" type="text" />
+              </label>
+              <label>
+                Costo Aproximado
+                <input required name="costoAproximado" type="number" min="0" step="100" />
+              </label>
+              <label>
+                Anticipo recibido
+                <input name="anticipo" type="number" min="0" step="100" />
+              </label>
+              <label>
+                Fecha estimada de entrega
+                <input name="fechaEntrega" type="date" />
+              </label>
+
+              <div class="pattern-field wide">
+                <div class="pattern-heading">
+                  <div>
+                    <span>Patron de desbloqueo</span>
+                    <small>El patron actual se puede ver y reemplazar dibujando uno nuevo.</small>
+                  </div>
+                  <button class="ghost-button small-button" id="clearPattern" type="button">Limpiar patron</button>
+                </div>
+                <div class="pattern-preview" id="savedPatternPreview"></div>
+                <div class="pattern-card">
+                  <canvas id="patternCanvas" width="360" height="360" aria-label="Dibujar patron de desbloqueo"></canvas>
+                </div>
+              </div>
+
+              <label class="wide">
+                Descripcion del problema
+                <textarea required name="problema" rows="4"></textarea>
+              </label>
+              <label class="wide">
+                Observaciones adicionales
+                <textarea name="observaciones" rows="4"></textarea>
+              </label>
+
+              <section class="expenses-section wide" aria-labelledby="expensesTitle">
+                <div class="expenses-heading">
+                  <div>
+                    <h3 id="expensesTitle">Gastos registrados</h3>
+                    <p>Agrega repuestos, insumos o costos del trabajo para calcular la ganancia real.</p>
+                  </div>
+                  <button class="primary-button small-button" id="openExpenseModal" type="button">Registrar gasto</button>
+                </div>
+
+                <div class="finance-summary">
+                  <div>
+                    <span>Costo reparacion</span>
+                    <strong id="repairIncomeTotal">$ 0</strong>
+                  </div>
+                  <div>
+                    <span>Total gastos</span>
+                    <strong id="expensesGrandTotal">$ 0</strong>
+                  </div>
+                  <div>
+                    <span>Ganancia estimada</span>
+                    <strong id="profitTotal">$ 0</strong>
+                  </div>
+                </div>
+
+                <div class="table-wrap expenses-wrap">
+                  <table class="expenses-table">
+                    <thead>
+                      <tr>
+                        <th>Concepto</th>
+                        <th>Monto unitario</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Accion</th>
+                      </tr>
+                    </thead>
+                    <tbody id="expensesTable"></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <div class="form-actions">
+                <a class="ghost-link action-link" href="reparaciones.html">Cancelar</a>
+                <button class="primary-button" type="submit">Guardar cambios</button>
+              </div>
+            </form>
+
+            <div class="finish-panel">
+              <div>
+                <h3>Finalizar trabajo</h3>
+                <p>Cierra la reparacion y guarda los datos para calcular ganancias mas adelante.</p>
+              </div>
+              <button class="success-button" id="openFinishModal" type="button">Finalizar reparacion</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="expenseModal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="expenseModalTitle">
+        <div class="modal-heading">
+          <div>
+            <h2 id="expenseModalTitle">Registrar gasto</h2>
+            <p>Completa el concepto, monto y cantidad.</p>
+          </div>
+          <button class="icon-button" id="closeExpenseModal" type="button" aria-label="Cerrar">x</button>
+        </div>
+
+        <form id="expenseForm" class="expense-form">
+          <label>
+            Concepto de gasto
+            <input required name="concepto" type="text" placeholder="Modulo, bateria, envio..." />
+          </label>
+          <label>
+            Monto unitario
+            <input required name="montoUnitario" id="expenseUnitPrice" type="number" min="0" step="100" placeholder="0" />
+          </label>
+          <label>
+            Cantidad
+            <input required name="cantidad" id="expenseQuantity" type="number" min="1" step="1" value="1" />
+          </label>
+          <label>
+            Total
+            <input name="total" id="expenseTotal" type="text" value="$ 0" readonly />
+          </label>
+
+          <div class="form-actions modal-actions">
+            <button class="ghost-button" id="cancelExpenseModal" type="button">Cancelar</button>
+            <button class="primary-button" type="submit">Agregar gasto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="finishModal" aria-hidden="true">
+      <div class="modal-card finish-modal-card" role="dialog" aria-modal="true" aria-labelledby="finishModalTitle">
+        <div class="modal-heading">
+          <div>
+            <h2 id="finishModalTitle">Finalizar reparacion</h2>
+            <p>Confirma el cierre del trabajo y la ganancia real.</p>
+          </div>
+          <button class="icon-button" id="closeFinishModal" type="button" aria-label="Cerrar">x</button>
+        </div>
+
+        <form id="finishForm" class="finish-form">
+          <label>
+            Costo inicial
+            <input id="finishInitialCost" name="costoInicial" type="text" readonly />
+          </label>
+          <label>
+            Gastos
+            <input id="finishExpenses" name="gastos" type="text" readonly />
+          </label>
+          <label>
+            Costo final
+            <input required id="finishFinalCost" name="costoFinal" type="number" min="0" step="100" placeholder="0" />
+          </label>
+          <label>
+            Ganancia
+            <input id="finishProfit" name="ganancia" type="text" readonly />
+          </label>
+          <label class="wide">
+            Solucion final
+            <textarea required id="finishSolution" name="solucionFinal" rows="4" placeholder="Detalle de la solucion realizada"></textarea>
+          </label>
+
+          <div class="form-actions modal-actions">
+            <button class="danger-solid-button" id="cancelFinishModal" type="button">Cancelar</button>
+            <button class="success-button" type="submit">Finalizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

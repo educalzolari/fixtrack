@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio | FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Menu principal">
+        <div class="brand">FixTrack</div>
+
+        <nav class="menu">
+          <p class="menu-title">Accesos Directos</p>
+          <a class="menu-link active" href="index.html"><span class="icon home"></span>Inicio</a>
+          <a class="menu-link" href="nueva-reparacion.html"><span class="icon plus"></span>Nueva Reparacion</a>
+          <a class="menu-link" href="reparaciones.html"><span class="icon clipboard"></span>Ver Reparaciones</a>
+          <a class="menu-link" href="clientes.html"><span class="icon user"></span>Clientes</a>
+          <a class="menu-link" href="reportes.html"><span class="icon chart"></span>Reportes</a>
+        </nav>
+
+        <nav class="menu secondary">
+          <a class="menu-link" href="inventario.html"><span class="icon box"></span>Inventario</a>
+          <a class="menu-link" href="proveedores.html"><span class="icon truck"></span>Proveedores</a>
+          <a class="menu-link" href="configuracion.html"><span class="icon gear"></span>Configuracion</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a class="help" href="ayuda.html">Centro de Ayuda</a>
+          <button class="logout" type="button">Salir</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+          <div>
+            <p class="date" id="currentDate">29/04/2026</p>
+            <h1>Hola - Eduardo</h1>
+          </div>
+        </header>
+
+        <section class="stats-grid" aria-label="Resumen">
+          <article class="stat-card hourglass-card">
+            <p>Trabajos en Espera</p>
+            <strong id="waitingCount">0</strong>
+            <span>Pendientes por iniciar</span>
+          </article>
+          <article class="stat-card invoice-card">
+            <p>Trabajos Activos</p>
+            <strong class="blue" id="collectCount">0</strong>
+            <span>En proceso o revision</span>
+          </article>
+          <article class="stat-card wrench-card">
+            <p>Reparaciones (Mes)</p>
+            <strong class="green" id="monthCount">0</strong>
+            <span><em id="monthDelta">0%</em> vs. mes anterior</span>
+          </article>
+          <article class="stat-card sales-card">
+            <p>Total de Ventas</p>
+            <strong class="red" id="salesTotal">$ 0</strong>
+            <span>Ingresos brutos</span>
+          </article>
+        </section>
+
+        <section class="quick-section" aria-labelledby="quickTitle">
+          <h2 id="quickTitle">Accesos Directos</h2>
+          <div class="quick-grid">
+            <a class="quick-card" href="nueva-reparacion.html">
+              <span>Cargar Reparacion</span>
+              <b class="quick-art phone"></b>
+            </a>
+            <a class="quick-card" href="reparaciones.html">
+              <span>Reparaciones</span>
+              <b class="quick-art tools"></b>
+            </a>
+            <a class="quick-card" href="clientes.html">
+              <span>Clientes</span>
+              <b class="quick-art people"></b>
+            </a>
+            <a class="quick-card" href="reportes.html">
+              <span>Resumen de Mes</span>
+              <b class="quick-art chart-art"></b>
+            </a>
+          </div>
+        </section>
+
+        <section class="panel preview-panel">
+          <div class="section-heading table-heading">
+            <div>
+              <h2>Ultimas Reparaciones</h2>
+              <p>Vista rapida de los trabajos mas recientes.</p>
+            </div>
+            <a class="primary-link" href="reparaciones.html">Ver todo</a>
+          </div>
+          <div class="table-wrap compact-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nro</th>
+                  <th>Cliente</th>
+                  <th>Equipo</th>
+                  <th>Estado</th>
+                  <th>Costo</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

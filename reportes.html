@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes | FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Menu principal">
+        <div class="brand">FixTrack</div>
+        <nav class="menu">
+          <p class="menu-title">Accesos Directos</p>
+          <a class="menu-link" href="index.html"><span class="icon home"></span>Inicio</a>
+          <a class="menu-link" href="nueva-reparacion.html"><span class="icon plus"></span>Nueva Reparacion</a>
+          <a class="menu-link" href="reparaciones.html"><span class="icon clipboard"></span>Ver Reparaciones</a>
+          <a class="menu-link" href="clientes.html"><span class="icon user"></span>Clientes</a>
+          <a class="menu-link active" href="reportes.html"><span class="icon chart"></span>Reportes</a>
+        </nav>
+        <nav class="menu secondary">
+          <a class="menu-link" href="inventario.html"><span class="icon box"></span>Inventario</a>
+          <a class="menu-link" href="proveedores.html"><span class="icon truck"></span>Proveedores</a>
+          <a class="menu-link" href="configuracion.html"><span class="icon gear"></span>Configuracion</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="help" href="ayuda.html">Centro de Ayuda</a>
+          <button class="logout" type="button">Salir</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+          <div>
+            <p class="date" id="currentDate">29/04/2026</p>
+            <h1>Reportes</h1>
+          </div>
+        </header>
+
+        <div class="report-header">
+          <h2 class="report-page-title"><strong>Resumen</strong> Dashboard</h2>
+          <div class="report-selectors">
+            <select id="reportMonth" class="report-select"></select>
+            <select id="reportYear" class="report-select"></select>
+          </div>
+        </div>
+
+        <div class="report-grid">
+
+          <!-- Fila 1: 4 tarjetas -->
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-green">💰</span>
+              <span class="report-badge badge-gray" id="rcIngresosBadge">Sin datos</span>
+            </div>
+            <p class="rc-label">Ingresos Totales</p>
+            <strong class="rc-value" id="rcIngresosValue">$ 0,00</strong>
+          </div>
+
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-blue">🔧</span>
+              <span class="report-badge badge-green" id="rcReparacionesBadge">0%</span>
+            </div>
+            <p class="rc-label">Reparaciones Completadas</p>
+            <strong class="rc-value" id="rcReparacionesValue">0</strong>
+          </div>
+
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-purple">🧾</span>
+              <span class="report-badge badge-blue" id="rcTicketBadge">Ventas: 0</span>
+            </div>
+            <p class="rc-label">Ticket Promedio</p>
+            <strong class="rc-value" id="rcTicketValue">$ 0,00</strong>
+          </div>
+
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-amber">👤</span>
+              <span class="report-badge badge-gray" id="rcClientesBadge">Sin datos</span>
+            </div>
+            <p class="rc-label">Clientes Nuevos</p>
+            <strong class="rc-value" id="rcClientesValue">0</strong>
+          </div>
+
+          <!-- Filas 2-3 izquierda: 4 tarjetas apiladas de a 2 -->
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-red">💸</span>
+              <span class="report-badge badge-gray" id="rcGastosBadge">Sin datos</span>
+            </div>
+            <p class="rc-label">Gastos Totales</p>
+            <strong class="rc-value" id="rcGastosValue">$ 0,00</strong>
+          </div>
+
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-teal">📈</span>
+              <span class="report-badge badge-blue" id="rcGananciaBadge">Gan = Ing-Gas</span>
+            </div>
+            <p class="rc-label">Ganancia Estimada</p>
+            <strong class="rc-value" id="rcGananciaValue">$ 0,00</strong>
+          </div>
+
+          <!-- Grafico: ocupa 2 columnas y 2 filas -->
+          <div class="panel report-chart-card rc-col2 rc-row2">
+            <p class="rc-chart-title">Ventas de la semana</p>
+            <div class="chart-wrap">
+              <canvas id="weeklyChart"></canvas>
+            </div>
+          </div>
+
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-gray">📦</span>
+              <span class="report-badge badge-gray" id="rcInventarioBadge">Articulos: 0</span>
+            </div>
+            <p class="rc-label">Valor de Inventario</p>
+            <strong class="rc-value" id="rcInventarioValue">$ 0,00</strong>
+          </div>
+
+          <div class="report-card">
+            <div class="report-card-top">
+              <span class="rc-icon rc-orange">📅</span>
+              <span class="report-badge badge-blue" id="rcEntregarBadge">Pendientes: 0</span>
+            </div>
+            <p class="rc-label">Reparaciones por Entregar</p>
+            <strong class="rc-value" id="rcEntregarValue">0</strong>
+          </div>
+
+          <!-- Fila 4: Top 5 + Categorias -->
+          <div class="panel rc-col2">
+            <div class="section-heading">
+              <h3 class="rc-section-title">Top 5 Reparaciones</h3>
+              <p>Las de mayor valor del mes seleccionado.</p>
+            </div>
+            <div class="table-wrap compact-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nro</th>
+                    <th>Cliente</th>
+                    <th>Equipo</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="top5TableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel rc-col2">
+            <div class="section-heading">
+              <h3 class="rc-section-title">Categorias Mas Vendidas</h3>
+              <p>Tipos de dispositivo reparados este mes.</p>
+            </div>
+            <div id="rcCategoriesBody" class="categories-body"></div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
