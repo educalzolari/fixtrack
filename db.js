@@ -77,6 +77,11 @@ async function dbUpsert(repair) {
   if (error) console.error("Error actualizando reparacion:", error);
 }
 
+async function dbDelete(id) {
+  const { error } = await _db.from("reparaciones").delete().eq("id", id);
+  if (error) console.error("Error eliminando reparacion:", error);
+}
+
 async function dbGetById(id) {
   const { data, error } = await _db
     .from("reparaciones")

@@ -785,6 +785,25 @@ tbody tr:not(.empty-row):hover {
   min-width: 54px;
 }
 
+.delete-action {
+  background: #ffe9ed;
+  color: #c4273d;
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.delete-action:hover {
+  background: #c4273d;
+  color: #fff;
+}
+
+.action-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 th,
 td {
   padding: 14px 14px;

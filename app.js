@@ -271,7 +271,12 @@ function renderTable() {
           </td>
           <td>${formatDate(repair.fechaIngreso)}</td>
           <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
-          <td><a class="table-action edit-action" href="editar-reparacion.html?id=${repair.id}" aria-label="Editar reparacion #${repair.id}">Editar</a></td>
+          <td class="action-cell">
+            <a class="table-action edit-action" href="editar-reparacion.html?id=${repair.id}" aria-label="Editar reparacion #${repair.id}">Editar</a>
+            <button class="table-action delete-action" data-id="${repair.id}" aria-label="Eliminar reparacion #${repair.id}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </td>
         </tr>
       `
     )
@@ -920,6 +925,20 @@ setupFinishFlow();
 
 if (searchInput) searchInput.addEventListener("input", renderTable);
 if (statusFilter) statusFilter.addEventListener("change", renderTable);
+
+if (tableBody) {
+  tableBody.addEventListener("click", async (event) => {
+    const btn = event.target.closest(".delete-action");
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+    const repair = repairs.find((r) => Number(r.id) === id);
+    const label = repair ? `#${repair.id} — ${repair.cliente}` : `#${id}`;
+    if (!confirm(`¿Eliminar la reparacion ${label}?\n\nEsta accion no se puede deshacer.`)) return;
+    await dbDelete(id);
+    repairs = repairs.filter((r) => Number(r.id) !== id);
+    renderAll();
+  });
+}
 
 if (menuToggle) {
   menuToggle.addEventListener("click", () => {
