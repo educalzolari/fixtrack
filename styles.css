@@ -162,7 +162,7 @@ a {
 
 .content {
   width: 100%;
-  padding: 24px 60px 50px;
+  padding: 24px 40px 50px;
   overflow: hidden;
 }
 
@@ -750,7 +750,7 @@ table {
 
 .jobs-table {
   table-layout: fixed;
-  min-width: 780px;
+  min-width: 0;
 }
 
 .jobs-table .col-id {
