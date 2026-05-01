@@ -806,7 +806,6 @@ if (form) {
   });
 }
 
-setupEditForm();
 setupExpenses();
 setupFinishFlow();
 
