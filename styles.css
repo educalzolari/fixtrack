@@ -52,9 +52,9 @@ a {
 .sidebar {
   position: sticky;
   top: 0;
-  width: 325px;
+  width: 220px;
   height: 100vh;
-  flex: 0 0 325px;
+  flex: 0 0 220px;
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg, #1b2f42 0%, #213148 52%, #1b2b3d 100%);
@@ -64,48 +64,70 @@ a {
 }
 
 .brand {
-  padding: 31px 30px 24px;
-  font-size: 24px;
+  padding: 24px 20px 18px;
+  font-size: 18px;
   font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .menu {
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
 
 .menu-title {
   margin: 8px 0 0;
-  padding: 18px 20px;
-  font-weight: 600;
+  padding: 14px 16px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .menu-link {
   position: relative;
-  min-height: 56px;
+  min-height: 44px;
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 12px 20px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.menu-link svg {
+  flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .menu-link:hover {
   background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+.menu-link:hover svg {
+  opacity: 1;
 }
 
 .menu-link.active {
-  background: var(--nav-2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.menu-link.active svg {
+  opacity: 1;
 }
 
 .menu-link.active::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
-  width: 4px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
   background: var(--accent);
 }
 
@@ -1112,110 +1134,6 @@ td > strong {
   color: #536171;
 }
 
-.icon {
-  position: relative;
-  width: 26px;
-  height: 26px;
-  flex: 0 0 26px;
-}
-
-.icon::before,
-.icon::after {
-  content: "";
-  position: absolute;
-}
-
-.home::before {
-  inset: 8px 5px 4px;
-  background: #fff;
-  clip-path: polygon(0 35%, 50% 0, 100% 35%, 100% 100%, 18% 100%, 18% 52%, 0 52%);
-}
-
-.plus::before {
-  inset: 4px;
-  border-radius: 50%;
-  background: #fff;
-}
-
-.plus::after {
-  inset: 11px 7px;
-  background: var(--nav);
-  box-shadow: 4px 0 0 0 var(--nav), -4px 0 0 0 var(--nav), 0 4px 0 0 var(--nav), 0 -4px 0 0 var(--nav);
-}
-
-.clipboard::before {
-  inset: 4px 6px 3px;
-  border: 3px solid #fff;
-  border-radius: 3px;
-}
-
-.clipboard::after {
-  inset: 3px 10px 17px;
-  background: #fff;
-  border-radius: 3px;
-}
-
-.user::before {
-  left: 8px;
-  top: 4px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #fff;
-}
-
-.user::after {
-  left: 5px;
-  bottom: 4px;
-  width: 16px;
-  height: 9px;
-  border-radius: 12px 12px 4px 4px;
-  background: #fff;
-}
-
-.chart::before {
-  inset: 6px 4px 5px;
-  border-left: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.chart::after {
-  left: 9px;
-  top: 10px;
-  width: 13px;
-  height: 9px;
-  border-top: 2px solid #fff;
-  border-right: 2px solid #fff;
-  transform: skew(-28deg);
-}
-
-.box::before {
-  inset: 5px;
-  background: #fff;
-  clip-path: polygon(50% 0, 100% 22%, 100% 76%, 50% 100%, 0 76%, 0 22%);
-}
-
-.truck::before {
-  inset: 8px 4px 7px;
-  border: 3px solid #fff;
-  border-radius: 2px;
-}
-
-.truck::after {
-  left: 7px;
-  right: 7px;
-  bottom: 3px;
-  height: 5px;
-  background: radial-gradient(circle, #fff 0 3px, transparent 4px) left / 50% 100%,
-    radial-gradient(circle, #fff 0 3px, transparent 4px) right / 50% 100%;
-  background-repeat: no-repeat;
-}
-
-.gear::before {
-  inset: 5px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--nav) 0 4px, transparent 5px), #fff;
-}
 
 @media (max-width: 1200px) {
   .content {
@@ -1244,7 +1162,7 @@ td > strong {
   .sidebar {
     position: fixed;
     z-index: 10;
-    width: 285px;
+    width: 240px;
     transform: translateX(-100%);
     transition: transform 0.2s ease;
   }
