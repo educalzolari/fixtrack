@@ -1506,12 +1506,12 @@ td > strong {
   gap: 24px;
 }
 
-.login-brand {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--accent);
-  text-align: center;
-  letter-spacing: 0.5px;
+.login-logo {
+  height: 80px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
 }
 
 .login-subtitle {
@@ -1612,10 +1612,10 @@ td > strong {
   align-items: center;
 }
 
-.orden-brand {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--accent);
+.orden-logo {
+  height: 44px;
+  width: auto;
+  display: block;
 }
 
 .orden-meta {
