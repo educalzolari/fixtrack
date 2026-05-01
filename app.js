@@ -108,6 +108,7 @@ function normalizeRepair(repair) {
     problema: repair.problema || repair.detalle || repair.tipo || "",
     observaciones: repair.observaciones || "",
     fechaIngreso: repair.fechaIngreso || repair.fecha || today,
+    telefono: repair.telefono || "",
   };
 }
 
@@ -326,6 +327,7 @@ function createRepair(formData) {
     fechaEntrega: formData.get("fechaEntrega"),
     estado: "En espera",
     cierre: null,
+    telefono: (formData.get("telefono") || "").trim(),
     problema: formData.get("problema").trim(),
     observaciones: formData.get("observaciones").trim(),
     fechaIngreso: today,
@@ -367,6 +369,7 @@ function formToRepair(formData, existing = {}) {
     problema: formData.get("problema").trim(),
     observaciones: formData.get("observaciones").trim(),
     fechaIngreso: formData.get("fechaIngreso") || existing.fechaIngreso || today,
+    telefono: (formData.get("telefono") || "").trim(),
   };
 }
 
@@ -795,12 +798,42 @@ function setupPatternCanvas() {
   drawPattern();
 }
 
+function formatPhoneForWhatsApp(phone) {
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("0")) return "54" + digits.slice(1);
+  if (digits.length === 10) return "54" + digits;
+  return digits;
+}
+
+function sendWhatsAppOrder(repair) {
+  if (!repair.telefono) return;
+  const phone = formatPhoneForWhatsApp(repair.telefono);
+  if (!phone) return;
+  const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
+  const lines = [
+    `*Orden de Reparacion #${repair.id} - FixTrack*`,
+    ``,
+    `Hola ${repair.cliente}, registramos tu ${repair.marca} ${repair.modelo}.`,
+    ``,
+    `Ver y descargar tu orden en PDF:`,
+    orderUrl,
+    ``,
+    `Costo estimado: ${formatMoney(repair.costoAproximado)}`,
+    repair.fechaEntrega ? `Entrega estimada: ${formatDate(repair.fechaEntrega)}` : null,
+    ``,
+    `Ante cualquier consulta, escribinos por aca.`,
+  ].filter((l) => l !== null).join("\n");
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+}
+
 if (form) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const repair = createRepair(new FormData(form));
     await dbInsert(repair);
     repairs = [repair, ...repairs];
+    sendWhatsAppOrder(repair);
     form.reset();
     renderAll();
     window.location.href = "reparaciones.html";

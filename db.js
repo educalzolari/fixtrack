@@ -24,6 +24,7 @@ function repairToRow(r) {
     problema: r.problema || "",
     observaciones: r.observaciones || "",
     cierre: r.cierre || null,
+    telefono: r.telefono || null,
   };
 }
 
@@ -48,6 +49,7 @@ function rowToRepair(row) {
     problema: row.problema || "",
     observaciones: row.observaciones || "",
     cierre: row.cierre || null,
+    telefono: row.telefono || "",
   };
 }
 
@@ -73,4 +75,14 @@ async function dbUpsert(repair) {
     .from("reparaciones")
     .upsert(repairToRow(repair), { onConflict: "id" });
   if (error) console.error("Error actualizando reparacion:", error);
+}
+
+async function dbGetById(id) {
+  const { data, error } = await _db
+    .from("reparaciones")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) return null;
+  return rowToRepair(data);
 }

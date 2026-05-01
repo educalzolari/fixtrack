@@ -1585,3 +1585,154 @@ td > strong {
   display: block;
 }
 
+/* ── Orden publica ──────────────────────────────────────── */
+.orden-body {
+  background: var(--paper);
+  min-height: 100vh;
+  padding: 32px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.orden-wrap {
+  width: 100%;
+  max-width: 680px;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.orden-header {
+  background: var(--nav);
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orden-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.orden-meta {
+  text-align: right;
+}
+
+.orden-meta strong {
+  display: block;
+  font-size: 14px;
+  color: #fff;
+}
+
+.orden-meta span {
+  font-size: 12px;
+  color: #8faac4;
+}
+
+.orden-section {
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.orden-section:last-child {
+  border-bottom: none;
+}
+
+.orden-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.orden-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 4px 0;
+  gap: 16px;
+}
+
+.orden-row span {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.orden-row strong {
+  text-align: right;
+}
+
+.orden-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0;
+}
+
+.orden-obs {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.orden-status-row {
+  padding: 14px 28px;
+}
+
+.orden-footer {
+  padding: 16px 28px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--paper);
+}
+
+.orden-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.orden-loading,
+.orden-empty {
+  padding: 40px 28px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ── Impresion / PDF ────────────────────────────────────── */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .orden-body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .orden-wrap {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+  }
+
+  .orden-header {
+    background: var(--nav) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .orden-footer {
+    background: #f8f8f8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+

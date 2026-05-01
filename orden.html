@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orden | FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="orden-body">
+
+    <div class="orden-wrap" id="ordenWrap">
+      <div class="orden-header">
+        <div class="orden-brand">FixTrack</div>
+        <div class="orden-meta">
+          <strong id="ordenTitle">Orden de Reparacion</strong>
+          <span id="ordenDate"></span>
+        </div>
+      </div>
+      <div id="ordenContent">
+        <p class="orden-loading">Cargando orden...</p>
+      </div>
+    </div>
+
+    <div class="orden-actions no-print">
+      <button class="primary-button" onclick="window.print()">Imprimir / Descargar PDF</button>
+      <button class="ghost-button" onclick="window.close()">Cerrar</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="db.js"></script>
+    <script src="orden.js"></script>
+  </body>
+</html>
