@@ -89,7 +89,7 @@
                   <button class="ghost-button small-button" id="clearPattern" type="button">Limpiar patron</button>
                 </div>
                 <div class="pattern-card">
-                  <canvas id="patternCanvas" width="360" height="360" aria-label="Dibujar patron de desbloqueo"></canvas>
+                  <canvas id="patternCanvas" width="240" height="240" aria-label="Dibujar patron de desbloqueo"></canvas>
                 </div>
                 <input type="hidden" name="patronImagen" id="patronImagen" />
                 <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
@@ -110,15 +110,6 @@
                 Fecha estimada de entrega
                 <input name="fechaEntrega" type="date" />
               </label>
-              <label>
-                Estado
-                <select required name="estado">
-                  <option>En espera</option>
-                  <option>Activo</option>
-                  <option>Finalizado</option>
-                  <option>Cancelado</option>
-                </select>
-              </label>
               <label class="wide">
                 Descripcion del problema
                 <textarea required name="problema" rows="4" placeholder="Detalle de la falla informada por el cliente"></textarea>
@@ -135,10 +126,6 @@
             </form>
           </div>
 
-          <aside class="panel ticket-panel">
-            <p class="mini-title">Ultima carga</p>
-            <div id="lastTicket" class="empty-ticket">Todavia no hay reparaciones cargadas.</div>
-          </aside>
         </section>
       </main>
     </div>

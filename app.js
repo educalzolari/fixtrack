@@ -323,7 +323,7 @@ function createRepair(formData) {
     costoAproximado: Number(formData.get("costoAproximado") || 0),
     anticipo: Number(formData.get("anticipo") || 0),
     fechaEntrega: formData.get("fechaEntrega"),
-    estado: formData.get("estado"),
+    estado: "En espera",
     cierre: null,
     problema: formData.get("problema").trim(),
     observaciones: formData.get("observaciones").trim(),
@@ -695,7 +695,7 @@ function setupPatternCanvas() {
       }
 
       context.strokeStyle = "#1487df";
-      context.lineWidth = 15;
+      context.lineWidth = 10;
       context.lineCap = "round";
       context.lineJoin = "round";
       context.stroke();
@@ -704,15 +704,15 @@ function setupPatternCanvas() {
     nodes.forEach((node) => {
       const isSelected = selected.some((item) => item.id === node.id);
       context.beginPath();
-      context.arc(node.x, node.y, 28, 0, Math.PI * 2);
+      context.arc(node.x, node.y, 19, 0, Math.PI * 2);
       context.fillStyle = isSelected ? "#078ee8" : "#f7fbff";
       context.fill();
-      context.lineWidth = isSelected ? 8 : 5;
+      context.lineWidth = isSelected ? 5 : 3;
       context.strokeStyle = isSelected ? "#a9dcff" : "#d4dde8";
       context.stroke();
 
       context.beginPath();
-      context.arc(node.x, node.y, 8, 0, Math.PI * 2);
+      context.arc(node.x, node.y, 5, 0, Math.PI * 2);
       context.fillStyle = isSelected ? "#ffffff" : "#b5c0cc";
       context.fill();
     });
@@ -729,7 +729,7 @@ function setupPatternCanvas() {
   function addNodeAt(point) {
     const node = nodes.find((item) => {
       const distance = Math.hypot(item.x - point.x, item.y - point.y);
-      return distance <= 42 && !selected.some((selectedNode) => selectedNode.id === item.id);
+      return distance <= 28 && !selected.some((selectedNode) => selectedNode.id === item.id);
     });
 
     if (node) selected.push(node);

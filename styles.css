@@ -379,7 +379,7 @@ h2 {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 30px;
   align-items: start;
   margin-bottom: 30px;
@@ -477,7 +477,7 @@ textarea {
 }
 
 .pattern-card {
-  width: min(100%, 390px);
+  width: min(100%, 260px);
   border: 1px solid #cfe3ff;
   border-radius: 16px;
   background: #eaf5ff;
