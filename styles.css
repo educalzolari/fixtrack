@@ -1025,6 +1025,37 @@ td > strong {
   margin-top: 4px;
 }
 
+.repair-action-bar {
+  display: flex;
+  gap: 12px;
+  padding: 20px 28px 28px;
+}
+
+.action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.whatsapp-btn {
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.whatsapp-btn:hover {
+  background: #128c7e;
+}
+
 .finish-panel {
   display: flex;
   align-items: center;
