@@ -560,6 +560,18 @@ function setupEditForm() {
     repairs = repairs.map((item) => (Number(item.id) === Number(updatedRepair.id) ? updatedRepair : item));
     window.location.href = "reparaciones.html";
   });
+
+  const notifyClientButton = $("#notifyClientButton");
+  if (notifyClientButton) {
+    notifyClientButton.addEventListener("click", () => {
+      const current = getRepairFromUrl();
+      if (!current?.telefono) {
+        alert("Esta reparacion no tiene numero de WhatsApp cargado.");
+        return;
+      }
+      sendWhatsAppStatus(current);
+    });
+  }
 }
 
 function setupExpenses() {
@@ -653,7 +665,21 @@ function setupFinishFlow() {
       await dbUpsert(finalizedRepair);
       repairs = repairs.map((item) => (Number(item.id) === Number(finalizedRepair.id) ? finalizedRepair : item));
       closeFinishModal();
-      window.location.href = "reparaciones.html";
+
+      if (finalizedRepair.telefono) {
+        const notifyModal = $("#notifyModal");
+        if (notifyModal) {
+          notifyModal.classList.add("open");
+          notifyModal.setAttribute("aria-hidden", "false");
+          const redirect = () => { window.location.href = "reparaciones.html"; };
+          $("#notifyYes").onclick = () => { sendWhatsAppFinished(finalizedRepair); redirect(); };
+          $("#notifyNo").onclick = redirect;
+        } else {
+          window.location.href = "reparaciones.html";
+        }
+      } else {
+        window.location.href = "reparaciones.html";
+      }
     });
   }
 }
@@ -804,6 +830,53 @@ function formatPhoneForWhatsApp(phone) {
   if (digits.startsWith("0")) return "54" + digits.slice(1);
   if (digits.length === 10) return "54" + digits;
   return digits;
+}
+
+function sendWhatsAppFinished(repair) {
+  if (!repair.telefono) return;
+  const phone = formatPhoneForWhatsApp(repair.telefono);
+  if (!phone) return;
+  const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
+  const lines = [
+    `*1Fix!*`,
+    ``,
+    `Hola ${repair.cliente}`,
+    ``,
+    `Tu equipo esta listo para retirar.`,
+    ``,
+    `Orden: #${repair.id}`,
+    `Equipo: ${repair.marca} ${repair.modelo}`,
+    ``,
+    `Podes ver el detalle aca:`,
+    orderUrl,
+    ``,
+    `Te esperamos!`,
+  ].join("\n");
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+}
+
+function sendWhatsAppStatus(repair) {
+  if (!repair.telefono) return;
+  const phone = formatPhoneForWhatsApp(repair.telefono);
+  if (!phone) return;
+  const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
+  const lines = [
+    `*1Fix!*`,
+    ``,
+    `Hola ${repair.cliente}`,
+    ``,
+    `Actualizacion de tu equipo:`,
+    ``,
+    `Orden: #${repair.id}`,
+    `Equipo: ${repair.marca} ${repair.modelo}`,
+    `Estado: ${repair.estado}`,
+    ``,
+    `Podes ver tu orden aca:`,
+    orderUrl,
+    ``,
+    `Cualquier consulta, escribinos.`,
+  ].join("\n");
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
 }
 
 function sendWhatsAppOrder(repair) {

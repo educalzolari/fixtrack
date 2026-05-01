@@ -194,6 +194,14 @@
               </div>
               <button class="success-button" id="openFinishModal" type="button">Finalizar reparacion</button>
             </div>
+
+            <div class="finish-panel notify-client-panel" id="notifyClientPanel">
+              <div>
+                <h3>Notificar cliente</h3>
+                <p>Envia el estado actual de la reparacion al cliente por WhatsApp.</p>
+              </div>
+              <button class="primary-button" id="notifyClientButton" type="button">Enviar estado por WhatsApp</button>
+            </div>
           </div>
         </section>
       </main>
@@ -272,6 +280,21 @@
             <button class="success-button" type="submit">Finalizar</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="notifyModal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true">
+        <div class="modal-heading">
+          <div>
+            <h2>Reparacion finalizada</h2>
+            <p>¿Querés notificar al cliente por WhatsApp?</p>
+          </div>
+        </div>
+        <div class="form-actions modal-actions">
+          <button class="ghost-button" id="notifyNo" type="button">No, gracias</button>
+          <button class="success-button" id="notifyYes" type="button">Si, notificar</button>
+        </div>
       </div>
     </div>
 
