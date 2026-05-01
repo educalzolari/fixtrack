@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FixTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="login-body">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-brand">FixTrack</div>
+        <p class="login-subtitle">Sistema de gestión de reparaciones</p>
+
+        <form id="loginForm" class="login-form" novalidate>
+          <div class="login-error" id="loginError">
+            Usuario o contraseña incorrectos.
+          </div>
+
+          <label>
+            Usuario
+            <input
+              id="loginUser"
+              name="usuario"
+              type="text"
+              autocomplete="username"
+              required
+              placeholder="Usuario"
+            />
+          </label>
+
+          <label>
+            Contraseña
+            <input
+              id="loginPass"
+              name="contrasena"
+              type="password"
+              autocomplete="current-password"
+              required
+              placeholder="Contraseña"
+            />
+          </label>
+
+          <button class="primary-button login-btn" type="submit">Ingresar</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="auth.js"></script>
+  </body>
+</html>
