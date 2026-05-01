@@ -5,8 +5,21 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 ## Stack
 - HTML + CSS + JS vanilla. Sin frameworks, sin build tools, sin dependencias.
 - Un solo `app.js` y un solo `styles.css` compartidos por todas las páginas.
-- Datos en `localStorage` (clave: `fixtrack_reparaciones`).
 - Fuente: Poppins (Google Fonts).
+- Base de datos: Supabase (PostgreSQL). Hosting: Netlify (auto-deploy desde GitHub).
+
+## Infraestructura
+- **Supabase**: `https://axgqawopidzljidnaodd.supabase.co` — tabla `reparaciones`, RLS habilitado con policy `acceso_total` (FOR ALL USING true).
+- **GitHub**: `https://github.com/educalzolari/fixtrack.git` (rama `main`)
+- **Netlify**: conectado al repo, despliega automáticamente en cada push a `main`.
+- **Cliente DB**: `db.js` — funciones `dbLoad()`, `dbInsert(repair)`, `dbUpsert(repair)`. Mapea camelCase JS ↔ snake_case DB.
+- `db.js` debe cargarse después del CDN de Supabase y antes de `app.js` en todos los HTML.
+
+## Autenticación
+- Archivo: `auth.js` — se carga en el `<head>` de todos los HTML.
+- Login en `login.html`. Credenciales hardcodeadas: usuario `1Fix.admin`, contraseña `Clara.Vera.26`.
+- Sesión persistida en `localStorage` clave `fixtrack_auth`. Botón "Salir" llama a `logout()`.
+- Cualquier página sin sesión redirige a `login.html` automáticamente.
 
 ## Estructura de datos — Reparación
 
@@ -40,8 +53,9 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 
 | Archivo | Estado | Descripción |
 |---|---|---|
+| `login.html` | Funcional | Pantalla de login, solo carga `auth.js` |
 | `index.html` | Funcional | Dashboard: 4 stats, accesos rápidos, últimas 5 reparaciones |
-| `nueva-reparacion.html` | Funcional | Formulario de alta de reparación |
+| `nueva-reparacion.html` | Funcional | Formulario de alta. Sin selector de estado (siempre "En espera"). Sin panel lateral. |
 | `reparaciones.html` | Funcional | Listado con búsqueda y filtro por estado |
 | `editar-reparacion.html` | Funcional | Edición + gastos + modal de cierre/finalización |
 | `clientes.html` | Placeholder | Fichas, historial y contacto por cliente |
@@ -55,8 +69,7 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 
 | Función | Qué hace |
 |---|---|
-| `loadRepairs()` | Lee y normaliza reparaciones de localStorage |
-| `saveRepairs()` | Persiste el array `repairs` en localStorage |
+| `initApp()` | Async. Llama `updateDate()`, `dbLoad()`, `setupEditForm()`, `setupPatternCanvas()`, `renderAll()`, `setupReportsDashboard()` |
 | `normalizeRepair(r)` | Normaliza campos legacy al esquema actual |
 | `normalizeStatus(s)` | Mapea estados viejos al esquema actual |
 | `renderStats()` | Actualiza los 4 contadores del dashboard |
@@ -65,7 +78,8 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 | `setupEditForm()` | Carga datos en el form de edición |
 | `setupExpenses()` | Gestiona el modal y tabla de gastos |
 | `setupFinishFlow()` | Gestiona el modal de cierre de reparación |
-| `setupPatternCanvas()` | Dibuja el patrón de desbloqueo en canvas |
+| `setupPatternCanvas()` | Inicializa el canvas de patrón de desbloqueo (240×240px) |
+| `updateDate()` | Actualiza el `#currentDate` del topbar con fecha local |
 | `setupReportsDashboard()` | Inicializa selectores de mes/año y llama a renderReportsDashboard |
 | `renderReportsDashboard()` | Calcula y pinta los 8 KPIs del dashboard de reportes |
 | `renderWeeklyChart()` | Dibuja el gráfico de línea semanal con Chart.js |
@@ -76,14 +90,13 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 | `escapeHtml(v)` | Escapa HTML para prevenir XSS |
 
 ## Convenciones
-- Todas las páginas incluyen el mismo sidebar y `app.js`.
+- Todas las páginas incluyen el mismo sidebar y `app.js` (excepto `login.html`).
 - El link activo del sidebar tiene clase `active`.
 - Clases de estado en pills: `waiting` | `active` | `done` | `cancelled`.
 - IDs de reparación empiezan en 1001 y se autoincrementan.
 - Las páginas placeholder tienen una `<section class="panel empty-page">` como contenido.
-- No agregar frameworks ni dependencias externas (excepciones: Chart.js CDN en `reportes.html`, Supabase CDN en todos los HTML).
-- Base de datos: Supabase (PostgreSQL). Tabla `reparaciones`. Cliente en `db.js`.
-- `db.js` debe cargarse antes que `app.js` en todos los HTML, y después del CDN de Supabase.
+- No agregar frameworks ni dependencias externas (excepciones: Chart.js CDN en `reportes.html`, Supabase CDN en todos los HTML excepto `login.html`).
 - Las operaciones de guardado son async: `dbInsert(repair)` para crear, `dbUpsert(repair)` para editar/finalizar.
-- `initApp()` es async: carga los datos con `dbLoad()` antes de renderizar.
+- `today` se calcula con fecha local (no `toISOString()` que es UTC).
+- El canvas del patrón es 240×240px. Los radios de nodo y detección de toque están escalados para ese tamaño.
 - No agregar comentarios en el código salvo que el "por qué" sea no obvio.
