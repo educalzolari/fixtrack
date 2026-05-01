@@ -1,4 +1,4 @@
-# FixTrack — Contexto del proyecto
+# 1Fix! — Contexto del proyecto
 
 App web para gestión de reparaciones de un taller de celulares/dispositivos.
 

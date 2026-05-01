@@ -812,18 +812,20 @@ function sendWhatsAppOrder(repair) {
   if (!phone) return;
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
   const lines = [
-    `*Orden de Reparacion #${repair.id} - FixTrack*`,
+    `*1Fix!*`,
     ``,
-    `Hola ${repair.cliente}, registramos tu ${repair.marca} ${repair.modelo}.`,
+    `Hola ${repair.cliente}`,
     ``,
-    `Ver y descargar tu orden en PDF:`,
+    `Tu equipo fue recibido en 1Fix!.`,
+    ``,
+    `Orden: #${repair.id}`,
+    `Equipo: ${repair.marca} ${repair.modelo}`,
+    ``,
+    `Podes ver y descargar tu orden aca:`,
     orderUrl,
     ``,
-    `Costo estimado: ${formatMoney(repair.costoAproximado)}`,
-    repair.fechaEntrega ? `Entrega estimada: ${formatDate(repair.fechaEntrega)}` : null,
-    ``,
-    `Ante cualquier consulta, escribinos por aca.`,
-  ].filter((l) => l !== null).join("\n");
+    `Te avisamos cuando tengamos novedades.`,
+  ].join("\n");
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
 }
 
