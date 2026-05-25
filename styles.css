@@ -1673,6 +1673,95 @@ td > strong {
   color: var(--muted);
 }
 
+/* ── Pagina patron de desbloqueo ────────────────────────── */
+.patron-body {
+  background: var(--paper);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 48px;
+}
+
+.patron-wrap {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.patron-header {
+  background: var(--nav);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+}
+
+.patron-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.patron-info {
+  padding: 24px 28px 0;
+}
+
+.patron-info h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.patron-info p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 6px;
+  line-height: 1.55;
+}
+
+.patron-form {
+  padding: 20px 28px 28px;
+  display: grid;
+  gap: 20px;
+}
+
+.patron-success {
+  padding: 48px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.patron-success h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.patron-success p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.patron-loading,
+.patron-error {
+  padding: 48px 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.patron-error {
+  color: var(--danger, #e53e3e);
+}
+
 /* ── Impresion / PDF ────────────────────────────────────── */
 @media print {
   .no-print {

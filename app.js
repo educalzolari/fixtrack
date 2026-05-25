@@ -566,6 +566,18 @@ function setupEditForm() {
     window.location.href = "reparaciones.html";
   });
 
+  const requestPatternButton = $("#requestPatternButton");
+  if (requestPatternButton) {
+    requestPatternButton.addEventListener("click", () => {
+      const current = getRepairFromUrl();
+      if (!current?.telefono) {
+        alert("Esta reparacion no tiene numero de WhatsApp cargado.");
+        return;
+      }
+      sendWhatsAppPattern(current);
+    });
+  }
+
   const notifyClientButton = $("#notifyClientButton");
   if (notifyClientButton) {
     notifyClientButton.addEventListener("click", () => {
@@ -842,6 +854,13 @@ function sendWhatsAppFinished(repair) {
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
+  const costoFinal = repair.cierre?.costoFinal || repair.costoAproximado || 0;
+  const anticipo = repair.anticipo || 0;
+  const saldo = costoFinal - anticipo;
+  const precioLines = [
+    `Costo total: ${formatMoney(costoFinal)}`,
+    ...(anticipo > 0 ? [`Anticipo: ${formatMoney(anticipo)}`, `Saldo a pagar: ${formatMoney(saldo)}`] : []),
+  ];
   const lines = [
     `*1Fix!*`,
     ``,
@@ -851,6 +870,8 @@ function sendWhatsAppFinished(repair) {
     ``,
     `Orden: #${repair.id}`,
     `Equipo: ${repair.marca} ${repair.modelo}`,
+    ``,
+    ...precioLines,
     ``,
     `Podes ver el detalle aca:`,
     orderUrl,
@@ -880,6 +901,26 @@ function sendWhatsAppStatus(repair) {
     orderUrl,
     ``,
     `Cualquier consulta, escribinos.`,
+  ].join("\n");
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+}
+
+function sendWhatsAppPattern(repair) {
+  if (!repair.telefono) return;
+  const phone = formatPhoneForWhatsApp(repair.telefono);
+  if (!phone) return;
+  const patronUrl = `${window.location.origin}/patron.html?id=${repair.id}`;
+  const lines = [
+    `*1Fix!*`,
+    ``,
+    `Hola ${repair.cliente}`,
+    ``,
+    `Para avanzar con la reparación de tu ${repair.marca} ${repair.modelo}, necesitamos el código de desbloqueo del equipo.`,
+    ``,
+    `Podés completarlo desde este enlace (solo tarda un momento):`,
+    patronUrl,
+    ``,
+    `¡Muchas gracias!`,
   ].join("\n");
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
 }
