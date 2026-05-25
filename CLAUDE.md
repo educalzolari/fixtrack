@@ -11,7 +11,7 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 ## Infraestructura
 - **Supabase**: `https://axgqawopidzljidnaodd.supabase.co` — tabla `reparaciones`, RLS habilitado con policy `acceso_total` (FOR ALL USING true).
 - **GitHub**: `https://github.com/educalzolari/fixtrack.git` (rama `main`)
-- **Netlify**: conectado al repo, despliega automáticamente en cada push a `main`.
+- **Vercel**: `https://fixtrack-omega.vercel.app` — conectado al repo, despliega automáticamente en cada push a `main`.
 - **Cliente DB**: `db.js` — funciones `dbLoad()`, `dbInsert(repair)`, `dbUpsert(repair)`. Mapea camelCase JS ↔ snake_case DB.
 - `db.js` debe cargarse después del CDN de Supabase y antes de `app.js` en todos los HTML.
 
