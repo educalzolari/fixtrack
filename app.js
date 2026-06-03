@@ -272,9 +272,11 @@ function renderTable() {
           <td>${formatDate(repair.fechaIngreso)}</td>
           <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
           <td class="action-cell">
-            <a class="table-action edit-action" href="editar-reparacion.html?id=${repair.id}" aria-label="Editar reparacion #${repair.id}">Editar</a>
-            <button class="table-action delete-action" data-id="${repair.id}" aria-label="Eliminar reparacion #${repair.id}">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            <a class="icon-action edit-icon" href="editar-reparacion.html?id=${repair.id}" aria-label="Editar reparacion #${repair.id}" title="Editar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </a>
+            <button class="icon-action delete-icon" data-id="${repair.id}" aria-label="Eliminar reparacion #${repair.id}" title="Eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
             </button>
           </td>
         </tr>
@@ -546,10 +548,11 @@ function setupEditForm() {
 
   fillFormFromRepair(editForm, repair);
   editingExpenses = [...(repair.gastos || [])];
-  if (editTitle) editTitle.textContent = `Reparacion #${repair.id}`;
+  if (editTitle) editTitle.innerHTML = `<strong>#${repair.id}</strong> &mdash; ${escapeHtml(repair.marca)} ${escapeHtml(repair.modelo)}`;
   renderEditSummary(repair);
   renderSavedPatternPreview(repair.patronImagen);
   renderExpensesTable(repair);
+  let fotosEdit = setupFotosEdit(repair);
 
   if (editForm.elements.costoAproximado) {
     editForm.elements.costoAproximado.addEventListener("input", () => {
@@ -561,6 +564,24 @@ function setupEditForm() {
     event.preventDefault();
     syncExpensesInput();
     const updatedRepair = formToRepair(new FormData(editForm), repair);
+
+    const sections = ["recepcion", "reparacion", "entrega"];
+    const currentFotos = { recepcion: [], reparacion: [], entrega: [] };
+
+    if (fotosEdit) {
+      for (const sec of sections) {
+        const mgr = fotosEdit[sec];
+        if (!mgr) { currentFotos[sec] = updatedRepair.fotos?.[sec] || []; continue; }
+        const newUrls = mgr.getFiles().length
+          ? await dbUploadFotos(repair.id, mgr.getFiles())
+          : [];
+        currentFotos[sec] = [...mgr.getSavedUrls(), ...newUrls];
+      }
+    } else {
+      sections.forEach((s) => { currentFotos[s] = updatedRepair.fotos?.[s] || []; });
+    }
+
+    updatedRepair.fotos = currentFotos;
     await dbUpsert(updatedRepair);
     repairs = repairs.map((item) => (Number(item.id) === Number(updatedRepair.id) ? updatedRepair : item));
     window.location.href = "reparaciones.html";
@@ -749,7 +770,8 @@ function setupPatternCanvas() {
     }
 
     nodes.forEach((node) => {
-      const isSelected = selected.some((item) => item.id === node.id);
+      const order = selected.findIndex((item) => item.id === node.id);
+      const isSelected = order !== -1;
       context.beginPath();
       context.arc(node.x, node.y, 19, 0, Math.PI * 2);
       context.fillStyle = isSelected ? "#078ee8" : "#f7fbff";
@@ -758,10 +780,18 @@ function setupPatternCanvas() {
       context.strokeStyle = isSelected ? "#a9dcff" : "#d4dde8";
       context.stroke();
 
-      context.beginPath();
-      context.arc(node.x, node.y, 5, 0, Math.PI * 2);
-      context.fillStyle = isSelected ? "#ffffff" : "#b5c0cc";
-      context.fill();
+      if (isSelected) {
+        context.font = "bold 15px Poppins, Arial, sans-serif";
+        context.fillStyle = "#ffffff";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(String(order + 1), node.x, node.y);
+      } else {
+        context.beginPath();
+        context.arc(node.x, node.y, 5, 0, Math.PI * 2);
+        context.fillStyle = "#b5c0cc";
+        context.fill();
+      }
     });
   }
 
@@ -835,7 +865,9 @@ function setupPatternCanvas() {
   patternCanvas.addEventListener("pointerleave", stopDrawing);
   patternCanvas.addEventListener("pointercancel", stopDrawing);
 
-  if (clearPatternButton) clearPatternButton.addEventListener("click", clearPattern);
+  if (clearPatternButton) clearPatternButton.addEventListener("click", () => {
+    if (!selected.length || confirm("¿Borrar el patron dibujado?")) clearPattern();
+  });
   if (form) form.addEventListener("reset", () => window.setTimeout(clearPattern, 0));
 
   drawPattern();
@@ -951,11 +983,53 @@ function sendWhatsAppOrder(repair) {
 if (form) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    const sel = $("#clienteSelect");
+    if (sel) {
+      if (!sel.value) { alert("Seleccioná un cliente o elegí '+ Nuevo cliente'."); return; }
+
+      if (sel.value === "__nuevo__") {
+        const nombre = ($("#nuevoNombre")?.value || "").trim();
+        if (!nombre) { alert("El nombre del cliente es obligatorio."); return; }
+        const saved = await dbInsertCliente({
+          nombre,
+          telefono: ($("#nuevoTelefono")?.value || "").trim(),
+          correo:   ($("#nuevoCorreo")?.value  || "").trim(),
+          direccion:($("#nuevoDireccion")?.value || "").trim(),
+        });
+        if (!saved) { alert("No se pudo guardar el cliente. Revisá la conexión."); return; }
+        $("#hiddenCliente").value = saved.nombre;
+        $("#hiddenTelefono").value = saved.telefono;
+
+        const opt = document.createElement("option");
+        opt.value = saved.id;
+        opt.dataset.nombre = saved.nombre;
+        opt.dataset.telefono = saved.telefono;
+        opt.textContent = saved.nombre;
+        sel.insertBefore(opt, sel.querySelector('option[value="__nuevo__"]'));
+      }
+    }
+
+    const submitBtn = form.querySelector('[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Guardando..."; }
+
     const repair = createRepair(new FormData(form));
     await dbInsert(repair);
+
+    const files = fotosManager ? fotosManager.getFiles() : [];
+    if (files.length) {
+      if (submitBtn) submitBtn.textContent = `Subiendo fotos (0/${files.length})...`;
+      const urls = await dbUploadFotos(repair.id, files);
+      if (urls.length) {
+        repair.fotos = urls;
+        await dbUpsert(repair);
+      }
+    }
+
     repairs = [repair, ...repairs];
     sendWhatsAppOrder(repair);
     form.reset();
+    if (sel) { sel.value = ""; $("#nuevoClienteFields").style.display = "none"; }
     renderAll();
     window.location.href = "reparaciones.html";
   });
@@ -969,7 +1043,7 @@ if (statusFilter) statusFilter.addEventListener("change", renderTable);
 
 if (tableBody) {
   tableBody.addEventListener("click", async (event) => {
-    const btn = event.target.closest(".delete-action");
+    const btn = event.target.closest(".delete-icon");
     if (!btn) return;
     const id = Number(btn.dataset.id);
     const repair = repairs.find((r) => Number(r.id) === id);
@@ -987,11 +1061,170 @@ if (menuToggle) {
   });
 }
 
+function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteExisting = null) {
+  const grid  = $(`#${gridId}`);
+  const input = $(`#${inputId}`);
+  const meta  = $(`#${metaId}`);
+  if (!grid || !input) return null;
+
+  let pendingFiles = [];
+  let savedUrls = [...existingUrls];
+
+  function updateMeta() {
+    if (!meta) return;
+    const total = savedUrls.length + pendingFiles.length;
+    meta.textContent = total
+      ? `${total} foto${total > 1 ? "s" : ""}`
+      : "";
+  }
+
+  function addSavedThumb(url) {
+    const thumb = document.createElement("div");
+    thumb.className = "foto-thumb";
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Foto guardada";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "foto-thumb-remove";
+    btn.title = "Eliminar";
+    btn.textContent = "✕";
+    btn.addEventListener("click", async () => {
+      if (!confirm("¿Eliminar esta foto?")) return;
+      savedUrls = savedUrls.filter((u) => u !== url);
+      thumb.remove();
+      if (onDeleteExisting) await onDeleteExisting(url);
+      updateMeta();
+    });
+
+    thumb.appendChild(img);
+    thumb.appendChild(btn);
+    grid.insertBefore(thumb, grid.querySelector(".foto-add"));
+  }
+
+  function addPendingThumb(file, index) {
+    const thumb = document.createElement("div");
+    thumb.className = "foto-thumb";
+    thumb.dataset.index = index;
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.alt = "Foto nueva";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "foto-thumb-remove";
+    btn.title = "Quitar";
+    btn.textContent = "✕";
+    btn.addEventListener("click", () => {
+      pendingFiles = pendingFiles.filter((_, i) => i !== Number(thumb.dataset.index));
+      rebuildPending();
+    });
+
+    thumb.appendChild(img);
+    thumb.appendChild(btn);
+    grid.insertBefore(thumb, grid.querySelector(".foto-add"));
+  }
+
+  function rebuildPending() {
+    grid.querySelectorAll(".foto-thumb[data-index]").forEach((t) => t.remove());
+    pendingFiles.forEach((f, i) => addPendingThumb(f, i));
+    updateMeta();
+  }
+
+  savedUrls.forEach((url) => addSavedThumb(url));
+  updateMeta();
+
+  input.addEventListener("change", () => {
+    Array.from(input.files).forEach((f) => pendingFiles.push(f));
+    input.value = "";
+    rebuildPending();
+  });
+
+  return {
+    getFiles:    () => pendingFiles,
+    getSavedUrls: () => savedUrls,
+    clear() { pendingFiles = []; savedUrls = []; grid.querySelectorAll(".foto-thumb").forEach((t) => t.remove()); updateMeta(); },
+  };
+}
+
+function setupFotos() {
+  const mgr = createFotoSection("fotoPreviewGrid", "fotoInput", "fotoMeta");
+  if (!mgr) return null;
+  if (form) form.addEventListener("reset", () => mgr.clear());
+  return mgr;
+}
+
+function setupFotosEdit(repair) {
+  if (!repair) return null;
+  const fotos = repair.fotos || { recepcion: [], reparacion: [], entrega: [] };
+
+  async function deleteAndSave(section, url) {
+    await dbDeleteFoto(url);
+    const current = repairs.find((r) => Number(r.id) === Number(repair.id));
+    if (current) {
+      current.fotos[section] = current.fotos[section].filter((u) => u !== url);
+      await dbUpsert(current);
+    }
+  }
+
+  const recepcion  = createFotoSection("fotoGridRecepcion",  "fotoInputRecepcion",  "fotoMetaRecepcion",  fotos.recepcion,  (url) => deleteAndSave("recepcion",  url));
+  const reparacion = createFotoSection("fotoGridReparacion", "fotoInputReparacion", "fotoMetaReparacion", fotos.reparacion, (url) => deleteAndSave("reparacion", url));
+  const entrega    = createFotoSection("fotoGridEntrega",    "fotoInputEntrega",    "fotoMetaEntrega",    fotos.entrega,    (url) => deleteAndSave("entrega",    url));
+
+  return { recepcion, reparacion, entrega };
+}
+
+async function setupClienteSelect() {
+  const sel = $("#clienteSelect");
+  if (!sel) return;
+
+  const clientes = await dbLoadClientes();
+  const nuevoOpt = sel.querySelector('option[value="__nuevo__"]');
+
+  clientes.forEach((c) => {
+    const opt = document.createElement("option");
+    opt.value = c.id;
+    opt.dataset.nombre = c.nombre;
+    opt.dataset.telefono = c.telefono || "";
+    opt.textContent = c.nombre;
+    sel.insertBefore(opt, nuevoOpt);
+  });
+
+  sel.addEventListener("change", () => {
+    const val = sel.value;
+    const panel = $("#nuevoClienteFields");
+    const hiddenNombre = $("#hiddenCliente");
+    const hiddenTel = $("#hiddenTelefono");
+
+    if (val === "__nuevo__") {
+      panel.style.display = "";
+      hiddenNombre.value = "";
+      hiddenTel.value = "";
+    } else if (val) {
+      panel.style.display = "none";
+      const opt = sel.selectedOptions[0];
+      hiddenNombre.value = opt.dataset.nombre;
+      hiddenTel.value = opt.dataset.telefono;
+    } else {
+      panel.style.display = "none";
+      hiddenNombre.value = "";
+      hiddenTel.value = "";
+    }
+  });
+}
+
+let fotosManager = null;
+
 async function initApp() {
   updateDate();
   repairs = await dbLoad();
   setupEditForm();
   setupPatternCanvas();
+  fotosManager = setupFotos();
+  await setupClienteSelect();
   renderAll();
   setupReportsDashboard();
 }

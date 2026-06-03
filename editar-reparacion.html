@@ -38,19 +38,13 @@
           <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
           <div>
             <p class="date" id="currentDate">29/04/2026</p>
-            <h1>Editar Reparacion</h1>
+            <h1 id="editTitle">Editar Reparacion</h1>
           </div>
+          <a class="ghost-link" style="margin-left:auto" href="reparaciones.html">Volver al listado</a>
         </header>
 
         <section class="workspace edit-workspace">
           <div class="panel form-panel">
-            <div class="section-heading edit-heading">
-              <div>
-                <h2 id="editTitle">Reparacion</h2>
-                <p>Actualiza datos internos, contrasena, estado y fechas.</p>
-              </div>
-              <a class="ghost-link" href="reparaciones.html">Volver al listado</a>
-            </div>
 
             <form id="editRepairForm" class="repair-form">
               <input type="hidden" name="id" />
@@ -59,7 +53,13 @@
               <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
               <input type="hidden" name="gastosJson" id="gastosJson" />
 
-              <label>
+              <!-- ── Sección: Cliente ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <span>Datos del cliente</span>
+              </div>
+
+              <label class="col-2">
                 Nombre y Apellido
                 <input required name="cliente" type="text" />
               </label>
@@ -76,6 +76,25 @@
                   <option>Cancelado</option>
                 </select>
               </label>
+              <label>
+                Fecha estimada de entrega
+                <input name="fechaEntrega" type="date" />
+              </label>
+              <label>
+                Costo Aproximado
+                <input required name="costoAproximado" type="number" min="0" step="100" />
+              </label>
+              <label>
+                Anticipo recibido
+                <input name="anticipo" type="number" min="0" step="100" />
+              </label>
+
+              <!-- ── Sección: Dispositivo ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+                <span>Datos del dispositivo</span>
+              </div>
+
               <label>
                 Tipo de dispositivo
                 <select required name="dispositivo">
@@ -97,41 +116,36 @@
                 IMEI/ESN/SN
                 <input name="identificador" type="text" />
               </label>
-              <label>
-                Contrasena dispositivo
-                <input name="passwordDispositivo" type="text" autocomplete="off" />
-              </label>
-              <label class="wide">
-                Accesorios
-                <input name="accesorios" type="text" />
-              </label>
-              <label>
-                Costo Aproximado
-                <input required name="costoAproximado" type="number" min="0" step="100" />
-              </label>
-              <label>
-                Anticipo recibido
-                <input name="anticipo" type="number" min="0" step="100" />
-              </label>
-              <label>
-                Fecha estimada de entrega
-                <input name="fechaEntrega" type="date" />
+
+              <label class="col-2">
+                Contrasena / PIN
+                <input name="passwordDispositivo" type="text" autocomplete="off" maxlength="12" style="max-width:160px" />
               </label>
 
               <div class="pattern-field wide">
                 <div class="pattern-heading">
                   <div>
                     <span>Patron de desbloqueo</span>
-                    <small>El patron actual se puede ver y reemplazar dibujando uno nuevo.</small>
+                    <small>El patron actual se puede ver abajo. Dibuja uno nuevo para reemplazarlo.</small>
                   </div>
-                  <button class="ghost-button small-button" id="clearPattern" type="button">Limpiar patron</button>
                 </div>
                 <div class="pattern-preview" id="savedPatternPreview"></div>
-                <div class="pattern-card">
+                <div class="pattern-card" style="margin-top:12px">
                   <canvas id="patternCanvas" width="240" height="240" aria-label="Dibujar patron de desbloqueo"></canvas>
+                </div>
+                <div class="pattern-actions">
+                  <button class="ghost-button small-button" id="clearPattern" type="button">Limpiar patron</button>
+                  <button class="ghost-button small-button" id="requestPatternButton" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Solicitar desbloqueo por WhatsApp
+                  </button>
                 </div>
               </div>
 
+              <label class="col-3">
+                Accesorios
+                <input name="accesorios" type="text" />
+              </label>
               <label class="wide">
                 Descripcion del problema
                 <textarea required name="problema" rows="4"></textarea>
@@ -141,6 +155,65 @@
                 <textarea name="observaciones" rows="4"></textarea>
               </label>
 
+              <!-- ── Sección: Fotos ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg></div>
+                <span>Registro fotografico</span>
+              </div>
+
+              <div class="wide fotos-edit-grid">
+
+                <div class="foto-subseccion">
+                  <p class="foto-subseccion-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 3H8l-2 4h12l-2-4z"/></svg>
+                    Recepcion
+                  </p>
+                  <p class="foto-hint">Estado del equipo al ingresar.</p>
+                  <div class="foto-grid" id="fotoGridRecepcion">
+                    <label class="foto-add" for="fotoInputRecepcion" title="Agregar foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                      <span>Agregar</span>
+                    </label>
+                  </div>
+                  <input type="file" id="fotoInputRecepcion" accept="image/*" multiple style="display:none" />
+                  <p class="foto-meta" id="fotoMetaRecepcion"></p>
+                </div>
+
+                <div class="foto-subseccion">
+                  <p class="foto-subseccion-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 0 0 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Reparacion
+                  </p>
+                  <p class="foto-hint">Fotos durante el proceso de reparacion.</p>
+                  <div class="foto-grid" id="fotoGridReparacion">
+                    <label class="foto-add" for="fotoInputReparacion" title="Agregar foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                      <span>Agregar</span>
+                    </label>
+                  </div>
+                  <input type="file" id="fotoInputReparacion" accept="image/*" multiple style="display:none" />
+                  <p class="foto-meta" id="fotoMetaReparacion"></p>
+                </div>
+
+                <div class="foto-subseccion">
+                  <p class="foto-subseccion-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+                    Entrega
+                  </p>
+                  <p class="foto-hint">Estado final del equipo al entregar.</p>
+                  <div class="foto-grid" id="fotoGridEntrega">
+                    <label class="foto-add" for="fotoInputEntrega" title="Agregar foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                      <span>Agregar</span>
+                    </label>
+                  </div>
+                  <input type="file" id="fotoInputEntrega" accept="image/*" multiple style="display:none" />
+                  <p class="foto-meta" id="fotoMetaEntrega"></p>
+                </div>
+
+              </div>
+
+              <!-- ── Sección: Gastos ── -->
               <section class="expenses-section wide" aria-labelledby="expensesTitle">
                 <div class="expenses-heading">
                   <div>
@@ -181,26 +254,23 @@
                 </div>
               </section>
 
-              <div class="form-actions">
-                <a class="ghost-link action-link" href="reparaciones.html">Cancelar</a>
-                <button class="primary-button" type="submit">Guardar cambios</button>
+              <div class="wide edit-action-bar">
+                <div class="edit-action-left">
+                  <button class="success-button action-btn" id="openFinishModal" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Finalizar reparacion
+                  </button>
+                  <button class="whatsapp-btn action-btn" id="notifyClientButton" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Notificar por WhatsApp
+                  </button>
+                </div>
+                <div class="edit-action-right">
+                  <a class="ghost-link" href="reparaciones.html">Cancelar</a>
+                  <button class="primary-button action-btn" type="submit">Guardar cambios</button>
+                </div>
               </div>
             </form>
-
-            <div class="repair-action-bar">
-              <button class="success-button action-btn" id="openFinishModal" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Finalizar
-              </button>
-              <button class="ghost-button action-btn" id="requestPatternButton" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Solicitar desbloqueo
-              </button>
-              <button class="whatsapp-btn action-btn" id="notifyClientButton" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                WhatsApp
-              </button>
-            </div>
           </div>
         </section>
       </main>

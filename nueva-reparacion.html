@@ -50,14 +50,51 @@
             </div>
 
             <form id="repairForm" class="repair-form">
-              <label>
-                Nombre y Apellido
-                <input required name="cliente" type="text" placeholder="Nombre y apellido" />
+              <input type="hidden" name="cliente" id="hiddenCliente" />
+              <input type="hidden" name="telefono" id="hiddenTelefono" />
+
+              <!-- ── Sección: Cliente ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <span>Cliente</span>
+              </div>
+
+              <label class="col-2">
+                Cliente
+                <select id="clienteSelect">
+                  <option value="">Seleccionar cliente...</option>
+                  <option value="__nuevo__">+ Nuevo cliente</option>
+                </select>
               </label>
-              <label>
-                Telefono WhatsApp
-                <input name="telefono" type="tel" placeholder="Ej: 1123456789 (opcional)" />
-              </label>
+
+              <div id="nuevoClienteFields" class="wide nuevo-cliente-panel" style="display:none">
+                <p class="nuevo-cliente-title">Datos del nuevo cliente</p>
+                <div class="nuevo-cliente-grid">
+                  <label>
+                    Nombre y Apellido *
+                    <input id="nuevoNombre" type="text" placeholder="Nombre y apellido" autocomplete="off" />
+                  </label>
+                  <label>
+                    Telefono WhatsApp
+                    <input id="nuevoTelefono" type="tel" placeholder="Ej: 1123456789" />
+                  </label>
+                  <label>
+                    Correo electronico
+                    <input id="nuevoCorreo" type="email" placeholder="correo@ejemplo.com" />
+                  </label>
+                  <label>
+                    Direccion
+                    <input id="nuevoDireccion" type="text" placeholder="Calle, numero, ciudad" />
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── Sección: Equipo ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+                <span>Datos del equipo</span>
+              </div>
+
               <label>
                 Tipo de dispositivo
                 <select required name="dispositivo">
@@ -80,9 +117,9 @@
                 IMEI/ESN/SN
                 <input name="identificador" type="text" placeholder="Numero de serie o IMEI" />
               </label>
-              <label>
-                Contrasena dispositivo
-                <input name="passwordDispositivo" type="text" autocomplete="off" placeholder="PIN, patron o clave" />
+              <label class="col-2">
+                Contrasena / PIN
+                <input name="passwordDispositivo" type="text" autocomplete="off" placeholder="PIN o clave" maxlength="12" style="max-width:160px" />
               </label>
               <div class="pattern-field wide">
                 <div class="pattern-heading">
@@ -90,15 +127,22 @@
                     <span>Patron de desbloqueo</span>
                     <small>Dibuja el recorrido si el equipo usa patron.</small>
                   </div>
-                  <button class="ghost-button small-button" id="clearPattern" type="button">Limpiar patron</button>
                 </div>
                 <div class="pattern-card">
                   <canvas id="patternCanvas" width="240" height="240" aria-label="Dibujar patron de desbloqueo"></canvas>
                 </div>
+                <button class="ghost-button small-button" id="clearPattern" type="button" style="margin-top:8px;width:min(100%,288px)">Limpiar patron</button>
                 <input type="hidden" name="patronImagen" id="patronImagen" />
                 <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
               </div>
-              <label class="wide">
+
+              <!-- ── Sección: Detalles ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+                <span>Detalles de la reparacion</span>
+              </div>
+
+              <label class="col-3">
                 Accesorios
                 <input name="accesorios" type="text" placeholder="Cargador, funda, SIM, memoria, caja..." />
               </label>
@@ -122,6 +166,24 @@
                 Observaciones adicionales
                 <textarea name="observaciones" rows="4" placeholder="Notas internas, estado fisico, condiciones de garantia..."></textarea>
               </label>
+
+              <!-- ── Sección: Fotos ── -->
+              <div class="wide form-section-header">
+                <div class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg></div>
+                <span>Registro fotografico</span>
+              </div>
+
+              <div class="wide foto-section">
+                <p class="foto-hint">Tomá fotos del estado del equipo. Se comprimen automáticamente antes de subir.</p>
+                <div class="foto-grid" id="fotoPreviewGrid">
+                  <label class="foto-add" for="fotoInput" title="Agregar foto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                    <span>Agregar foto</span>
+                  </label>
+                </div>
+                <input type="file" id="fotoInput" accept="image/*" multiple style="display:none" />
+                <p class="foto-meta" id="fotoMeta"></p>
+              </div>
 
               <div class="form-actions">
                 <button class="ghost-button" type="reset">Limpiar</button>
