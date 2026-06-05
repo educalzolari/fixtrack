@@ -53,7 +53,6 @@ let editingExpenses = [];
 
 function normalizeStatus(status) {
   if (status === "En revision" || status === "En reparacion" || status === "Listo para cobrar") return "Activo";
-  if (status === "Entregado") return "Finalizado";
   if (status === "Cancelado") return "Cancelado";
   return status || "En espera";
 }
@@ -147,8 +146,9 @@ function updateDate() {
 }
 
 function getStatusClass(status) {
-  if (status === "Activo") return "active";
+  if (status === "Activo")    return "active";
   if (status === "Finalizado") return "done";
+  if (status === "Entregado") return "delivered";
   if (status === "Cancelado") return "cancelled";
   return "waiting";
 }
@@ -194,8 +194,11 @@ function renderStats() {
   monthCount.textContent = thisMonth.length;
   salesTotal.textContent = formatMoney(
     repairs
-      .filter((repair) => repair.estado === "Finalizado")
-      .reduce((sum, repair) => sum + Number(repair.costoAproximado || 0), 0)
+      .filter((r) => r.estado === "Entregado" && r.fechaEntregaReal && (() => {
+        const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      })())
+      .reduce((sum, r) => sum + (r.cierre?.costoFinal || Number(r.costoAproximado || 0)), 0)
   );
 
   const delta = previousMonth.length
@@ -230,59 +233,102 @@ function renderDashboardTable() {
     .join("");
 }
 
+const GROUP_ORDER = ["Activo", "En espera", "Finalizado", "Entregado", "Cancelado"];
+const GROUP_LABELS = {
+  "Activo":     "En reparacion",
+  "En espera":  "Pendientes de inicio",
+  "Finalizado": "Terminados — pendiente de retiro",
+  "Entregado":  "Entregados al cliente",
+  "Cancelado":  "Cancelados",
+};
+
+function repairRow(repair) {
+  const entregaBtn = repair.estado === "Finalizado"
+    ? `<button class="icon-action deliver-icon" data-id="${repair.id}" title="Marcar como entregado">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </button>`
+    : "";
+  return `
+    <tr class="clickable-row" data-edit-id="${repair.id}">
+      <td>
+        <div class="cell-stack id-stack">
+          <strong>#${repair.id}</strong>
+          <span>${formatDate(repair.fechaIngreso)}</span>
+        </div>
+      </td>
+      <td>
+        <div class="cell-stack">
+          <strong>${escapeHtml(repair.cliente)}</strong>
+          <span>${escapeHtml(repairDeviceLabel(repair))}</span>
+        </div>
+      </td>
+      <td>
+        <div class="cell-stack service-stack">
+          <strong>${escapeHtml(serviceTitle(repair))}</strong>
+          <span>${escapeHtml(serviceDetail(repair))}</span>
+        </div>
+      </td>
+      <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
+      <td class="action-cell">
+        ${entregaBtn}
+        <a class="icon-action edit-icon" href="editar-reparacion.html?id=${repair.id}" title="Editar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </a>
+        <button class="icon-action delete-icon" data-id="${repair.id}" title="Eliminar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </td>
+    </tr>`;
+}
+
+function groupHeaderRow(estado, count) {
+  return `<tr class="group-header-row">
+    <td colspan="5">
+      <span class="status-pill ${getStatusClass(estado)}">${escapeHtml(estado)}</span>
+      <span class="group-count">${count}</span>
+    </td>
+  </tr>`;
+}
+
 function renderTable() {
   if (!tableBody) return;
 
-  const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+  const query  = searchInput  ? searchInput.value.trim().toLowerCase() : "";
   const status = statusFilter ? statusFilter.value : "todos";
+
   const filtered = repairs.filter((repair) => {
     const text = `${repair.cliente} ${repair.dispositivo} ${repair.marca} ${repair.modelo} ${repair.identificador}`.toLowerCase();
-    const matchesText = !query || text.includes(query);
-    const matchesStatus = status === "todos" || repair.estado === status;
-    return matchesText && matchesStatus;
+    return (!query || text.includes(query)) && (status === "todos" || repair.estado === status);
   });
 
   if (!filtered.length) {
-    tableBody.innerHTML = `<tr class="empty-row"><td colspan="6">No hay reparaciones para mostrar.</td></tr>`;
+    tableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No hay reparaciones para mostrar.</td></tr>`;
     return;
   }
 
-  tableBody.innerHTML = filtered
-    .map(
-      (repair) => `
-        <tr class="clickable-row" data-edit-id="${repair.id}">
-          <td>
-            <div class="cell-stack id-stack">
-              <strong>#${repair.id}</strong>
-              <span>Reparacion</span>
-            </div>
-          </td>
-          <td>
-            <div class="cell-stack">
-              <strong>${escapeHtml(repair.cliente)}</strong>
-              <span>${escapeHtml(repairDeviceLabel(repair))}</span>
-            </div>
-          </td>
-          <td>
-            <div class="cell-stack service-stack">
-              <strong>${escapeHtml(serviceTitle(repair))}</strong>
-              <span>${escapeHtml(serviceDetail(repair))}</span>
-            </div>
-          </td>
-          <td>${formatDate(repair.fechaIngreso)}</td>
-          <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
-          <td class="action-cell">
-            <a class="icon-action edit-icon" href="editar-reparacion.html?id=${repair.id}" aria-label="Editar reparacion #${repair.id}" title="Editar">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </a>
-            <button class="icon-action delete-icon" data-id="${repair.id}" aria-label="Eliminar reparacion #${repair.id}" title="Eliminar">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-            </button>
-          </td>
-        </tr>
-      `
-    )
-    .join("");
+  const sorted = [...filtered].sort((a, b) => {
+    const gi = (r) => GROUP_ORDER.indexOf(r.estado === "En espera" ? "En espera" : r.estado);
+    if (gi(a) !== gi(b)) return gi(a) - gi(b);
+    return (b.fechaIngreso || "").localeCompare(a.fechaIngreso || "");
+  });
+
+  if (status !== "todos") {
+    tableBody.innerHTML = sorted.map(repairRow).join("");
+    return;
+  }
+
+  let html = "";
+  let currentGroup = null;
+  sorted.forEach((repair) => {
+    const g = repair.estado;
+    if (g !== currentGroup) {
+      const count = sorted.filter((r) => r.estado === g).length;
+      html += groupHeaderRow(g, count);
+      currentGroup = g;
+    }
+    html += repairRow(repair);
+  });
+  tableBody.innerHTML = html;
 }
 
 function renderLastTicket() {
@@ -1021,16 +1067,18 @@ if (form) {
       if (submitBtn) submitBtn.textContent = `Subiendo fotos (0/${files.length})...`;
       const urls = await dbUploadFotos(repair.id, files);
       if (urls.length) {
-        repair.fotos = urls;
+        repair.fotos = { recepcion: urls, reparacion: [], entrega: [] };
         await dbUpsert(repair);
       }
     }
 
     repairs = [repair, ...repairs];
-    sendWhatsAppOrder(repair);
     form.reset();
     if (sel) { sel.value = ""; $("#nuevoClienteFields").style.display = "none"; }
     renderAll();
+    if (repair.telefono && confirm(`¿Enviar WhatsApp a ${repair.cliente} con los datos de la orden?`)) {
+      sendWhatsAppOrder(repair);
+    }
     window.location.href = "reparaciones.html";
   });
 }
@@ -1043,14 +1091,57 @@ if (statusFilter) statusFilter.addEventListener("change", renderTable);
 
 if (tableBody) {
   tableBody.addEventListener("click", async (event) => {
-    const btn = event.target.closest(".delete-icon");
-    if (!btn) return;
-    const id = Number(btn.dataset.id);
+    const delBtn = event.target.closest(".delete-icon");
+    if (delBtn) {
+      const id = Number(delBtn.dataset.id);
+      const repair = repairs.find((r) => Number(r.id) === id);
+      const label = repair ? `#${repair.id} — ${repair.cliente}` : `#${id}`;
+      if (!confirm(`¿Eliminar la reparacion ${label}?\n\nEsta accion no se puede deshacer.`)) return;
+      await dbDelete(id);
+      repairs = repairs.filter((r) => Number(r.id) !== id);
+      renderAll();
+      return;
+    }
+
+    const deliverBtn = event.target.closest(".deliver-icon");
+    if (deliverBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const id = Number(deliverBtn.dataset.id);
+      const modal = $("#deliverModal");
+      const dateInput = $("#deliverDateInput");
+      if (!modal || !dateInput) return;
+      dateInput.value = today;
+      modal.dataset.repairId = id;
+      modal.style.display = "flex";
+    }
+  });
+}
+
+const deliverModal = $("#deliverModal");
+const deliverForm  = $("#deliverForm");
+const closeDeliverModal  = $("#closeDeliverModal");
+const cancelDeliverModal = $("#cancelDeliverModal");
+
+function closeDeliver() {
+  if (deliverModal) deliverModal.style.display = "none";
+}
+
+if (closeDeliverModal)  closeDeliverModal.addEventListener("click", closeDeliver);
+if (cancelDeliverModal) cancelDeliverModal.addEventListener("click", closeDeliver);
+if (deliverModal) deliverModal.addEventListener("click", (e) => { if (e.target === deliverModal) closeDeliver(); });
+
+if (deliverForm) {
+  deliverForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = Number(deliverModal.dataset.repairId);
+    const fechaEntregaReal = $("#deliverDateInput").value;
     const repair = repairs.find((r) => Number(r.id) === id);
-    const label = repair ? `#${repair.id} — ${repair.cliente}` : `#${id}`;
-    if (!confirm(`¿Eliminar la reparacion ${label}?\n\nEsta accion no se puede deshacer.`)) return;
-    await dbDelete(id);
-    repairs = repairs.filter((r) => Number(r.id) !== id);
+    if (!repair) return;
+    repair.estado = "Entregado";
+    repair.fechaEntregaReal = fechaEntregaReal;
+    await dbUpsert(repair);
+    closeDeliver();
     renderAll();
   });
 }
@@ -1287,20 +1378,31 @@ function renderReportsDashboard() {
     return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
   });
 
-  const finalized = inMonth.filter((r) => r.estado === "Finalizado");
-  const prevFinalized = inPrevMonth.filter((r) => r.estado === "Finalizado");
+  const finalized = inMonth.filter((r) => r.estado === "Finalizado" || r.estado === "Entregado");
+  const prevFinalized = inPrevMonth.filter((r) => r.estado === "Finalizado" || r.estado === "Entregado");
 
-  const ingresos = finalized.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
-  const prevIngresos = prevFinalized.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  const cobradosEnMes = repairs.filter((r) => {
+    if (r.estado !== "Entregado" || !r.fechaEntregaReal) return false;
+    const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
+    return d.getMonth() === month && d.getFullYear() === year;
+  });
+  const prevCobradosEnMes = repairs.filter((r) => {
+    if (r.estado !== "Entregado" || !r.fechaEntregaReal) return false;
+    const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
+    return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
+  });
+
+  const ingresos = cobradosEnMes.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  const prevIngresos = prevCobradosEnMes.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
 
   const gastos = inMonth.reduce((s, r) => s + expensesTotal(r.gastos || []), 0);
   const ganancia = ingresos - gastos;
-  const ticketPromedio = finalized.length ? Math.round(ingresos / finalized.length) : 0;
+  const ticketPromedio = cobradosEnMes.length ? Math.round(ingresos / cobradosEnMes.length) : 0;
 
   const clientesNuevos = new Set(inMonth.map((r) => r.cliente.toLowerCase().trim())).size;
   const prevClientesNuevos = new Set(inPrevMonth.map((r) => r.cliente.toLowerCase().trim())).size;
 
-  const porEntregar = repairs.filter((r) => r.estado !== "Finalizado" && r.estado !== "Cancelado").length;
+  const porEntregar = repairs.filter((r) => r.estado === "Finalizado").length;
 
   function fmtDelta(curr, prev) {
     if (!prev && !curr) return null;
@@ -1333,7 +1435,7 @@ function renderReportsDashboard() {
 
   // Ticket promedio
   setValue("rcTicketValue", formatMoney(ticketPromedio));
-  setBadge("rcTicketBadge", `Ventas: ${finalized.length}`, "badge-blue");
+  setBadge("rcTicketBadge", `Cobrados: ${cobradosEnMes.length}`, "badge-blue");
 
   // Clientes nuevos
   setValue("rcClientesValue", clientesNuevos);
@@ -1352,9 +1454,9 @@ function renderReportsDashboard() {
   setValue("rcInventarioValue", formatMoney(0));
   setBadge("rcInventarioBadge", "Articulos: 0", "badge-gray");
 
-  // Por entregar
+  // Por entregar (Finalizado pero aún no retirado)
   setValue("rcEntregarValue", porEntregar);
-  setBadge("rcEntregarBadge", `Pendientes: ${porEntregar}`, "badge-blue");
+  setBadge("rcEntregarBadge", porEntregar ? `Listos, sin retirar` : "Ninguno pendiente", porEntregar ? "badge-blue" : "badge-green");
 
   renderWeeklyChart();
   renderTop5Table(inMonth);
@@ -1379,7 +1481,7 @@ function renderWeeklyChart() {
 
   const data = days.map((dateStr) =>
     repairs
-      .filter((r) => r.estado === "Finalizado" && (r.cierre?.fechaFinalizacion === dateStr || r.fechaIngreso === dateStr))
+      .filter((r) => r.estado === "Entregado" && r.fechaEntregaReal === dateStr)
       .reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0)
   );
 

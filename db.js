@@ -1,4 +1,7 @@
 function normalizeFotos(raw) {
+  if (typeof raw === "string") {
+    try { raw = JSON.parse(raw); } catch { return { recepcion: [], reparacion: [], entrega: [] }; }
+  }
   if (raw && !Array.isArray(raw) && typeof raw === "object") {
     return {
       recepcion:  Array.isArray(raw.recepcion)  ? raw.recepcion  : [],
@@ -37,6 +40,7 @@ function repairToRow(r) {
     cierre: r.cierre || null,
     telefono: r.telefono || null,
     fotos: r.fotos || { recepcion: [], reparacion: [], entrega: [] },
+    fecha_entrega_real: r.fechaEntregaReal || "",
   };
 }
 
@@ -63,6 +67,7 @@ function rowToRepair(row) {
     cierre: row.cierre || null,
     telefono: row.telefono || "",
     fotos: normalizeFotos(row.fotos),
+    fechaEntregaReal: row.fecha_entrega_real || "",
   };
 }
 

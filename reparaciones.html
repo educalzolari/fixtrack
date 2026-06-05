@@ -55,6 +55,7 @@
                 <option>En espera</option>
                 <option>Activo</option>
                 <option>Finalizado</option>
+                <option>Entregado</option>
                 <option>Cancelado</option>
               </select>
             </div>
@@ -66,16 +67,14 @@
                 <col class="col-id" />
                 <col class="col-name" />
                 <col class="col-service" />
-                <col class="col-date" />
                 <col class="col-status" />
                 <col class="col-action" />
               </colgroup>
               <thead>
                 <tr>
-                  <th>Nro</th>
-                  <th>Nombre</th>
+                  <th>Nro / Fecha</th>
+                  <th>Cliente</th>
                   <th>Servicio</th>
-                  <th>Fecha de alta</th>
                   <th>Estado</th>
                   <th>Accion</th>
                 </tr>
@@ -85,6 +84,29 @@
           </div>
         </section>
       </main>
+    </div>
+
+    <!-- Modal: Marcar entregado -->
+    <div class="modal-backdrop" id="deliverModal" style="display:none;align-items:center;justify-content:center">
+      <div class="modal-card" style="max-width:420px;width:100%">
+        <div class="modal-heading">
+          <div>
+            <h2 style="font-size:20px">Marcar como entregado</h2>
+            <p>Registrá la fecha en que el cliente retiró el equipo.</p>
+          </div>
+          <button class="icon-button" id="closeDeliverModal" type="button" aria-label="Cerrar">&times;</button>
+        </div>
+        <form id="deliverForm">
+          <label style="display:block;font-weight:600;margin-bottom:8px">
+            Fecha de entrega real
+            <input id="deliverDateInput" type="date" required style="display:block;width:100%;margin-top:6px" />
+          </label>
+          <div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+            <button type="button" id="cancelDeliverModal" class="ghost-button">Cancelar</button>
+            <button type="submit" class="primary-button">Confirmar entrega</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>

@@ -678,6 +678,33 @@ textarea {
   color: #c4273d;
 }
 
+.status-pill.delivered {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.group-header-row td {
+  background: var(--paper);
+  padding: 8px 16px;
+  border-top: 2px solid var(--line);
+}
+
+.group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 .repairs-panel {
   margin-bottom: 40px;
 }
@@ -788,6 +815,16 @@ tbody tr:not(.empty-row):hover {
 
 .delete-icon:hover {
   background: #c4273d;
+  color: #fff;
+}
+
+.deliver-icon {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.deliver-icon:hover {
+  background: #0369a1;
   color: #fff;
 }
 
