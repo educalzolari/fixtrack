@@ -1,0 +1,25 @@
+<svg width="680" height="400" viewBox="0 0 680 400" role="img" aria-label="Celular terminado y listo para entregar" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c365e"/><stop offset="1" stop-color="#151b34"/></linearGradient>
+<linearGradient id="screenG" x1="0" y1="0" x2="0.5" y2="1"><stop offset="0" stop-color="#a98cff"/><stop offset="1" stop-color="#6d4ddb"/></linearGradient>
+<linearGradient id="badgeG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9bbff"/><stop offset="1" stop-color="#6d4ddb"/></linearGradient>
+</defs>
+<circle cx="470" cy="115" r="80" fill="#7c5cfc" opacity="0.06"/>
+<ellipse cx="316" cy="360" rx="112" ry="17" fill="#10142a" opacity="0.2"/>
+<g transform="rotate(-6 320 205)">
+<rect x="246" y="76" width="160" height="270" rx="28" fill="#0f1430" opacity="0.4"/>
+<rect x="240" y="70" width="160" height="270" rx="28" fill="url(#bodyG)"/>
+<rect x="247" y="77" width="74" height="110" rx="20" fill="#ffffff" opacity="0.05"/>
+<rect x="300" y="80" width="40" height="6" rx="3" fill="#0e1226"/>
+<rect x="253" y="90" width="134" height="232" rx="14" fill="url(#screenG)"/>
+<rect x="261" y="98" width="52" height="108" rx="12" fill="#ffffff" opacity="0.1"/>
+<rect x="300" y="328" width="40" height="6" rx="3" fill="#0e1226"/>
+</g>
+<ellipse cx="396" cy="352" rx="42" ry="8" fill="#10142a" opacity="0.18"/>
+<circle cx="392" cy="308" r="42" fill="url(#badgeG)"/>
+<path d="M364 326 A42 42 0 0 1 363 288" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+<path d="M373 309 L386 322 L411 292" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="250,97 253.25,106.75 263,110 253.25,113.25 250,123 246.75,113.25 237,110 246.75,106.75" fill="#c4b5fd" opacity="0.9"/>
+<polygon points="440,141 442.25,147.75 449,150 442.25,152.25 440,159 437.75,152.25 431,150 437.75,147.75" fill="#a78bfa" opacity="0.8"/>
+<polygon points="458,250 459.75,255.25 465,257 459.75,258.75 458,264 456.25,258.75 451,257 456.25,255.25" fill="#c4b5fd" opacity="0.7"/>
+</svg>

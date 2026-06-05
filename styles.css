@@ -279,27 +279,41 @@ h2 {
 
 .stat-icon {
   position: absolute;
-  right: 18px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 110px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.15;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.stat-icon svg {
-  width: 32px;
-  height: 32px;
+.stat-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.88;
+  filter: drop-shadow(0 6px 12px rgba(80, 40, 180, 0.18));
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
 }
 
-.hourglass-card .stat-icon { background: var(--yellow); }
-.invoice-card .stat-icon   { background: var(--blue); }
-.wrench-card .stat-icon    { background: var(--green); }
-.sales-card .stat-icon     { background: var(--accent); }
+.stat-card:hover .stat-icon img {
+  transform: translateY(-6px) scale(1.08);
+  opacity: 1;
+  filter: drop-shadow(0 12px 20px rgba(80, 40, 180, 0.28));
+}
+
+.stat-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px rgba(30, 20, 80, 0.13);
+}
 
 .quick-section {
   margin-bottom: 30px;
