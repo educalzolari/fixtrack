@@ -1152,9 +1152,10 @@ if (menuToggle) {
   });
 }
 
-function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteExisting = null) {
+function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteExisting = null, inputIdExtra = null) {
   const grid  = $(`#${gridId}`);
   const input = $(`#${inputId}`);
+  const inputExtra = inputIdExtra ? $(`#${inputIdExtra}`) : null;
   const meta  = $(`#${metaId}`);
   if (!grid || !input) return null;
 
@@ -1228,11 +1229,14 @@ function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteE
   savedUrls.forEach((url) => addSavedThumb(url));
   updateMeta();
 
-  input.addEventListener("change", () => {
-    Array.from(input.files).forEach((f) => pendingFiles.push(f));
-    input.value = "";
+  function onInputChange(el) {
+    Array.from(el.files).forEach((f) => pendingFiles.push(f));
+    el.value = "";
     rebuildPending();
-  });
+  }
+
+  input.addEventListener("change", () => onInputChange(input));
+  if (inputExtra) inputExtra.addEventListener("change", () => onInputChange(inputExtra));
 
   return {
     getFiles:    () => pendingFiles,
@@ -1242,7 +1246,7 @@ function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteE
 }
 
 function setupFotos() {
-  const mgr = createFotoSection("fotoPreviewGrid", "fotoInput", "fotoMeta");
+  const mgr = createFotoSection("fotoPreviewGrid", "fotoInputCamara", "fotoMeta", [], null, "fotoInputGaleria");
   if (!mgr) return null;
   if (form) form.addEventListener("reset", () => mgr.clear());
   return mgr;
@@ -1261,9 +1265,9 @@ function setupFotosEdit(repair) {
     }
   }
 
-  const recepcion  = createFotoSection("fotoGridRecepcion",  "fotoInputRecepcion",  "fotoMetaRecepcion",  fotos.recepcion,  (url) => deleteAndSave("recepcion",  url));
-  const reparacion = createFotoSection("fotoGridReparacion", "fotoInputReparacion", "fotoMetaReparacion", fotos.reparacion, (url) => deleteAndSave("reparacion", url));
-  const entrega    = createFotoSection("fotoGridEntrega",    "fotoInputEntrega",    "fotoMetaEntrega",    fotos.entrega,    (url) => deleteAndSave("entrega",    url));
+  const recepcion  = createFotoSection("fotoGridRecepcion",  "fotoInputRecepcionCam",  "fotoMetaRecepcion",  fotos.recepcion,  (url) => deleteAndSave("recepcion",  url), "fotoInputRecepcionGal");
+  const reparacion = createFotoSection("fotoGridReparacion", "fotoInputReparacionCam", "fotoMetaReparacion", fotos.reparacion, (url) => deleteAndSave("reparacion", url), "fotoInputReparacionGal");
+  const entrega    = createFotoSection("fotoGridEntrega",    "fotoInputEntregaCam",    "fotoMetaEntrega",    fotos.entrega,    (url) => deleteAndSave("entrega",    url), "fotoInputEntregaGal");
 
   return { recepcion, reparacion, entrega };
 }

@@ -171,12 +171,17 @@
                   </p>
                   <p class="foto-hint">Estado del equipo al ingresar.</p>
                   <div class="foto-grid" id="fotoGridRecepcion">
-                    <label class="foto-add" for="fotoInputRecepcion" title="Agregar foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                      <span>Agregar</span>
+                    <label class="foto-add" for="fotoInputRecepcionCam" title="Tomar foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                      <span>Cámara</span>
+                    </label>
+                    <label class="foto-add foto-add-gallery" for="fotoInputRecepcionGal" title="Elegir de galería">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                      <span>Galería</span>
                     </label>
                   </div>
-                  <input type="file" id="fotoInputRecepcion" accept="image/*" multiple style="display:none" />
+                  <input type="file" id="fotoInputRecepcionCam" accept="image/*" capture="environment" style="display:none" />
+                  <input type="file" id="fotoInputRecepcionGal" accept="image/*" multiple style="display:none" />
                   <p class="foto-meta" id="fotoMetaRecepcion"></p>
                 </div>
 
@@ -187,12 +192,17 @@
                   </p>
                   <p class="foto-hint">Fotos durante el proceso de reparacion.</p>
                   <div class="foto-grid" id="fotoGridReparacion">
-                    <label class="foto-add" for="fotoInputReparacion" title="Agregar foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                      <span>Agregar</span>
+                    <label class="foto-add" for="fotoInputReparacionCam" title="Tomar foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                      <span>Cámara</span>
+                    </label>
+                    <label class="foto-add foto-add-gallery" for="fotoInputReparacionGal" title="Elegir de galería">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                      <span>Galería</span>
                     </label>
                   </div>
-                  <input type="file" id="fotoInputReparacion" accept="image/*" multiple style="display:none" />
+                  <input type="file" id="fotoInputReparacionCam" accept="image/*" capture="environment" style="display:none" />
+                  <input type="file" id="fotoInputReparacionGal" accept="image/*" multiple style="display:none" />
                   <p class="foto-meta" id="fotoMetaReparacion"></p>
                 </div>
 
@@ -203,12 +213,17 @@
                   </p>
                   <p class="foto-hint">Estado final del equipo al entregar.</p>
                   <div class="foto-grid" id="fotoGridEntrega">
-                    <label class="foto-add" for="fotoInputEntrega" title="Agregar foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                      <span>Agregar</span>
+                    <label class="foto-add" for="fotoInputEntregaCam" title="Tomar foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                      <span>Cámara</span>
+                    </label>
+                    <label class="foto-add foto-add-gallery" for="fotoInputEntregaGal" title="Elegir de galería">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                      <span>Galería</span>
                     </label>
                   </div>
-                  <input type="file" id="fotoInputEntrega" accept="image/*" multiple style="display:none" />
+                  <input type="file" id="fotoInputEntregaCam" accept="image/*" capture="environment" style="display:none" />
+                  <input type="file" id="fotoInputEntregaGal" accept="image/*" multiple style="display:none" />
                   <p class="foto-meta" id="fotoMetaEntrega"></p>
                 </div>
 
