@@ -775,13 +775,15 @@ table {
 @media (max-width: 640px) {
   .jobs-table .col-service,
   .jobs-table tbody td:nth-child(3),
-  .jobs-table thead th:nth-child(3) {
+  .jobs-table thead th:nth-child(3),
+  .jobs-table .col-status,
+  .jobs-table tbody td:nth-child(4),
+  .jobs-table thead th:nth-child(4) {
     display: none;
   }
 
-  .jobs-table .col-id     { width: 22%; }
-  .jobs-table .col-name   { width: 42%; }
-  .jobs-table .col-status { width: 22%; }
+  .jobs-table .col-id     { width: 28%; }
+  .jobs-table .col-name   { width: 58%; }
   .jobs-table .col-action { width: 14%; }
 }
 
