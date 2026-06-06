@@ -1,0 +1,17 @@
+<svg width="680" height="380" viewBox="0 0 680 380" role="img" aria-label="Estadísticas con signo de dólar" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="st-coreG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a335a"/><stop offset="1" stop-color="#141a33"/></linearGradient>
+</defs>
+<circle cx="470" cy="100" r="78" fill="#7c5cfc" opacity="0.06"/>
+<ellipse cx="342" cy="316" rx="104" ry="16" fill="#10142a" opacity="0.2"/>
+<g fill="none" stroke-width="34" stroke-linecap="round" transform="rotate(-90 340 190)">
+<circle cx="340" cy="190" r="80" stroke="#8b6dff" stroke-dasharray="180 322" stroke-dashoffset="0"/>
+<circle cx="340" cy="190" r="80" stroke="#2f3a63" stroke-dasharray="150 352" stroke-dashoffset="-204"/>
+<circle cx="340" cy="190" r="80" stroke="#c4b5fd" stroke-dasharray="100 402" stroke-dashoffset="-378"/>
+</g>
+<path d="M286 132 A80 80 0 0 1 330 112" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.2"/>
+<circle cx="340" cy="190" r="55" fill="url(#st-coreG)"/>
+<rect x="336" y="150" width="8" height="80" rx="4" fill="#ece8ff"/>
+<path d="M358 166 C358 156 322 156 322 178 C322 192 358 188 358 202 C358 224 322 224 322 214" fill="none" stroke="#ece8ff" stroke-width="9" stroke-linecap="round"/>
+<polygon points="468,118 470.25,124.75 477,127 470.25,129.25 468,136 465.75,129.25 459,127 465.75,124.75" fill="#c4b5fd" opacity="0.8"/>
+</svg>
