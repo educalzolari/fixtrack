@@ -881,6 +881,16 @@ tbody tr:not(.empty-row):hover {
   color: #fff;
 }
 
+.unlock-icon {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.unlock-icon:hover {
+  background: #6b7280;
+  color: #fff;
+}
+
 .action-cell {
   vertical-align: middle;
   white-space: nowrap;

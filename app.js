@@ -242,7 +242,11 @@ const GROUP_LABELS = {
   "Cancelado":  "Cancelados",
 };
 
+const LOCKED_STATES = ["Finalizado", "Entregado"];
+
 function repairRow(repair) {
+  const locked = LOCKED_STATES.includes(repair.estado);
+
   const entregaBtn = repair.estado === "Finalizado"
     ? `<button class="icon-action deliver-icon" data-id="${repair.id}" title="Marcar como entregado">
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -254,12 +258,18 @@ function repairRow(repair) {
       </button>`
     : "";
   const finalizarBtn = repair.estado === "Activo"
-    ? `<button class="icon-action finalizar-icon" data-id="${repair.id}" title="Pasar a Finalizado">
+    ? `<button class="icon-action finalizar-icon" data-id="${repair.id}" title="Finalizar reparación">
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </button>`
     : "";
+  const unlockBtn = locked
+    ? `<a class="icon-action unlock-icon" href="editar-reparacion.html?id=${repair.id}" title="Habilitar edición">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+      </a>`
+    : "";
+
   return `
-    <tr class="clickable-row" data-edit-id="${repair.id}">
+    <tr class="${locked ? "" : "clickable-row"}" ${locked ? "" : `data-edit-id="${repair.id}"`}>
       <td>
         <div class="cell-stack id-stack">
           <strong>#${repair.id}</strong>
@@ -281,7 +291,7 @@ function repairRow(repair) {
       <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
       <td class="action-cell">
         <div class="action-cell-inner">
-          ${activarBtn}${finalizarBtn}${entregaBtn}
+          ${activarBtn}${finalizarBtn}${entregaBtn}${unlockBtn}
           <button class="icon-action delete-icon" data-id="${repair.id}" title="Eliminar">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           </button>
@@ -604,6 +614,10 @@ function setupEditForm() {
   fillFormFromRepair(editForm, repair);
   editingExpenses = [...(repair.gastos || [])];
   if (editTitle) editTitle.innerHTML = `<strong>#${repair.id}</strong> &mdash; ${escapeHtml(repair.marca)} ${escapeHtml(repair.modelo)}`;
+
+  if (openFinishModalButton && LOCKED_STATES.includes(repair.estado)) {
+    openFinishModalButton.style.display = "none";
+  }
   renderEditSummary(repair);
   renderSavedPatternPreview(repair.patronImagen);
   renderExpensesTable(repair);
