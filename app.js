@@ -427,7 +427,7 @@ function formToRepair(formData, existing = {}) {
     anticipo: Number(formData.get("anticipo") || 0),
     fechaEntrega: formData.get("fechaEntrega"),
     estado: formData.get("estado"),
-    cierre: existing.cierre || null,
+    cierre: ["Finalizado", "Entregado"].includes(formData.get("estado")) ? (existing.cierre || null) : null,
     problema: formData.get("problema").trim(),
     observaciones: formData.get("observaciones").trim(),
     fechaIngreso: formData.get("fechaIngreso") || existing.fechaIngreso || today,
@@ -465,7 +465,7 @@ function renderExpensesTable(repair) {
   if (!expensesTable) return;
 
   const totalGastos = expensesTotal(editingExpenses);
-  const costoReparacion = Number(repair?.costoAproximado || 0);
+  const costoReparacion = Number(repair?.cierre?.costoFinal || repair?.costoAproximado || 0);
 
   if (repairIncomeTotal) repairIncomeTotal.textContent = formatMoney(costoReparacion);
   if (expensesGrandTotal) expensesGrandTotal.textContent = formatMoney(totalGastos);
@@ -1133,10 +1133,7 @@ if (tableBody) {
       const id = Number(finalizarBtn.dataset.id);
       const repair = repairs.find((r) => Number(r.id) === id);
       if (!repair) return;
-      if (!confirm(`¿Marcar #${repair.id} — ${repair.cliente} como Finalizado?`)) return;
-      repair.estado = "Finalizado";
-      await dbUpsert(repair);
-      renderAll();
+      openQuickFinishModal(repair);
       return;
     }
 
@@ -1161,6 +1158,93 @@ if (tableBody) {
   });
 }
 
+// ── Modal cierre rápido (desde lista) ────────────────────
+const quickFinishModal       = $("#quickFinishModal");
+const quickFinishForm        = $("#quickFinishForm");
+const quickFinishCosto       = $("#quickFinishCosto");
+const quickFinishSolucion    = $("#quickFinishSolucion");
+const quickFinishGanancia    = $("#quickFinishGanancia");
+const quickFinishGastosTotal = $("#quickFinishGastosTotal");
+const quickFinishBody        = $("#quickFinishExpensesBody");
+const quickFinishSubtitle    = $("#quickFinishSubtitle");
+
+function closeQuickFinish() {
+  if (quickFinishModal) quickFinishModal.style.display = "none";
+}
+
+function openQuickFinishModal(repair) {
+  if (!quickFinishModal) return;
+
+  quickFinishModal.dataset.repairId = repair.id;
+
+  if (quickFinishSubtitle)
+    quickFinishSubtitle.textContent = `#${repair.id} — ${repair.cliente} · ${repair.marca} ${repair.modelo}`;
+
+  const gastos = repair.gastos || [];
+  const totalGastos = expensesTotal(gastos);
+
+  if (quickFinishBody) {
+    quickFinishBody.innerHTML = gastos.length
+      ? gastos.map(g => `
+          <tr>
+            <td style="padding:4px 8px">${escapeHtml(g.concepto)}</td>
+            <td style="text-align:right;padding:4px 8px">${formatMoney(g.montoUnitario)}</td>
+            <td style="text-align:center;padding:4px 8px">${g.cantidad}</td>
+            <td style="text-align:right;padding:4px 8px"><strong>${formatMoney(g.total)}</strong></td>
+          </tr>`).join("")
+      : `<tr><td colspan="4" style="padding:8px;color:#94a3b8;font-size:13px">Sin gastos registrados.</td></tr>`;
+  }
+  if (quickFinishGastosTotal) quickFinishGastosTotal.textContent = formatMoney(totalGastos);
+
+  const costoInicial = repair.costoAproximado || 0;
+  if (quickFinishCosto) quickFinishCosto.value = costoInicial || "";
+  if (quickFinishSolucion) quickFinishSolucion.value = "";
+  if (quickFinishGanancia) quickFinishGanancia.textContent = formatMoney((costoInicial || 0) - totalGastos);
+
+  quickFinishModal.style.display = "flex";
+}
+
+function updateQuickFinishGanancia() {
+  if (!quickFinishGanancia || !quickFinishGastosTotal) return;
+  const id = Number(quickFinishModal?.dataset.repairId);
+  const repair = repairs.find(r => Number(r.id) === id);
+  const totalGastos = expensesTotal(repair?.gastos || []);
+  quickFinishGanancia.textContent = formatMoney(Number(quickFinishCosto?.value || 0) - totalGastos);
+}
+
+if (quickFinishCosto) quickFinishCosto.addEventListener("input", updateQuickFinishGanancia);
+if ($("#closeQuickFinishModal")) $("#closeQuickFinishModal").addEventListener("click", closeQuickFinish);
+if ($("#cancelQuickFinishModal")) $("#cancelQuickFinishModal").addEventListener("click", closeQuickFinish);
+if (quickFinishModal) quickFinishModal.addEventListener("click", e => { if (e.target === quickFinishModal) closeQuickFinish(); });
+
+if (quickFinishForm) {
+  quickFinishForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = Number(quickFinishModal.dataset.repairId);
+    const repair = repairs.find(r => Number(r.id) === id);
+    if (!repair) return;
+
+    const costoFinal = Number(quickFinishCosto.value || 0);
+    const totalGastos = expensesTotal(repair.gastos || []);
+
+    repair.estado = "Finalizado";
+    repair.cierre = {
+      costoInicial: Number(repair.costoAproximado || 0),
+      gastos: totalGastos,
+      costoFinal,
+      solucionFinal: quickFinishSolucion?.value.trim() || "",
+      ganancia: costoFinal - totalGastos,
+      fechaFinalizacion: today,
+    };
+
+    await dbUpsert(repair);
+    repairs = repairs.map(r => Number(r.id) === id ? repair : r);
+    closeQuickFinish();
+    renderAll();
+  });
+}
+
+// ── Modal entrega ─────────────────────────────────────────
 const deliverModal = $("#deliverModal");
 const deliverForm  = $("#deliverForm");
 const closeDeliverModal  = $("#closeDeliverModal");
