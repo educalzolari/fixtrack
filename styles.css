@@ -581,6 +581,18 @@ textarea {
   color: #4c5968;
 }
 
+.secondary-button {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1.5px solid #bbf7d0;
+}
+
+.secondary-button:hover {
+  background: #15803d;
+  color: #fff;
+  border-color: #15803d;
+}
+
 .ghost-link {
   min-height: 42px;
   display: inline-flex;

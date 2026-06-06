@@ -262,14 +262,8 @@ function repairRow(repair) {
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </button>`
     : "";
-  const unlockBtn = locked
-    ? `<a class="icon-action unlock-icon" href="editar-reparacion.html?id=${repair.id}" title="Habilitar edición">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
-      </a>`
-    : "";
-
   return `
-    <tr class="${locked ? "" : "clickable-row"}" ${locked ? "" : `data-edit-id="${repair.id}"`}>
+    <tr class="clickable-row" data-edit-id="${repair.id}">
       <td>
         <div class="cell-stack id-stack">
           <strong>#${repair.id}</strong>
@@ -291,7 +285,7 @@ function repairRow(repair) {
       <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
       <td class="action-cell">
         <div class="action-cell-inner">
-          ${activarBtn}${finalizarBtn}${entregaBtn}${unlockBtn}
+          ${activarBtn}${finalizarBtn}${entregaBtn}
           <button class="icon-action delete-icon" data-id="${repair.id}" title="Eliminar">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           </button>
@@ -615,8 +609,24 @@ function setupEditForm() {
   editingExpenses = [...(repair.gastos || [])];
   if (editTitle) editTitle.innerHTML = `<strong>#${repair.id}</strong> &mdash; ${escapeHtml(repair.marca)} ${escapeHtml(repair.modelo)}`;
 
-  if (openFinishModalButton && LOCKED_STATES.includes(repair.estado)) {
-    openFinishModalButton.style.display = "none";
+  const enableEditButton = $("#enableEditButton");
+  const saveEditButton   = $("#saveEditButton");
+
+  if (LOCKED_STATES.includes(repair.estado)) {
+    if (openFinishModalButton) openFinishModalButton.style.display = "none";
+    if (saveEditButton) saveEditButton.style.display = "none";
+    if (enableEditButton) enableEditButton.style.display = "";
+
+    const fields = editForm.querySelectorAll("input, select, textarea, button[data-delete-expense], #openExpenseModalButton");
+    fields.forEach(f => f.disabled = true);
+
+    if (enableEditButton) {
+      enableEditButton.addEventListener("click", () => {
+        fields.forEach(f => f.disabled = false);
+        if (saveEditButton) saveEditButton.style.display = "";
+        enableEditButton.style.display = "none";
+      });
+    }
   }
   renderEditSummary(repair);
   renderSavedPatternPreview(repair.patronImagen);
