@@ -248,6 +248,16 @@ function repairRow(repair) {
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </button>`
     : "";
+  const activarBtn = repair.estado === "En espera"
+    ? `<button class="icon-action activar-icon" data-id="${repair.id}" title="Pasar a Activo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>`
+    : "";
+  const finalizarBtn = repair.estado === "Activo"
+    ? `<button class="icon-action finalizar-icon" data-id="${repair.id}" title="Pasar a Finalizado">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>`
+    : "";
   return `
     <tr class="clickable-row" data-edit-id="${repair.id}">
       <td>
@@ -270,13 +280,12 @@ function repairRow(repair) {
       </td>
       <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
       <td class="action-cell">
-        ${entregaBtn}
-        <a class="icon-action edit-icon" href="editar-reparacion.html?id=${repair.id}" title="Editar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </a>
-        <button class="icon-action delete-icon" data-id="${repair.id}" title="Eliminar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
+        <div class="action-cell-inner">
+          ${activarBtn}${finalizarBtn}${entregaBtn}
+          <button class="icon-action delete-icon" data-id="${repair.id}" title="Eliminar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
       </td>
     </tr>`;
 }
@@ -1099,6 +1108,32 @@ if (tableBody) {
       if (!confirm(`¿Eliminar la reparacion ${label}?\n\nEsta accion no se puede deshacer.`)) return;
       await dbDelete(id);
       repairs = repairs.filter((r) => Number(r.id) !== id);
+      renderAll();
+      return;
+    }
+
+    const activarBtn = event.target.closest(".activar-icon");
+    if (activarBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const id = Number(activarBtn.dataset.id);
+      const repair = repairs.find((r) => Number(r.id) === id);
+      if (!repair) return;
+      repair.estado = "Activo";
+      await dbUpsert(repair);
+      renderAll();
+      return;
+    }
+
+    const finalizarBtn = event.target.closest(".finalizar-icon");
+    if (finalizarBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const id = Number(finalizarBtn.dataset.id);
+      const repair = repairs.find((r) => Number(r.id) === id);
+      if (!repair) return;
+      repair.estado = "Finalizado";
+      await dbUpsert(repair);
       renderAll();
       return;
     }
