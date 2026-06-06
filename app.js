@@ -1119,6 +1119,7 @@ if (tableBody) {
       const id = Number(activarBtn.dataset.id);
       const repair = repairs.find((r) => Number(r.id) === id);
       if (!repair) return;
+      if (!confirm(`¿Pasar #${repair.id} — ${repair.cliente} a Activo?`)) return;
       repair.estado = "Activo";
       await dbUpsert(repair);
       renderAll();
@@ -1132,6 +1133,7 @@ if (tableBody) {
       const id = Number(finalizarBtn.dataset.id);
       const repair = repairs.find((r) => Number(r.id) === id);
       if (!repair) return;
+      if (!confirm(`¿Marcar #${repair.id} — ${repair.cliente} como Finalizado?`)) return;
       repair.estado = "Finalizado";
       await dbUpsert(repair);
       renderAll();
@@ -1149,6 +1151,12 @@ if (tableBody) {
       dateInput.value = today;
       modal.dataset.repairId = id;
       modal.style.display = "flex";
+      return;
+    }
+
+    const row = event.target.closest(".clickable-row");
+    if (row && row.dataset.editId) {
+      window.location.href = `editar-reparacion.html?id=${row.dataset.editId}`;
     }
   });
 }
