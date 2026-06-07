@@ -631,7 +631,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
   .nuevo-cliente-grid{grid-template-columns:1fr}
   .fotos-edit-grid{grid-template-columns:1fr}
 }
-@media (max-width:560px){
+@media (max-width:768px){
   .kpi-grid,.qa-grid{grid-template-columns:1fr}
   .theme-grid{grid-template-columns:repeat(2,1fr)}
   .tbl thead{display:none}
