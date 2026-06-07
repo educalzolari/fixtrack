@@ -3,42 +3,265 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Configuracion | 1Fix!</title>
+    <title>Configuración | 1Fix!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="auth.js"></script>
+    <script src="shell.js"></script>
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Menu principal">
-        <div class="brand">1Fix!</div>
-        <nav class="menu">
-          <p class="menu-title">Accesos Directos</p>
-          <a class="menu-link" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Inicio</a>
-          <a class="menu-link" href="nueva-reparacion.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva Reparacion</a>
-          <a class="menu-link" href="reparaciones.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>Ver Reparaciones</a>
-          <a class="menu-link" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
-          <a class="menu-link" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
+    <div class="app" id="appRoot">
+      <div class="scrim"></div>
+
+      <aside class="sidebar" aria-label="Menú principal">
+        <div class="brand">
+          <div class="brand-mark">1F</div>
+          <div><div class="brand-name">1Fix</div><div class="brand-sub">Workshop OS</div></div>
+        </div>
+        <nav class="nav">
+          <div class="nav-label">Operación</div>
+          <a class="nav-item" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Inicio</a>
+          <a class="nav-item" href="nueva-reparacion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva Reparación</a>
+          <a class="nav-item" href="reparaciones.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Ver Reparaciones<span class="nav-badge" id="repairsBadge" style="display:none"></span></a>
+          <a class="nav-item" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
+          <a class="nav-item" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
+          <div class="nav-label">Negocio</div>
+          <a class="nav-item" href="inventario.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario</a>
+          <a class="nav-item" href="proveedores.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Proveedores</a>
+          <a class="nav-item active" href="configuracion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a>
         </nav>
-        <nav class="menu secondary">
-          <a class="menu-link" href="inventario.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario</a>
-          <a class="menu-link" href="proveedores.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Proveedores</a>
-          <a class="menu-link active" href="configuracion.html"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuracion</a>
-        </nav>
-        <div class="sidebar-footer"><a class="help" href="ayuda.html">Centro de Ayuda</a><button class="logout" type="button">Salir</button></div>
+        <div class="side-foot">
+          <a class="nav-item" href="ayuda.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Centro de Ayuda</a>
+          <button class="nav-item danger logout" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Salir</button>
+        </div>
       </aside>
-      <main class="content">
+
+      <div class="main">
         <header class="topbar">
-          <button class="menu-toggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
-          <div><p class="date" id="currentDate">29/04/2026</p><h1>Configuracion</h1></div>
+          <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <span class="crumb">1Fix / <b>Configuración</b></span>
+          <div class="topbar-spacer"></div>
+          <div class="clock"><span class="live-dot"></span><span id="topbarClock"></span></div>
+          <button class="theme-btn" id="themeToggleBtn" title="Cambiar tema"></button>
         </header>
-        <section class="panel empty-page"><h2>Configuracion</h2><p>Pagina preparada para datos del taller, usuarios, estados y preferencias.</p></section>
-      </main>
+
+        <div class="page">
+          <div class="page-head">
+            <div class="page-kicker">Negocio / Configuración</div>
+            <h1 class="page-title">Apariencia</h1>
+          </div>
+
+          <!-- Galería de temas -->
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Tema</h2>
+            <div class="cfg-themes" id="themeGallery"></div>
+          </section>
+
+          <!-- Modo claro / oscuro -->
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Modo</h2>
+            <div class="seg" id="modeSegment">
+              <button class="seg-btn" data-mode="dark" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                Oscuro
+              </button>
+              <button class="seg-btn" data-mode="light" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                Claro
+              </button>
+            </div>
+          </section>
+
+          <!-- Acento -->
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Acento</h2>
+            <div class="cfg-accents" id="accentSwatches"></div>
+          </section>
+
+          <!-- Esquinas -->
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Esquinas</h2>
+            <div class="seg" id="radiusSegment">
+              <button class="seg-btn" data-radius="recto" type="button">Recto</button>
+              <button class="seg-btn" data-radius="suave" type="button">Suave</button>
+              <button class="seg-btn" data-radius="redondo" type="button">Redondo</button>
+            </div>
+          </section>
+
+          <!-- Densidad -->
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Densidad</h2>
+            <div class="seg" id="densitySegment">
+              <button class="seg-btn" data-density="compacto" type="button">Compacto</button>
+              <button class="seg-btn" data-density="normal" type="button">Normal</button>
+              <button class="seg-btn" data-density="amplio" type="button">Amplio</button>
+            </div>
+          </section>
+
+          <!-- Opciones -->
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Opciones</h2>
+            <div class="cfg-opts">
+              <label class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Efecto glow</span>
+                  <span class="cfg-lbl-sub">Halo de luz en el sidebar (solo modo oscuro)</span>
+                </span>
+                <span class="swc" id="glowSwitch" role="switch" tabindex="0">
+                  <span class="swc-knob"></span>
+                </span>
+              </label>
+              <label class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Números monoespaciados</span>
+                  <span class="cfg-lbl-sub">Usa JetBrains Mono para IDs y cifras</span>
+                </span>
+                <span class="swc" id="monoNumSwitch" role="switch" tabindex="0">
+                  <span class="swc-knob"></span>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Reset -->
+          <section class="cfg-sec">
+            <button class="btn btn-ghost" id="resetThemeBtn" type="button">
+              Restablecer a Neón (por defecto)
+            </button>
+          </section>
+        </div>
+      </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
+    <script>
+      const API = window._shellThemeAPI;
+
+      const ACCENT_COLORS = {
+        lima:    '#84cc16',
+        cyan:    '#22d3ee',
+        violeta: '#c084fc',
+        ambar:   '#fbbf24',
+      };
+      const ACCENT_LABELS = { lima: 'Lima', cyan: 'Cyan', violeta: 'Violeta', ambar: 'Ámbar' };
+
+      const THEME_META = {
+        neon:       { label: 'Neón',       mode: 'dark',  accent: 'lima'    },
+        medianoche: { label: 'Medianoche', mode: 'dark',  accent: 'cyan'    },
+        carbon:     { label: 'Carbón',     mode: 'dark',  accent: 'violeta' },
+        estudio:    { label: 'Estudio',    mode: 'light', accent: 'lima'    },
+        papel:      { label: 'Papel',      mode: 'light', accent: 'ambar'   },
+        indigo:     { label: 'Índigo',     mode: 'light', accent: 'violeta' },
+      };
+
+      function buildGallery() {
+        const gallery = document.getElementById('themeGallery');
+        gallery.innerHTML = Object.entries(THEME_META).map(([key, meta]) => {
+          const accentHex = ACCENT_COLORS[meta.accent] || '#84cc16';
+          const isDark = meta.mode === 'dark';
+          const bg   = isDark ? '#1a1a1a' : '#f5f5f0';
+          const side = isDark ? '#161616' : '#ebebeb';
+          const card = isDark ? '#242424' : '#ffffff';
+          return `<button class="cfg-theme-card" data-theme="${key}" type="button" title="${meta.label}">
+            <div class="cfg-theme-preview" style="background:${bg}">
+              <div class="cfg-preview-sidebar" style="background:${side}">
+                <div class="cfg-preview-brand" style="background:${accentHex}"></div>
+                <div class="cfg-preview-navrow" style="background:${accentHex}33"></div>
+                <div class="cfg-preview-navrow"></div>
+                <div class="cfg-preview-navrow"></div>
+              </div>
+              <div class="cfg-preview-body">
+                <div class="cfg-preview-kpi" style="background:${card}; border-top:2px solid ${accentHex}"></div>
+                <div class="cfg-preview-kpi" style="background:${card}; border-top:2px solid ${accentHex}77"></div>
+                <div class="cfg-preview-row" style="background:${card}"></div>
+              </div>
+            </div>
+            <div class="cfg-theme-foot">
+              <div class="cfg-theme-dot" style="background:${accentHex}"></div>
+              <span>${meta.label}</span>
+            </div>
+          </button>`;
+        }).join('');
+
+        gallery.querySelectorAll('.cfg-theme-card').forEach(btn =>
+          btn.addEventListener('click', () => API.setThemePreset(btn.dataset.theme)));
+      }
+
+      function buildSwatches() {
+        const wrap = document.getElementById('accentSwatches');
+        wrap.innerHTML = Object.entries(ACCENT_COLORS).map(([key, hex]) =>
+          `<button class="cfg-swatch" data-accent="${key}" type="button" title="${ACCENT_LABELS[key]}" style="--swc-clr:${hex}">
+            <svg class="cfg-swatch-check" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>`
+        ).join('');
+
+        wrap.querySelectorAll('.cfg-swatch').forEach(btn =>
+          btn.addEventListener('click', () => API.setAccent(btn.dataset.accent)));
+      }
+
+      function _syncConfig() {
+        const t = API.getTheme();
+
+        document.querySelectorAll('.cfg-theme-card').forEach(c =>
+          c.classList.toggle('active', c.dataset.theme === t.theme));
+
+        document.querySelectorAll('#modeSegment .seg-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.mode === t.mode));
+
+        document.querySelectorAll('.cfg-swatch').forEach(b =>
+          b.classList.toggle('active', b.dataset.accent === t.accent));
+
+        document.querySelectorAll('#radiusSegment .seg-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.radius === t.radius));
+
+        document.querySelectorAll('#densitySegment .seg-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.density === t.density));
+
+        document.getElementById('glowSwitch')?.classList.toggle('on', !!t.glow);
+        document.getElementById('monoNumSwitch')?.classList.toggle('on', !!t.monoNum);
+      }
+
+      window._syncConfig = _syncConfig;
+
+      document.getElementById('modeSegment').addEventListener('click', e => {
+        const btn = e.target.closest('.seg-btn');
+        if (!btn) return;
+        const presets = { dark: 'neon', light: 'estudio' };
+        if (btn.dataset.mode !== API.getTheme().mode) API.setThemePreset(presets[btn.dataset.mode]);
+      });
+
+      document.getElementById('radiusSegment').addEventListener('click', e => {
+        const btn = e.target.closest('.seg-btn');
+        if (btn) API.setRadius(btn.dataset.radius);
+      });
+
+      document.getElementById('densitySegment').addEventListener('click', e => {
+        const btn = e.target.closest('.seg-btn');
+        if (btn) API.setDensity(btn.dataset.density);
+      });
+
+      const glowSwitch = document.getElementById('glowSwitch');
+      glowSwitch.addEventListener('click', () => API.setGlow(!API.getTheme().glow));
+      glowSwitch.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); glowSwitch.click(); } });
+
+      const monoSwitch = document.getElementById('monoNumSwitch');
+      monoSwitch.addEventListener('click', () => API.setMonoNum(!API.getTheme().monoNum));
+      monoSwitch.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); monoSwitch.click(); } });
+
+      document.getElementById('resetThemeBtn').addEventListener('click', () => {
+        API.resetTheme();
+        window.showToast('Tema restablecido', 'Neón activado', 'var(--st-activo)');
+      });
+
+      buildGallery();
+      buildSwatches();
+      _syncConfig();
+    </script>
   </body>
 </html>

@@ -15,7 +15,7 @@ const collectCount = $("#collectCount");
 const monthCount = $("#monthCount");
 const salesTotal = $("#salesTotal");
 const monthDelta = $("#monthDelta");
-const menuToggle = $(".menu-toggle");
+// menuToggle removed — handled by shell.js
 const patternCanvas = $("#patternCanvas");
 const patternImageInput = $("#patronImagen");
 const patternSequenceInput = $("#patronSecuencia");
@@ -146,11 +146,11 @@ function updateDate() {
 }
 
 function getStatusClass(status) {
-  if (status === "Activo")    return "active";
-  if (status === "Finalizado") return "done";
-  if (status === "Entregado") return "delivered";
-  if (status === "Cancelado") return "cancelled";
-  return "waiting";
+  if (status === "Activo")     return "sc-activo";
+  if (status === "Finalizado") return "sc-finalizado";
+  if (status === "Entregado")  return "sc-entregado";
+  if (status === "Cancelado")  return "sc-cancelado";
+  return "sc-espera";
 }
 
 function repairDeviceLabel(repair) {
@@ -206,7 +206,8 @@ function renderStats() {
     : thisMonth.length
       ? 100
       : 0;
-  monthDelta.textContent = `${delta}%`;
+  monthDelta.textContent = `${delta >= 0 ? "+" : ""}${delta}%`;
+  monthDelta.className = delta >= 0 ? "delta up" : "delta down";
 }
 
 function renderDashboardTable() {
@@ -222,10 +223,10 @@ function renderDashboardTable() {
     .map(
       (repair) => `
         <tr class="clickable-row" data-edit-id="${repair.id}">
-          <td>#${repair.id}</td>
+          <td class="cell-nro">#${repair.id}</td>
           <td>${escapeHtml(repair.cliente)}</td>
           <td>${escapeHtml(repairDeviceLabel(repair))}</td>
-          <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
+          <td><span class="pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
           <td>${formatMoney(repair.costoAproximado)}</td>
         </tr>
       `
@@ -248,17 +249,17 @@ function repairRow(repair) {
   const locked = LOCKED_STATES.includes(repair.estado);
 
   const entregaBtn = repair.estado === "Finalizado"
-    ? `<button class="icon-action deliver-icon" data-id="${repair.id}" title="Marcar como entregado">
+    ? `<button class="btn-icon deliver deliver-icon" data-id="${repair.id}" title="Marcar como entregado">
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </button>`
     : "";
   const activarBtn = repair.estado === "En espera"
-    ? `<button class="icon-action activar-icon" data-id="${repair.id}" title="Pasar a Activo">
+    ? `<button class="btn-icon ok activar-icon" data-id="${repair.id}" title="Pasar a Activo">
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       </button>`
     : "";
   const finalizarBtn = repair.estado === "Activo"
-    ? `<button class="icon-action finalizar-icon" data-id="${repair.id}" title="Finalizar reparación">
+    ? `<button class="btn-icon ok finalizar-icon" data-id="${repair.id}" title="Finalizar reparación">
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </button>`
     : "";
@@ -266,8 +267,8 @@ function repairRow(repair) {
     <tr class="clickable-row" data-edit-id="${repair.id}">
       <td>
         <div class="cell-stack id-stack">
-          <strong>#${repair.id}</strong>
-          <span>${formatDate(repair.fechaIngreso)}</span>
+          <span class="cell-nro">#${repair.id}</span>
+          <span class="cell-date">${formatDate(repair.fechaIngreso)}</span>
         </div>
       </td>
       <td>
@@ -282,23 +283,27 @@ function repairRow(repair) {
           <span>${escapeHtml(serviceDetail(repair))}</span>
         </div>
       </td>
-      <td><span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
-      <td class="action-cell">
-        <div class="action-cell-inner">
-          ${activarBtn}${finalizarBtn}${entregaBtn}
-          <button class="icon-action delete-icon" data-id="${repair.id}" title="Eliminar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
-        </div>
+      <td><span class="pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
+      <td class="row-actions">
+        ${activarBtn}${finalizarBtn}${entregaBtn}
+        <button class="btn-icon del go delete-icon" data-id="${repair.id}" title="Eliminar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+        <a class="btn-icon go" href="editar-reparacion.html?id=${repair.id}" title="Editar" onclick="event.stopPropagation()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
       </td>
     </tr>`;
 }
 
 function groupHeaderRow(estado, count) {
-  return `<tr class="group-header-row">
+  const sc = getStatusClass(estado);
+  return `<tr class="grp">
     <td colspan="5">
-      <span class="status-pill ${getStatusClass(estado)}">${escapeHtml(estado)}</span>
-      <span class="group-count">${count}</span>
+      <span class="grp-head">
+        <span class="pill ${sc}">${escapeHtml(estado)}</span>
+        <span class="grp-count">${count}</span>
+      </span>
     </td>
   </tr>`;
 }
@@ -567,7 +572,7 @@ function renderEditSummary(repair) {
   editSummary.innerHTML = `
     <strong>#${repair.id} - ${escapeHtml(repair.cliente)}</strong>
     <span>${escapeHtml(repairDeviceLabel(repair))}</span><br />
-    <span class="status-pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span>
+    <span class="pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span>
     <div class="secret-block">
       <span>Contrasena</span>
       <b>${escapeHtml(repair.passwordDispositivo || "Sin contrasena cargada")}</b>
@@ -821,14 +826,22 @@ function setupPatternCanvas() {
   let drawing = false;
   let pointer = null;
 
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
   function drawBackground() {
     context.clearRect(0, 0, size, size);
-    context.fillStyle = "#ffffff";
+    context.fillStyle = cssVar("--bg-2") || "#1e1e1e";
     context.fillRect(0, 0, size, size);
   }
 
   function drawPattern() {
     drawBackground();
+    const accent = cssVar("--accent") || "#84cc16";
+    const line2  = cssVar("--line-2") || "#333";
+    const text3  = cssVar("--text-3") || "#666";
+    const accentInk = cssVar("--accent-ink") || "#1a1a1a";
 
     if (selected.length) {
       context.beginPath();
@@ -841,34 +854,36 @@ function setupPatternCanvas() {
         context.lineTo(pointer.x, pointer.y);
       }
 
-      context.strokeStyle = "#1487df";
-      context.lineWidth = 10;
+      context.strokeStyle = accent;
+      context.lineWidth = 8;
       context.lineCap = "round";
       context.lineJoin = "round";
+      context.globalAlpha = 0.7;
       context.stroke();
+      context.globalAlpha = 1;
     }
 
     nodes.forEach((node) => {
       const order = selected.findIndex((item) => item.id === node.id);
       const isSelected = order !== -1;
       context.beginPath();
-      context.arc(node.x, node.y, 19, 0, Math.PI * 2);
-      context.fillStyle = isSelected ? "#078ee8" : "#f7fbff";
+      context.arc(node.x, node.y, 18, 0, Math.PI * 2);
+      context.fillStyle = isSelected ? accent : (cssVar("--bg-1") || "#141414");
       context.fill();
-      context.lineWidth = isSelected ? 5 : 3;
-      context.strokeStyle = isSelected ? "#a9dcff" : "#d4dde8";
-      context.stroke();
+      context.lineWidth = isSelected ? 0 : 2;
+      context.strokeStyle = line2;
+      if (!isSelected) context.stroke();
 
       if (isSelected) {
-        context.font = "bold 15px Poppins, Arial, sans-serif";
-        context.fillStyle = "#ffffff";
+        context.font = "bold 13px 'Space Grotesk', sans-serif";
+        context.fillStyle = accentInk;
         context.textAlign = "center";
         context.textBaseline = "middle";
         context.fillText(String(order + 1), node.x, node.y);
       } else {
         context.beginPath();
-        context.arc(node.x, node.y, 5, 0, Math.PI * 2);
-        context.fillStyle = "#b5c0cc";
+        context.arc(node.x, node.y, 4, 0, Math.PI * 2);
+        context.fillStyle = text3;
         context.fill();
       }
     });
@@ -1297,11 +1312,7 @@ if (deliverForm) {
   });
 }
 
-if (menuToggle) {
-  menuToggle.addEventListener("click", () => {
-    document.body.classList.toggle("menu-open");
-  });
-}
+// drawer handled by shell.js via #menuBtn
 
 function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteExisting = null, inputIdExtra = null) {
   const grid  = $(`#${gridId}`);
@@ -1467,6 +1478,10 @@ let fotosManager = null;
 async function initApp() {
   updateDate();
   repairs = await dbLoad();
+  window.repairs = repairs;
+  const openCount = repairs.filter(r => r.estado === "En espera" || r.estado === "Activo").length;
+  if (window.shellSetRepairCount) window.shellSetRepairCount(openCount);
+  document.dispatchEvent(new Event("repairsLoaded"));
   setupEditForm();
   setupPatternCanvas();
   fotosManager = setupFotos();
@@ -1669,11 +1684,11 @@ function renderWeeklyChart() {
         y: {
           beginAtZero: true,
           grid: { color: "#e8edf4" },
-          ticks: { font: { family: "Poppins", size: 11 } },
+          ticks: { font: { family: "Hanken Grotesk", size: 11 } },
         },
         x: {
           grid: { display: false },
-          ticks: { font: { family: "Poppins", size: 11 } },
+          ticks: { font: { family: "Hanken Grotesk", size: 11 } },
         },
       },
     },
@@ -1700,7 +1715,7 @@ function renderTop5Table(monthRepairs) {
       <td><strong>#${r.id}</strong></td>
       <td>${escapeHtml(r.cliente)}</td>
       <td>${escapeHtml(repairDeviceLabel(r))}</td>
-      <td><span class="status-pill ${getStatusClass(r.estado)}">${escapeHtml(r.estado)}</span></td>
+      <td><span class="pill ${getStatusClass(r.estado)}">${escapeHtml(r.estado)}</span></td>
       <td><strong>${formatMoney(r.cierre?.costoFinal || r.costoAproximado || 0)}</strong></td>
     </tr>
   `
