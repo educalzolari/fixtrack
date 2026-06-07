@@ -21,9 +21,9 @@ const THEMES = {
 };
 
 const DEFAULT_THEME = {
-  theme: 'neon',
+  theme: 'carbon',
   mode: 'dark',
-  accent: 'lima',
+  accent: 'violeta',
   radius: 'suave',
   density: 'normal',
   glow: false,
@@ -38,7 +38,14 @@ let _theme = Object.assign({}, DEFAULT_THEME);
 function loadTheme() {
   try {
     const saved = JSON.parse(localStorage.getItem(THEME_KEY));
-    if (saved) _theme = Object.assign({}, DEFAULT_THEME, saved);
+    if (saved) {
+      // migrar accent 'lima' legacy al nuevo default violeta
+      if (saved.accent === 'lima' && saved.theme === 'neon') {
+        saved.accent = 'violeta';
+        saved.theme = 'carbon';
+      }
+      _theme = Object.assign({}, DEFAULT_THEME, saved);
+    }
   } catch {}
   applyTheme();
 }
@@ -89,14 +96,7 @@ function applyTheme() {
 
 function toggleTheme() {
   const newMode = _theme.mode === 'dark' ? 'light' : 'dark';
-  // map to the first preset of that mode
-  const presets = { dark: 'neon', light: 'estudio' };
-  const preset = presets[newMode];
-  _theme = Object.assign({}, _theme, {
-    theme: preset,
-    mode: newMode,
-    accent: THEMES[preset].accent,
-  });
+  _theme = Object.assign({}, _theme, { mode: newMode });
   saveTheme();
   applyTheme();
   syncConfigPage();
@@ -234,9 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
   _setupDrawer();
   _setupThemeBtn();
   _startClock();
-  // glow class needs app element
-  const app = document.querySelector('.app');
-  if (app && _theme.glow && _theme.mode === 'dark') app.classList.add('glow');
+  // re-apply icon/glow now that DOM exists
+  applyTheme();
 });
 
 // Apply theme immediately (before DOMContentLoaded) to avoid flash

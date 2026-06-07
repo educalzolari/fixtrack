@@ -283,15 +283,13 @@ function repairRow(repair) {
           <span>${escapeHtml(serviceDetail(repair))}</span>
         </div>
       </td>
-      <td><span class="pill ${getStatusClass(repair.estado)}">${escapeHtml(repair.estado)}</span></td>
       <td class="row-actions">
-        ${activarBtn}${finalizarBtn}${entregaBtn}
-        <button class="btn-icon del go delete-icon" data-id="${repair.id}" title="Eliminar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-        <a class="btn-icon go" href="editar-reparacion.html?id=${repair.id}" title="Editar" onclick="event.stopPropagation()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
+        <div class="row-actions-inner">
+          ${activarBtn}${finalizarBtn}${entregaBtn}
+          <button class="btn-icon del delete-icon" data-id="${repair.id}" title="Eliminar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
       </td>
     </tr>`;
 }
