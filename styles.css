@@ -121,7 +121,7 @@ button,input,select,textarea{font:inherit}
 .scrim{display:none}
 
 /* ── Main / topbar ─────────────────────────────────────────────────────── */
-.main{position:relative;z-index:1;height:100%;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.main{position:relative;z-index:1;height:100%;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;min-width:0}
 .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;
   padding:14px 30px;background:color-mix(in oklch,var(--bg) 82%,transparent);
   backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-shrink:0;
@@ -264,7 +264,7 @@ button,input,select,textarea{font:inherit}
 .clickable-row{cursor:pointer}
 
 /* ── Forms ─────────────────────────────────────────────────────────────── */
-.form-grid{display:grid;gap:16px}
+.form-grid{display:grid;gap:16px;min-width:0}
 .form-sec{background:var(--bg-1);border:1px solid var(--line);border-radius:calc(var(--radius) + 3px);padding:22px 24px}
 .field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 20px}
 .field-wide{grid-column:1/-1}
