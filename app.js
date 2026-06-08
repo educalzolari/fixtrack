@@ -2,6 +2,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
+let movimientos = [];
+
 const _now = new Date();
 const today = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, "0")}-${String(_now.getDate()).padStart(2, "0")}`;
 
@@ -703,6 +705,8 @@ function setupEditForm() {
     // si se está cancelando, preguntar por reposición de stock
     if (updatedRepair.estado === "Cancelado" && repair.estado !== "Cancelado") {
       await restoreStockForExpenses(editingExpenses);
+      await dbDeleteMovimientosByReparacion(repair.id);
+      movimientos = movimientos.filter(m => m.reparacionId !== repair.id);
     }
 
     const sections = ["recepcion", "reparacion", "entrega"];
@@ -763,6 +767,14 @@ async function restoreStockForExpenses(expenses) {
       await dbUpsertItem(item);
     }
   }
+}
+
+async function syncGastosMovimientoLocal(repair) {
+  if (!repair?.id) return;
+  const total = editingExpenses.reduce((s, e) => s + (e.total || 0), 0);
+  const saved = await dbSyncGastosMovimiento(repair, total);
+  movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
+  if (saved) movimientos = [saved, ...movimientos];
 }
 
 function setupExpenses() {
@@ -865,6 +877,7 @@ function setupExpenses() {
       const repair = getEditRepairPreview();
       renderExpensesTable(repair);
       renderEditSummary(repair);
+      await syncGastosMovimientoLocal(repair);
       closeExpenseModal();
     });
   }
@@ -891,6 +904,7 @@ function setupExpenses() {
       const repair = getEditRepairPreview();
       renderExpensesTable(repair);
       renderEditSummary(repair);
+      await syncGastosMovimientoLocal(repair);
     });
   }
 }
@@ -934,6 +948,11 @@ function setupFinishFlow() {
 
       await dbUpsert(finalizedRepair);
       repairs = repairs.map((item) => (Number(item.id) === Number(finalizedRepair.id) ? finalizedRepair : item));
+
+      const ingresoMov = await dbSyncIngresoMovimiento(finalizedRepair, costoFinal);
+      movimientos = movimientos.filter(m => !(m.reparacionId === finalizedRepair.id && m.categoria === "Reparación"));
+      if (ingresoMov) movimientos = [ingresoMov, ...movimientos];
+
       closeFinishModal();
 
       if (finalizedRepair.telefono) {
@@ -1625,7 +1644,7 @@ let fotosManager = null;
 
 async function initApp() {
   updateDate();
-  [repairs, inventario] = await Promise.all([dbLoad(), dbLoadInventario()]);
+  [repairs, inventario, movimientos] = await Promise.all([dbLoad(), dbLoadInventario(), dbLoadMovimientos()]);
   window.repairs = repairs;
   const openCount = repairs.filter(r => r.estado === "En espera" || r.estado === "Activo").length;
   if (window.shellSetRepairCount) window.shellSetRepairCount(openCount);
@@ -2099,3 +2118,177 @@ async function initInventario() {
 }
 
 initInventario();
+
+// ===== MOVIMIENTOS PAGE =====
+
+const CATEGORIA_TIPO = {
+  "Reparación":          "ingreso",
+  "Venta":               "ingreso",
+  "Otro ingreso":        "ingreso",
+  "Gasto de reparación": "egreso",
+  "Compra de stock":     "egreso",
+  "Gasto operativo":     "egreso",
+  "Retiro":              "egreso",
+};
+
+const CATEGORIAS_INGRESO = ["Reparación", "Venta", "Otro ingreso"];
+const CATEGORIAS_EGRESO  = ["Gasto de reparación", "Compra de stock", "Gasto operativo", "Retiro"];
+
+function formatFechaCorta(fecha) {
+  if (!fecha) return "";
+  const [y, m, d] = fecha.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+function renderMovTable(filtered) {
+  const tbody = document.getElementById("movTableBody");
+  if (!tbody) return;
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Sin movimientos para este período.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(m => {
+    const esIngreso = m.tipo === "ingreso";
+    const signo = esIngreso ? "+" : "−";
+    const colorClass = esIngreso ? "mov-pos" : "mov-neg";
+    const catClass = esIngreso ? "pill done" : "pill waiting";
+    const autoTag = m.reparacionId ? `<span class="mov-auto-tag">AUTO</span>` : "";
+    return `<tr class="clickable-row" data-mov-id="${m.id}">
+      <td><span class="mov-fecha">${formatFechaCorta(m.fecha)}</span></td>
+      <td>
+        <div class="cell-stack">
+          <strong>${escapeHtml(m.descripcion)}${autoTag}</strong>
+          <span><span class="${catClass}">${escapeHtml(m.categoria)}</span></span>
+        </div>
+      </td>
+      <td class="mov-monto ${colorClass}">${signo} ${formatMoney(m.monto)}</td>
+      <td class="row-actions">
+        ${!m.reparacionId ? `<button class="btn-icon del" data-delete-mov="${m.id}" title="Eliminar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>` : ""}
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+function renderMovSummary(filtered) {
+  const ingresos = filtered.filter(m => m.tipo === "ingreso").reduce((s, m) => s + m.monto, 0);
+  const egresos  = filtered.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
+  const resultado = ingresos - egresos;
+  const el = id => document.getElementById(id);
+  if (el("movTotalIngresos")) el("movTotalIngresos").textContent = formatMoney(ingresos);
+  if (el("movTotalEgresos"))  el("movTotalEgresos").textContent  = formatMoney(egresos);
+  if (el("movResultado")) {
+    el("movResultado").textContent = formatMoney(resultado);
+    el("movResultado").className = "mov-result-val " + (resultado >= 0 ? "mov-pos" : "mov-neg");
+  }
+}
+
+function getMovFiltered() {
+  const mes  = document.getElementById("movMesSelect")?.value;
+  const anio = document.getElementById("movAnioSelect")?.value;
+  const cat  = document.getElementById("movCatFilter")?.value || "";
+  return movimientos.filter(m => {
+    if (!m.fecha) return false;
+    const [y, mo] = m.fecha.split("-");
+    if (mes  && mo !== mes)  return false;
+    if (anio && y  !== anio) return false;
+    if (cat  && m.categoria !== cat) return false;
+    return true;
+  });
+}
+
+function renderMov() {
+  const filtered = getMovFiltered();
+  renderMovSummary(filtered);
+  renderMovTable(filtered);
+}
+
+function openMovModal(mov = null) {
+  const modal = document.getElementById("movModal");
+  const form  = document.getElementById("movForm");
+  const title = document.getElementById("movModalTitle");
+  if (!modal || !form) return;
+
+  form.reset();
+  if (title) title.textContent = "Nuevo movimiento";
+
+  const catSel = document.getElementById("movCategoria");
+  if (catSel) {
+    catSel.innerHTML = `<optgroup label="Ingresos">${CATEGORIAS_INGRESO.map(c => `<option value="${c}">${c}</option>`).join("")}</optgroup>
+      <optgroup label="Egresos">${CATEGORIAS_EGRESO.map(c => `<option value="${c}">${c}</option>`).join("")}</optgroup>`;
+  }
+
+  const fechaInput = document.getElementById("movFecha");
+  if (fechaInput) fechaInput.value = today;
+
+  modal.style.display = "flex";
+}
+
+function closeMovModal() {
+  const modal = document.getElementById("movModal");
+  if (modal) modal.style.display = "none";
+}
+
+async function initMovimientos() {
+  if (!document.getElementById("movTableBody")) return;
+
+  const now = new Date();
+  const mesSel  = document.getElementById("movMesSelect");
+  const anioSel = document.getElementById("movAnioSelect");
+
+  if (mesSel) {
+    const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    mesSel.innerHTML = meses.map((n, i) => {
+      const v = String(i + 1).padStart(2, "0");
+      return `<option value="${v}" ${i === now.getMonth() ? "selected" : ""}>${n}</option>`;
+    }).join("");
+  }
+
+  if (anioSel) {
+    const y = now.getFullYear();
+    anioSel.innerHTML = [y - 1, y, y + 1].map(yr =>
+      `<option value="${yr}" ${yr === y ? "selected" : ""}>${yr}</option>`
+    ).join("");
+  }
+
+  renderMov();
+
+  mesSel?.addEventListener("change", renderMov);
+  anioSel?.addEventListener("change", renderMov);
+  document.getElementById("movCatFilter")?.addEventListener("change", renderMov);
+
+  document.getElementById("newMovBtn")?.addEventListener("click", () => openMovModal());
+  document.getElementById("closeMovModal")?.addEventListener("click", closeMovModal);
+  document.getElementById("movModal")?.addEventListener("click", e => {
+    if (e.target === document.getElementById("movModal")) closeMovModal();
+  });
+
+  document.getElementById("movForm")?.addEventListener("submit", async e => {
+    e.preventDefault();
+    const fecha       = document.getElementById("movFecha")?.value;
+    const descripcion = document.getElementById("movDescripcion")?.value.trim();
+    const categoria   = document.getElementById("movCategoria")?.value;
+    const monto       = Number(document.getElementById("movMonto")?.value || 0);
+    if (!descripcion || !monto || !categoria) return;
+    const tipo = CATEGORIA_TIPO[categoria] || "egreso";
+    const saved = await dbInsertMovimiento({ fecha, descripcion, categoria, tipo, monto, reparacionId: null });
+    if (saved) {
+      movimientos = [saved, ...movimientos];
+      renderMov();
+    }
+    closeMovModal();
+  });
+
+  document.getElementById("movTableBody")?.addEventListener("click", async e => {
+    const btn = e.target.closest("[data-delete-mov]");
+    if (!btn) return;
+    if (!confirm("¿Eliminar este movimiento?")) return;
+    const id = Number(btn.dataset.deleteMov);
+    await dbDeleteMovimiento(id);
+    movimientos = movimientos.filter(m => m.id !== id);
+    renderMov();
+  });
+}
+
+initMovimientos();

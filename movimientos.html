@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inicio | 1Fix!</title>
+    <title>Movimientos | 1Fix!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -19,7 +19,6 @@
     <div class="app" id="appRoot">
       <div class="scrim"></div>
 
-      <!-- ── Sidebar ── -->
       <aside class="sidebar" aria-label="Menú principal">
         <div class="brand">
           <div class="brand-mark">1F</div>
@@ -30,7 +29,7 @@
         </div>
         <nav class="nav">
           <div class="nav-label">Operación</div>
-          <a class="nav-item active" href="index.html">
+          <a class="nav-item" href="index.html">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Inicio
           </a>
@@ -52,7 +51,7 @@
             Reportes
           </a>
           <div class="nav-label">Negocio</div>
-          <a class="nav-item" href="movimientos.html">
+          <a class="nav-item active" href="movimientos.html">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
             Movimientos
           </a>
@@ -87,134 +86,134 @@
           <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <span class="crumb">1Fix / <b>Inicio</b></span>
+          <span class="crumb">1Fix / <b>Movimientos</b></span>
           <div class="topbar-spacer"></div>
-          <div class="clock">
-            <span class="live-dot"></span>
-            <span id="topbarClock"></span>
-          </div>
+          <div class="clock"><span class="live-dot"></span><span id="topbarClock"></span></div>
           <button class="theme-btn" id="themeToggleBtn" title="Cambiar tema"></button>
         </header>
 
         <div class="page">
-          <!-- Page header -->
-          <div class="page-head" style="flex-direction:column;align-items:flex-start;gap:6px">
-            <div class="page-kicker" id="currentDate"></div>
-            <h1 class="page-title">Hola, Eduardo 👋</h1>
-            <p id="dashboardStatus" style="font-size:14px;color:var(--text-2);margin:0"></p>
-          </div>
-
-          <!-- KPIs -->
-          <div class="kpi-grid stagger" aria-label="Resumen del taller">
-
-            <div class="kpi">
-              <div class="kpi-accent" style="--clr:var(--st-espera)"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">En espera</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              </div>
-              <div class="kpi-num num" id="waitingCount">—</div>
-              <div class="kpi-foot">Pendientes de inicio</div>
+          <div class="page-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <div class="page-kicker">Finanzas / Historial</div>
+              <h1 class="page-title">Movimientos</h1>
             </div>
+            <button class="btn btn-accent" id="newMovBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo
+            </button>
+          </div>
 
-            <div class="kpi">
-              <div class="kpi-accent" style="--clr:var(--st-activo)"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">Activos</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          <!-- Filtros -->
+          <div class="toolbar" style="margin-bottom:20px">
+            <select class="sel" id="movMesSelect" style="max-width:150px"></select>
+            <select class="sel" id="movAnioSelect" style="max-width:100px"></select>
+            <select class="sel" id="movCatFilter" style="max-width:200px">
+              <option value="">Todas las categorías</option>
+              <optgroup label="Ingresos">
+                <option value="Reparación">Reparación</option>
+                <option value="Venta">Venta</option>
+                <option value="Otro ingreso">Otro ingreso</option>
+              </optgroup>
+              <optgroup label="Egresos">
+                <option value="Gasto de reparación">Gasto de reparación</option>
+                <option value="Compra de stock">Compra de stock</option>
+                <option value="Gasto operativo">Gasto operativo</option>
+                <option value="Retiro">Retiro</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Resumen -->
+          <div class="mov-summary stagger">
+            <div class="mov-card">
+              <div class="mov-card-ico mov-ico-in">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
               </div>
-              <div class="kpi-num num" id="collectCount">—</div>
-              <div class="kpi-foot">En proceso o revisión</div>
+              <div>
+                <span class="mov-card-label">Ingresos</span>
+                <div id="movTotalIngresos" class="mov-card-val mov-pos">$0</div>
+              </div>
             </div>
-
-            <div class="kpi">
-              <div class="kpi-accent" style="--clr:var(--st-finalizado)"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">Reparaciones (mes)</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+            <div class="mov-card">
+              <div class="mov-card-ico mov-ico-out">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
               </div>
-              <div class="kpi-num num" id="monthCount">—</div>
-              <div class="kpi-foot"><span id="monthDelta" class="delta">—</span> vs. mes anterior</div>
+              <div>
+                <span class="mov-card-label">Egresos</span>
+                <div id="movTotalEgresos" class="mov-card-val mov-neg">$0</div>
+              </div>
             </div>
-
-            <div class="kpi is-accent">
-              <div class="kpi-accent"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">Total ventas</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="mov-card">
+              <div class="mov-card-ico mov-ico-res">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
               </div>
-              <div class="kpi-num num" id="salesTotal">—</div>
-              <div class="kpi-foot">Ingresos del mes (entregados)</div>
+              <div>
+                <span class="mov-card-label">Resultado</span>
+                <div id="movResultado" class="mov-result-val mov-pos">$0</div>
+              </div>
             </div>
-
           </div>
 
-          <!-- Quick actions -->
-          <div class="section-head" style="margin-top:36px">
-            <div class="section-title">Accesos directos</div>
-          </div>
-          <div class="qa-grid stagger" aria-label="Accesos directos">
-
-            <a class="qa" href="nueva-reparacion.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Cargar Reparación</div>
-            </a>
-
-            <a class="qa" href="reparaciones.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Ver Reparaciones</div>
-            </a>
-
-            <a class="qa" href="clientes.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Clientes</div>
-            </a>
-
-            <a class="qa" href="reportes.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Resumen de Mes</div>
-            </a>
-
-          </div>
-
-          <!-- Últimas reparaciones -->
-          <div class="section-head">
-            <div class="section-title">Últimas reparaciones</div>
-            <a class="btn btn-ghost btn-sm" href="reparaciones.html">Ver todo →</a>
-          </div>
-          <div class="tbl-wrap">
+          <!-- Tabla -->
+          <div class="tbl-wrap" style="margin-top:24px">
             <table class="tbl">
               <thead>
                 <tr>
-                  <th>Nro / Fecha</th>
-                  <th>Cliente</th>
-                  <th>Equipo</th>
-                  <th>Estado</th>
-                  <th>Costo</th>
+                  <th style="width:80px">Fecha</th>
+                  <th>Descripción</th>
+                  <th style="text-align:right;width:140px">Monto</th>
+                  <th style="width:48px"></th>
                 </tr>
               </thead>
-              <tbody id="dashboardTable"></tbody>
+              <tbody id="movTableBody"></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
 
-        </div><!-- /page -->
-      </div><!-- /main -->
-    </div><!-- /app -->
+    <!-- Modal nuevo movimiento -->
+    <div class="modal-backdrop" id="movModal" style="display:none;align-items:center;justify-content:center">
+      <div class="modal-card" style="max-width:460px;width:100%">
+        <div class="modal-heading">
+          <h3 class="modal-title" id="movModalTitle">Nuevo movimiento</h3>
+          <button class="icon-button" id="closeMovModal" type="button" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <form id="movForm" class="field-grid" style="margin-top:20px">
+          <div class="field field-wide">
+            <label class="field-label" for="movDescripcion">Descripción</label>
+            <input class="inp" id="movDescripcion" type="text" placeholder="Ej: Venta celular Samsung A54" required />
+          </div>
+          <div class="field">
+            <label class="field-label" for="movCategoria">Categoría</label>
+            <select class="sel" id="movCategoria" required></select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="movMonto">Monto</label>
+            <input class="inp" id="movMonto" type="number" min="0" step="100" placeholder="0" required />
+          </div>
+          <div class="field field-wide">
+            <label class="field-label" for="movFecha">Fecha</label>
+            <input class="inp" id="movFecha" type="date" required />
+          </div>
+          <div class="field field-wide" style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+            <button class="btn btn-ghost" type="button" id="cancelMovModal">Cancelar</button>
+            <button class="btn btn-accent" type="submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
+    <script>
+      document.getElementById("cancelMovModal")?.addEventListener("click", () => {
+        document.getElementById("movModal").style.display = "none";
+      });
+    </script>
   </body>
 </html>

@@ -258,3 +258,79 @@ async function dbDeleteItem(id) {
   const { error } = await _db.from("inventario").delete().eq("id", id);
   if (error) console.error("Error eliminando item:", error);
 }
+
+// ===== MOVIMIENTOS =====
+
+function rowToMovimiento(row) {
+  return {
+    id: row.id,
+    fecha: row.fecha,
+    descripcion: row.descripcion,
+    categoria: row.categoria,
+    tipo: row.tipo,
+    monto: Number(row.monto || 0),
+    reparacionId: row.reparacion_id || null,
+  };
+}
+
+function movimientoToRow(m) {
+  return {
+    fecha: m.fecha,
+    descripcion: m.descripcion,
+    categoria: m.categoria,
+    tipo: m.tipo,
+    monto: Number(m.monto || 0),
+    reparacion_id: m.reparacionId || null,
+  };
+}
+
+async function dbLoadMovimientos() {
+  const { data, error } = await _db
+    .from("movimientos")
+    .select("*")
+    .order("fecha", { ascending: false })
+    .order("id", { ascending: false });
+  if (error) { console.error("Error cargando movimientos:", error); return []; }
+  return data.map(rowToMovimiento);
+}
+
+async function dbInsertMovimiento(m) {
+  const { data, error } = await _db.from("movimientos").insert(movimientoToRow(m)).select().single();
+  if (error) { console.error("Error insertando movimiento:", error); return null; }
+  return rowToMovimiento(data);
+}
+
+async function dbDeleteMovimiento(id) {
+  const { error } = await _db.from("movimientos").delete().eq("id", id);
+  if (error) console.error("Error eliminando movimiento:", error);
+}
+
+async function dbDeleteMovimientosByReparacion(reparacionId) {
+  const { error } = await _db.from("movimientos").delete().eq("reparacion_id", reparacionId);
+  if (error) console.error("Error eliminando movimientos de reparacion:", error);
+}
+
+async function dbSyncIngresoMovimiento(repair, costoFinal) {
+  await _db.from("movimientos").delete().eq("reparacion_id", repair.id).eq("categoria", "Reparación");
+  return await dbInsertMovimiento({
+    fecha: repair.cierre?.fechaFinalizacion || new Date().toISOString().slice(0, 10),
+    descripcion: `Reparación #${repair.id} — ${repair.cliente}`,
+    categoria: "Reparación",
+    tipo: "ingreso",
+    monto: costoFinal,
+    reparacionId: repair.id,
+  });
+}
+
+async function dbSyncGastosMovimiento(repair, total) {
+  await _db.from("movimientos").delete().eq("reparacion_id", repair.id).eq("categoria", "Gasto de reparación");
+  if (total <= 0) return null;
+  return await dbInsertMovimiento({
+    fecha: new Date().toISOString().slice(0, 10),
+    descripcion: `Gastos reparación #${repair.id} — ${repair.cliente}`,
+    categoria: "Gasto de reparación",
+    tipo: "egreso",
+    monto: total,
+    reparacionId: repair.id,
+  });
+}
