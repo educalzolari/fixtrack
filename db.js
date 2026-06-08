@@ -189,3 +189,72 @@ async function dbInsertCliente(cliente) {
   }
   return rowToCliente(data);
 }
+
+// ── Inventario ───────────────────────────────────────────
+
+function rowToItem(row) {
+  return {
+    id: row.id,
+    nombre: row.nombre || "",
+    categoria: row.categoria || "Repuesto",
+    descripcion: row.descripcion || "",
+    proveedor: row.proveedor || "",
+    precioCosto: Number(row.precio_costo || 0),
+    precioVenta: Number(row.precio_venta || 0),
+    esChipImei: Boolean(row.es_chip_imei),
+    sku: row.sku || "",
+    stock: Number(row.stock || 0),
+    stockMinimo: Number(row.stock_minimo || 0),
+  };
+}
+
+function itemToRow(item) {
+  return {
+    id: item.id,
+    nombre: item.nombre || "",
+    categoria: item.categoria || "Repuesto",
+    descripcion: item.descripcion || "",
+    proveedor: item.proveedor || "",
+    precio_costo: Number(item.precioCosto || 0),
+    precio_venta: Number(item.precioVenta || 0),
+    es_chip_imei: Boolean(item.esChipImei),
+    sku: item.sku || "",
+    stock: Number(item.stock || 0),
+    stock_minimo: Number(item.stockMinimo || 0),
+  };
+}
+
+async function dbLoadInventario() {
+  const { data, error } = await _db
+    .from("inventario")
+    .select("*")
+    .order("nombre", { ascending: true });
+  if (error) {
+    console.error("Error cargando inventario:", error);
+    return [];
+  }
+  return data.map(rowToItem);
+}
+
+async function dbInsertItem(item) {
+  const row = itemToRow(item);
+  delete row.id;
+  const { data, error } = await _db.from("inventario").insert(row).select().single();
+  if (error) { console.error("Error insertando item:", error); return null; }
+  return rowToItem(data);
+}
+
+async function dbUpsertItem(item) {
+  const { data, error } = await _db
+    .from("inventario")
+    .upsert(itemToRow(item), { onConflict: "id" })
+    .select()
+    .single();
+  if (error) { console.error("Error actualizando item:", error); return null; }
+  return rowToItem(data);
+}
+
+async function dbDeleteItem(id) {
+  const { error } = await _db.from("inventario").delete().eq("id", id);
+  if (error) console.error("Error eliminando item:", error);
+}

@@ -505,15 +505,47 @@ function renderExpensesTable(repair) {
 }
 
 function updateExpenseTotalPreview() {
-  if (!expenseUnitPrice || !expenseQuantity || !expenseTotal) return;
-  const total = Number(expenseUnitPrice.value || 0) * Number(expenseQuantity.value || 0);
-  expenseTotal.value = formatMoney(total);
+  const totalEl = $("#expenseTotal");
+  const qty = Number($("#expenseQuantity")?.value || 0);
+  const price = expenseMode === "inv"
+    ? Number($("#expInvPrice")?.value || 0)
+    : Number($("#expenseUnitPrice")?.value || 0);
+  if (totalEl) totalEl.value = formatMoney(price * qty);
 }
+
+let expenseMode = "free"; // "free" | "inv"
 
 function openExpenseModal() {
   if (!expenseModal || !expenseForm) return;
   expenseForm.reset();
   if (expenseQuantity) expenseQuantity.value = 1;
+
+  // reset al modo libre
+  expenseMode = "free";
+  const btnFree = $("#expTypeFree");
+  const btnInv  = $("#expTypeInv");
+  const freeFields = $("#expFreeFields");
+  const invFields  = $("#expInvFields");
+  if (btnFree)   { btnFree.classList.add("active");    btnInv.classList.remove("active"); }
+  if (freeFields) freeFields.style.display = "";
+  if (invFields)  invFields.style.display  = "none";
+
+  // popular select de inventario
+  const sel = $("#expInvSelect");
+  if (sel) {
+    sel.innerHTML = `<option value="">Seleccionar…</option>`;
+    inventario
+      .filter((i) => i.stock > 0)
+      .forEach((i) => {
+        const opt = document.createElement("option");
+        opt.value = i.id;
+        opt.dataset.precio = i.precioCosto;
+        opt.dataset.nombre = i.nombre;
+        opt.textContent = `${i.nombre} — stock: ${i.stock}`;
+        sel.appendChild(opt);
+      });
+  }
+
   updateExpenseTotalPreview();
   expenseModal.classList.add("open");
   expenseModal.setAttribute("aria-hidden", "false");
@@ -647,6 +679,11 @@ function setupEditForm() {
     syncExpensesInput();
     const updatedRepair = formToRepair(new FormData(editForm), repair);
 
+    // si se está cancelando, preguntar por reposición de stock
+    if (updatedRepair.estado === "Cancelado" && repair.estado !== "Cancelado") {
+      await restoreStockForExpenses(editingExpenses);
+    }
+
     const sections = ["recepcion", "reparacion", "entrega"];
     const currentFotos = { recepcion: [], reparacion: [], entrega: [] };
 
@@ -694,14 +731,61 @@ function setupEditForm() {
   }
 }
 
+async function restoreStockForExpenses(expenses) {
+  const invExpenses = expenses.filter((e) => e.inventarioId);
+  for (const e of invExpenses) {
+    const item = inventario.find((i) => i.id === e.inventarioId);
+    if (!item) continue;
+    const reponer = confirm(`¿Reponer ${e.cantidad} unidad(es) de "${item.nombre}" al stock?\n\nStock actual: ${item.stock}`);
+    if (reponer) {
+      item.stock += e.cantidad;
+      await dbUpsertItem(item);
+    }
+  }
+}
+
 function setupExpenses() {
   if (!expensesTable && !expenseModal) return;
 
   if (openExpenseModalButton) openExpenseModalButton.addEventListener("click", openExpenseModal);
   if (closeExpenseModalButton) closeExpenseModalButton.addEventListener("click", closeExpenseModal);
   if (cancelExpenseModalButton) cancelExpenseModalButton.addEventListener("click", closeExpenseModal);
-  if (expenseUnitPrice) expenseUnitPrice.addEventListener("input", updateExpenseTotalPreview);
   if (expenseQuantity) expenseQuantity.addEventListener("input", updateExpenseTotalPreview);
+
+  // toggle libre / inventario
+  $("#expTypeFree")?.addEventListener("click", () => {
+    expenseMode = "free";
+    $("#expTypeFree").classList.add("active");
+    $("#expTypeInv").classList.remove("active");
+    $("#expFreeFields").style.display = "";
+    $("#expInvFields").style.display  = "none";
+    updateExpenseTotalPreview();
+  });
+
+  $("#expTypeInv")?.addEventListener("click", () => {
+    expenseMode = "inv";
+    $("#expTypeInv").classList.add("active");
+    $("#expTypeFree").classList.remove("active");
+    $("#expFreeFields").style.display = "none";
+    $("#expInvFields").style.display  = "";
+    updateExpenseTotalPreview();
+  });
+
+  // al elegir ítem del inventario, precargar precio
+  $("#expInvSelect")?.addEventListener("change", () => {
+    const sel = $("#expInvSelect");
+    const opt = sel.selectedOptions[0];
+    const priceInput = $("#expInvPrice");
+    if (opt?.dataset.precio && priceInput) {
+      priceInput.value = opt.dataset.precio;
+    } else if (priceInput) {
+      priceInput.value = "";
+    }
+    updateExpenseTotalPreview();
+  });
+
+  $("#expInvPrice")?.addEventListener("input", updateExpenseTotalPreview);
+  $("#expenseUnitPrice")?.addEventListener("input", updateExpenseTotalPreview);
 
   if (expenseModal) {
     expenseModal.addEventListener("click", (event) => {
@@ -710,21 +794,53 @@ function setupExpenses() {
   }
 
   if (expenseForm) {
-    expenseForm.addEventListener("submit", (event) => {
+    expenseForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const formData = new FormData(expenseForm);
-      const montoUnitario = Number(formData.get("montoUnitario") || 0);
-      const cantidad = Number(formData.get("cantidad") || 0);
-      editingExpenses = [
-        ...editingExpenses,
-        {
+
+      const cantidad = Number($("#expenseQuantity")?.value || 0);
+
+      if (expenseMode === "inv") {
+        const sel = $("#expInvSelect");
+        const invId = Number(sel?.value);
+        const opt = sel?.selectedOptions[0];
+        if (!invId || !opt) { alert("Seleccioná un ítem del inventario."); return; }
+
+        const item = inventario.find((i) => i.id === invId);
+        if (!item) return;
+        if (cantidad > item.stock) {
+          alert(`Stock insuficiente. Tenés ${item.stock} unidad(es) de "${item.nombre}".`);
+          return;
+        }
+
+        const montoUnitario = Number($("#expInvPrice")?.value || item.precioCosto);
+
+        editingExpenses = [...editingExpenses, {
           id: Date.now(),
-          concepto: formData.get("concepto").trim(),
+          concepto: item.nombre,
           montoUnitario,
           cantidad,
           total: montoUnitario * cantidad,
-        },
-      ];
+          inventarioId: item.id,
+        }];
+
+        // descontar stock inmediatamente
+        item.stock -= cantidad;
+        await dbUpsertItem(item);
+
+      } else {
+        const concepto = $("#expConcepto")?.value.trim();
+        const montoUnitario = Number($("#expenseUnitPrice")?.value || 0);
+        if (!concepto) { alert("Ingresá el concepto del gasto."); return; }
+
+        editingExpenses = [...editingExpenses, {
+          id: Date.now(),
+          concepto,
+          montoUnitario,
+          cantidad,
+          total: montoUnitario * cantidad,
+        }];
+      }
+
       const repair = getEditRepairPreview();
       renderExpensesTable(repair);
       renderEditSummary(repair);
@@ -733,11 +849,24 @@ function setupExpenses() {
   }
 
   if (expensesTable) {
-    expensesTable.addEventListener("click", (event) => {
+    expensesTable.addEventListener("click", async (event) => {
       const button = event.target.closest("[data-delete-expense]");
       if (!button) return;
       const id = Number(button.dataset.deleteExpense);
-      editingExpenses = editingExpenses.filter((expense) => Number(expense.id) !== id);
+      const expense = editingExpenses.find((e) => Number(e.id) === id);
+
+      if (expense?.inventarioId) {
+        const item = inventario.find((i) => i.id === expense.inventarioId);
+        if (item) {
+          const reponer = confirm(`¿Reponer ${expense.cantidad} unidad(es) de "${item.nombre}" al stock?\n\nStock actual: ${item.stock}`);
+          if (reponer) {
+            item.stock += expense.cantidad;
+            await dbUpsertItem(item);
+          }
+        }
+      }
+
+      editingExpenses = editingExpenses.filter((e) => Number(e.id) !== id);
       const repair = getEditRepairPreview();
       renderExpensesTable(repair);
       renderEditSummary(repair);
@@ -1753,3 +1882,189 @@ function renderCategoriesChart(monthRepairs) {
     )
     .join("");
 }
+
+// ===== INVENTARIO =====
+
+let inventario = [];
+let invDeleteTargetId = null;
+
+function invStockBadge(item) {
+  if (item.stock === 0) return `<span class="pill sc-cancelado">Sin stock</span>`;
+  if (item.stockMinimo > 0 && item.stock <= item.stockMinimo)
+    return `<span class="pill sc-espera">${item.stock} <small style="opacity:.7">▼mín</small></span>`;
+  return `<span class="pill sc-entregado">${item.stock}</span>`;
+}
+
+function renderInvTable() {
+  const tbody = document.getElementById("invTableBody");
+  if (!tbody) return;
+
+  const search = (document.getElementById("invSearch")?.value || "").toLowerCase().trim();
+  const catFilter = document.getElementById("invCatFilter")?.value || "";
+
+  let items = inventario;
+  if (search) {
+    items = items.filter((i) =>
+      i.nombre.toLowerCase().includes(search) ||
+      i.sku.toLowerCase().includes(search) ||
+      i.proveedor.toLowerCase().includes(search)
+    );
+  }
+  if (catFilter) items = items.filter((i) => i.categoria === catFilter);
+
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--fg-3)">${inventario.length ? "Sin resultados." : "No hay ítems cargados."}</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = items.map((item) => `
+    <tr>
+      <td>
+        <strong>${escapeHtml(item.nombre)}</strong>
+        ${item.descripcion ? `<br><small style="color:var(--fg-3)">${escapeHtml(item.descripcion)}</small>` : ""}
+        ${item.sku ? `<br><code style="font-size:11px;color:var(--fg-3)">${escapeHtml(item.sku)}</code>` : ""}
+      </td>
+      <td>${escapeHtml(item.categoria)}</td>
+      <td style="color:var(--fg-3)">${escapeHtml(item.proveedor) || "—"}</td>
+      <td>${invStockBadge(item)}</td>
+      <td><strong>${formatMoney(item.precioVenta)}</strong></td>
+      <td>
+        <div class="row-actions-inner">
+          <button class="btn btn-ghost btn-sm inv-edit-btn" data-id="${item.id}" type="button">Editar</button>
+          <button class="btn btn-ghost btn-sm inv-delete-btn" data-id="${item.id}" data-nombre="${escapeHtml(item.nombre)}" type="button" style="color:var(--danger,#e53e3e)">Eliminar</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function openInvModal(item = null) {
+  const modal = document.getElementById("invModal");
+  const title = document.getElementById("invModalTitle");
+  const sub   = document.getElementById("invModalSub");
+  if (!modal) return;
+
+  document.getElementById("invItemId").value      = item?.id || "";
+  document.getElementById("invNombre").value       = item?.nombre || "";
+  document.getElementById("invCategoria").value    = item?.categoria || "";
+  document.getElementById("invEsChipImei").value   = item ? String(item.esChipImei) : "false";
+  document.getElementById("invDescripcion").value  = item?.descripcion || "";
+  document.getElementById("invProveedor").value    = item?.proveedor || "";
+  document.getElementById("invSku").value          = item?.sku || "";
+  document.getElementById("invPrecioCosto").value  = item?.precioCosto || "";
+  document.getElementById("invPrecioVenta").value  = item?.precioVenta || "";
+  document.getElementById("invStock").value        = item?.stock ?? "";
+  document.getElementById("invStockMinimo").value  = item?.stockMinimo || "";
+
+  if (title) title.textContent = item ? "Editar ítem" : "Nuevo ítem";
+  if (sub)   sub.textContent   = item ? item.nombre : "Completá los datos del artículo.";
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.getElementById("invNombre").focus();
+}
+
+function closeInvModal() {
+  const modal = document.getElementById("invModal");
+  if (!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.getElementById("invForm").reset();
+}
+
+function openInvDeleteModal(id, nombre) {
+  invDeleteTargetId = id;
+  const modal = document.getElementById("invDeleteModal");
+  const label = document.getElementById("invDeleteName");
+  if (label) label.textContent = `¿Seguro que querés eliminar "${nombre}"? Esta acción no se puede deshacer.`;
+  if (modal) { modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); }
+}
+
+function closeInvDeleteModal() {
+  invDeleteTargetId = null;
+  const modal = document.getElementById("invDeleteModal");
+  if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
+}
+
+function setupInventario() {
+  if (!document.getElementById("invTableBody")) return;
+
+  document.getElementById("invSearch")?.addEventListener("input", renderInvTable);
+  document.getElementById("invCatFilter")?.addEventListener("change", renderInvTable);
+
+  document.getElementById("newItemBtn")?.addEventListener("click", () => openInvModal());
+  document.getElementById("closeInvModal")?.addEventListener("click", closeInvModal);
+  document.getElementById("cancelInvModal")?.addEventListener("click", closeInvModal);
+  document.getElementById("cancelInvDelete")?.addEventListener("click", closeInvDeleteModal);
+
+  document.getElementById("invModal")?.addEventListener("click", (e) => {
+    if (e.target === document.getElementById("invModal")) closeInvModal();
+  });
+  document.getElementById("invDeleteModal")?.addEventListener("click", (e) => {
+    if (e.target === document.getElementById("invDeleteModal")) closeInvDeleteModal();
+  });
+
+  document.getElementById("invTableBody")?.addEventListener("click", (e) => {
+    const editBtn = e.target.closest(".inv-edit-btn");
+    if (editBtn) {
+      const item = inventario.find((i) => i.id === Number(editBtn.dataset.id));
+      if (item) openInvModal(item);
+      return;
+    }
+    const delBtn = e.target.closest(".inv-delete-btn");
+    if (delBtn) openInvDeleteModal(Number(delBtn.dataset.id), delBtn.dataset.nombre);
+  });
+
+  document.getElementById("confirmInvDelete")?.addEventListener("click", async () => {
+    if (!invDeleteTargetId) return;
+    await dbDeleteItem(invDeleteTargetId);
+    inventario = inventario.filter((i) => i.id !== invDeleteTargetId);
+    closeInvDeleteModal();
+    renderInvTable();
+    if (window.showToast) window.showToast("Ítem eliminado", "", "red");
+  });
+
+  document.getElementById("invForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("invSubmitBtn");
+    if (btn) { btn.disabled = true; btn.textContent = "Guardando…"; }
+
+    const id = document.getElementById("invItemId").value;
+    const itemData = {
+      nombre:      document.getElementById("invNombre").value.trim(),
+      categoria:   document.getElementById("invCategoria").value,
+      esChipImei:  document.getElementById("invEsChipImei").value === "true",
+      descripcion: document.getElementById("invDescripcion").value.trim(),
+      proveedor:   document.getElementById("invProveedor").value.trim(),
+      sku:         document.getElementById("invSku").value.trim(),
+      precioCosto: Number(document.getElementById("invPrecioCosto").value || 0),
+      precioVenta: Number(document.getElementById("invPrecioVenta").value || 0),
+      stock:       Number(document.getElementById("invStock").value || 0),
+      stockMinimo: Number(document.getElementById("invStockMinimo").value || 0),
+    };
+
+    let saved;
+    if (id) {
+      itemData.id = Number(id);
+      saved = await dbUpsertItem(itemData);
+      if (saved) inventario = inventario.map((i) => i.id === saved.id ? saved : i);
+    } else {
+      saved = await dbInsertItem(itemData);
+      if (saved) inventario = [saved, ...inventario];
+    }
+
+    closeInvModal();
+    renderInvTable();
+    if (btn) { btn.disabled = false; btn.textContent = "Guardar ítem"; }
+    if (window.showToast) window.showToast(id ? "Ítem actualizado" : "Ítem guardado", itemData.nombre, "green");
+  });
+}
+
+async function initInventario() {
+  if (!document.getElementById("invTableBody")) return;
+  inventario = await dbLoadInventario();
+  renderInvTable();
+  setupInventario();
+}
+
+initInventario();

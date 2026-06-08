@@ -448,6 +448,9 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .finance-summary strong{display:block;margin-top:6px;color:var(--st-finalizado);font-family:var(--num-font);font-size:20px;font-weight:700}
 .finance-summary strong.negative{color:oklch(0.65 0.2 18)}
 
+.expense-type-toggle{display:flex;gap:6px;margin-bottom:16px;background:var(--bg-inset);border-radius:var(--radius);padding:4px}
+.expense-type-btn{flex:1;padding:7px 12px;border:none;border-radius:calc(var(--radius) - 2px);background:transparent;color:var(--text-2);font:500 13px var(--body-font);cursor:pointer;transition:background .15s,color .15s}
+.expense-type-btn.active{background:var(--bg-2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .expense-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .expense-form label:first-child{grid-column:1/-1}
 .finish-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}

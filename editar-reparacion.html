@@ -301,28 +301,52 @@
         <div class="modal-heading">
           <div>
             <h2 id="expenseModalTitle">Registrar gasto</h2>
-            <p>Completa el concepto, monto y cantidad.</p>
+            <p>Desde el inventario o ingresá un gasto libre.</p>
           </div>
           <button class="btn-icon" id="closeExpenseModal" type="button" aria-label="Cerrar">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <form id="expenseForm" class="expense-form">
-          <label class="field">
-            <span class="field-label">Concepto</span>
-            <input class="inp" required name="concepto" type="text" placeholder="Módulo, batería, envío…" />
-          </label>
-          <label class="field">
-            <span class="field-label">Monto unitario</span>
-            <input class="inp" required name="montoUnitario" id="expenseUnitPrice" type="number" min="0" step="100" placeholder="0" />
-          </label>
+          <!-- Toggle tipo de gasto -->
+          <div class="expense-type-toggle">
+            <button class="expense-type-btn active" id="expTypeFree" type="button">Gasto libre</button>
+            <button class="expense-type-btn" id="expTypeInv" type="button">Del inventario</button>
+          </div>
+
+          <!-- Gasto libre -->
+          <div id="expFreeFields">
+            <label class="field">
+              <span class="field-label">Concepto</span>
+              <input class="inp" id="expConcepto" type="text" placeholder="Módulo, batería, flete…" />
+            </label>
+            <label class="field">
+              <span class="field-label">Monto unitario</span>
+              <input class="inp" id="expenseUnitPrice" type="number" min="0" step="100" placeholder="0" />
+            </label>
+          </div>
+
+          <!-- Desde inventario -->
+          <div id="expInvFields" style="display:none">
+            <label class="field">
+              <span class="field-label">Ítem del inventario</span>
+              <select class="sel" id="expInvSelect">
+                <option value="">Seleccionar…</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">Precio unitario</span>
+              <input class="inp" id="expInvPrice" type="number" min="0" step="1" placeholder="0" />
+            </label>
+          </div>
+
           <label class="field">
             <span class="field-label">Cantidad</span>
-            <input class="inp" required name="cantidad" id="expenseQuantity" type="number" min="1" step="1" value="1" />
+            <input class="inp" required id="expenseQuantity" type="number" min="1" step="1" value="1" />
           </label>
           <label class="field">
             <span class="field-label">Total</span>
-            <input class="inp" name="total" id="expenseTotal" type="text" value="$ 0" readonly />
+            <input class="inp" id="expenseTotal" type="text" value="$ 0" readonly />
           </label>
           <div class="modal-actions">
             <button class="btn btn-ghost" id="cancelExpenseModal" type="button">Cancelar</button>
