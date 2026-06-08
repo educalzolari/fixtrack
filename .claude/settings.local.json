@@ -4,7 +4,11 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "PowerShell(& \"C:\\\\Users\\\\eduar\\\\Documents\\\\Codex\\\\2026-04-29\\\\quiero-hacer-un-sitio-desde-0\\\\replace_icons.ps1\")",
+      "PowerShell(powershell.exe -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\eduar\\\\Documents\\\\Codex\\\\2026-04-29\\\\quiero-hacer-un-sitio-desde-0\\\\replace_icons.ps1\")",
+      "Skill(anthropic-skills:consolidate-memory)",
+      "Skill(anthropic-skills:consolidate-memory:*)"
     ]
   }
 }
