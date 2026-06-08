@@ -231,46 +231,40 @@ function renderStats() {
   monthDelta.textContent = `${delta >= 0 ? "+" : ""}${delta}%`;
   monthDelta.className = delta >= 0 ? "delta up" : "delta down";
 
-  // Barra segmentada — Reparaciones del mes por estado
-  const repairsBar = document.getElementById("repairsBar");
-  const repairsLegend = document.getElementById("repairsLegend");
-  if (repairsBar && thisMonth.length) {
-    const segs = [
-      { label: "En espera", key: "En espera",  color: "var(--st-espera)" },
-      { label: "Activo",    key: "Activo",      color: "var(--st-activo)" },
-      { label: "Finalizado",key: "Finalizado",  color: "var(--st-finalizado)" },
-      { label: "Cancelado", key: "Cancelado",   color: "var(--text-3)" },
-    ].map(s => ({ ...s, count: thisMonth.filter(r => r.estado === s.key).length }))
-     .filter(s => s.count > 0);
-    const total = segs.reduce((a, s) => a + s.count, 0);
-    repairsBar.innerHTML = segs.map(s =>
-      `<div class="kpi-seg" style="width:${(s.count/total*100).toFixed(1)}%;background:${s.color}" title="${s.label}: ${s.count}"></div>`
-    ).join("");
-    if (repairsLegend) repairsLegend.innerHTML = segs.map(s =>
-      `<span class="kpi-seg-dot" style="background:${s.color}"></span><span>${s.label} <b>${s.count}</b></span>`
-    ).join("");
+  // Sparkline bars — últimos 6 meses
+  function last6MonthCounts(filterFn) {
+    const result = [];
+    const n = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(n.getFullYear(), n.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+      result.push(filterFn(key));
+    }
+    return result;
   }
 
-  // Barras ingresos / egresos — desde movimientos del mes
-  const salesBars = document.getElementById("salesBars");
-  if (salesBars) {
-    const ym = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
-    const movMes = movimientos.filter(m => m.fecha?.startsWith(ym));
-    const ingresos = movMes.filter(m => m.tipo === "ingreso").reduce((s, m) => s + m.monto, 0);
-    const egresos  = movMes.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
-    const maxVal   = Math.max(ingresos, egresos, 1);
-    salesBars.innerHTML = `
-      <div class="kpi-flow-row">
-        <span class="kpi-flow-lbl">Ingresos</span>
-        <div class="kpi-flow-track"><div class="kpi-flow-fill kpi-flow-in" style="width:${(ingresos/maxVal*100).toFixed(1)}%"></div></div>
-        <span class="kpi-flow-val">${formatMoney(ingresos)}</span>
-      </div>
-      <div class="kpi-flow-row">
-        <span class="kpi-flow-lbl">Egresos</span>
-        <div class="kpi-flow-track"><div class="kpi-flow-fill kpi-flow-out" style="width:${(egresos/maxVal*100).toFixed(1)}%"></div></div>
-        <span class="kpi-flow-val">${formatMoney(egresos)}</span>
-      </div>`;
+  function renderSpark(id, values) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const max = Math.max(...values, 1);
+    const last = values.length - 1;
+    el.innerHTML = values.map((v, i) => {
+      const h = v === 0 ? 3 : Math.max(8, Math.round(v / max * 26));
+      return `<i class="${i === last ? "hot" : ""}" style="height:${h}px"></i>`;
+    }).join("");
   }
+
+  // Card 3: reparaciones finalizadas por mes (últimos 6 meses)
+  renderSpark("sparkMonth", last6MonthCounts(ym =>
+    repairs.filter(r => (r.fechaIngreso||"").startsWith(ym) && (r.estado === "Finalizado" || r.estado === "Cancelado")).length
+  ));
+
+  // Card 4: ventas por mes — misma fuente que salesTotal (reparaciones entregadas, costoFinal)
+  renderSpark("sparkSales", last6MonthCounts(ym =>
+    repairs
+      .filter(r => r.estado === "Entregado" && (r.fechaEntregaReal||"").startsWith(ym))
+      .reduce((s, r) => s + (r.cierre?.costoFinal || Number(r.costoAproximado || 0)), 0)
+  ));
 }
 
 function renderDashboardTable() {
@@ -1196,7 +1190,7 @@ function sendWhatsAppFinished(repair) {
     ...(anticipo > 0 ? [`Anticipo: ${formatMoney(anticipo)}`, `Saldo a pagar: ${formatMoney(saldo)}`] : []),
   ];
   const lines = [
-    `*1Fix!*`,
+    `*1Fixtrack!*`,
     ``,
     `Hola ${repair.cliente}`,
     ``,
@@ -1221,7 +1215,7 @@ function sendWhatsAppStatus(repair) {
   if (!phone) return;
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
   const lines = [
-    `*1Fix!*`,
+    `*1Fixtrack!*`,
     ``,
     `Hola ${repair.cliente}`,
     ``,
@@ -1245,7 +1239,7 @@ function sendWhatsAppPattern(repair) {
   if (!phone) return;
   const patronUrl = `${window.location.origin}/patron.html?id=${repair.id}`;
   const lines = [
-    `*1Fix!*`,
+    `*1Fixtrack!*`,
     ``,
     `Hola ${repair.cliente}`,
     ``,
@@ -1265,11 +1259,11 @@ function sendWhatsAppOrder(repair) {
   if (!phone) return;
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
   const lines = [
-    `*1Fix!*`,
+    `*1Fixtrack!*`,
     ``,
     `Hola ${repair.cliente}`,
     ``,
-    `Tu equipo fue recibido en 1Fix!.`,
+    `Tu equipo fue recibido en 1Fixtrack!.`,
     ``,
     `Orden: #${repair.id}`,
     `Equipo: ${repair.marca} ${repair.modelo}`,
@@ -1315,8 +1309,9 @@ if (form) {
     const submitBtn = form.querySelector('[type="submit"]');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Guardando..."; }
 
-    const repair = createRepair(new FormData(form));
-    await dbInsert(repair);
+    let repair = createRepair(new FormData(form));
+    const saved = await dbInsert(repair);
+    if (saved) repair = saved;
 
     const files = fotosManager ? fotosManager.getFiles() : [];
     if (files.length) {

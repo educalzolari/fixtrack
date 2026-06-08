@@ -127,8 +127,9 @@ async function dbLoad() {
 }
 
 async function dbInsert(repair) {
-  const { error } = await _db.from("reparaciones").insert(repairToRow(repair));
-  if (error) console.error("Error insertando reparacion:", error);
+  const { data, error } = await _db.from("reparaciones").insert(repairToRow(repair)).select().single();
+  if (error) { console.error("Error insertando reparacion:", error); return null; }
+  return rowToRepair(data);
 }
 
 async function dbUpsert(repair) {

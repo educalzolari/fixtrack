@@ -1,4 +1,4 @@
-const CACHE = '1fixtrack-v1';
+const CACHE = '1Fixtrack-v1';
 
 self.addEventListener('install', e => {
   self.skipWaiting();

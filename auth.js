@@ -1,5 +1,5 @@
 const AUTH_KEY = "fixtrack_auth";
-const VALID_USER = "1Fix.admin";
+const VALID_USER = "1Fixtrack.admin";
 const VALID_PASS = "Clara.Vera.26";
 
 function isLoggedIn() {

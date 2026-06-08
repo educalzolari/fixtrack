@@ -1,4 +1,4 @@
-# 1Fix! — Contexto del proyecto
+# 1Fixtrack! — Contexto del proyecto
 
 App web para gestión de reparaciones de un taller de celulares/dispositivos.
 
@@ -17,7 +17,7 @@ App web para gestión de reparaciones de un taller de celulares/dispositivos.
 
 ## Autenticación
 - Archivo: `auth.js` — se carga en el `<head>` de todos los HTML.
-- Login en `login.html`. Credenciales hardcodeadas: usuario `1Fix.admin`, contraseña `Clara.Vera.26`.
+- Login en `login.html`. Credenciales hardcodeadas: usuario `1Fixtrack.admin`, contraseña `Clara.Vera.26`.
 - Sesión persistida en `localStorage` clave `fixtrack_auth`. Botón "Salir" llama a `logout()`.
 - Cualquier página sin sesión redirige a `login.html` automáticamente.
 

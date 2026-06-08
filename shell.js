@@ -1,8 +1,8 @@
-/* ── 1Fix Shell — tema, drawer, reloj, toasts ───────────────────────────
+/* ── 1Fixtrack Shell — tema, drawer, reloj, toasts ───────────────────────────
    Cargá este archivo ANTES de app.js en cada página (excepto login/orden/patron).
    ─────────────────────────────────────────────────────────────────────────── */
 
-const THEME_KEY = '1fix:theme:v1';
+const THEME_KEY = '1Fixtrack:theme:v1';
 
 const ACCENTS = {
   lima:    { accent: 'oklch(0.86 0.19 130)', ink: 'oklch(0.22 0.03 135)' },

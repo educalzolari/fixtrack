@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clientes | 1Fix!</title>
+    <title>Clientes | 1Fixtrack!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=5" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#13121f" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -19,15 +19,15 @@
     <div class="app" id="appRoot">
       <div class="scrim"></div>
 
-      <aside class="sidebar" aria-label="Menú principal">
+      <aside class="sidebar" aria-label="MenÃº principal">
         <div class="brand">
           <div class="brand-mark">1F</div>
-          <div><div class="brand-name">1Fix</div><div class="brand-sub">Workshop OS</div></div>
+          <div><div class="brand-name">1Fixtrack</div><div class="brand-sub">Workshop OS</div></div>
         </div>
         <nav class="nav">
-          <div class="nav-label">Operación</div>
+          <div class="nav-label">OperaciÃ³n</div>
           <a class="nav-item" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Inicio</a>
-          <a class="nav-item" href="nueva-reparacion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva Reparación</a>
+          <a class="nav-item" href="nueva-reparacion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva ReparaciÃ³n</a>
           <a class="nav-item" href="reparaciones.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Ver Reparaciones<span class="nav-badge" id="repairsBadge" style="display:none"></span></a>
           <a class="nav-item active" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
           <a class="nav-item" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
@@ -38,7 +38,7 @@
           </a>
           <a class="nav-item" href="inventario.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario</a>
           <a class="nav-item" href="proveedores.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Proveedores</a>
-          <a class="nav-item" href="configuracion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a>
+          <a class="nav-item" href="configuracion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>ConfiguraciÃ³n</a>
         </nav>
         <div class="side-foot">
           <a class="nav-item" href="ayuda.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Centro de Ayuda</a>
@@ -48,10 +48,10 @@
 
       <div class="main">
         <header class="topbar">
-          <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú">
+          <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menÃº">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <span class="crumb">1Fix / <b>Clientes</b></span>
+          <span class="crumb">1Fixtrack / <b>Clientes</b></span>
           <div class="topbar-spacer"></div>
           <div class="clock"><span class="live-dot"></span><span id="topbarClock"></span></div>
           <button class="theme-btn" id="themeToggleBtn" title="Cambiar tema"></button>
@@ -59,14 +59,14 @@
 
         <div class="page">
           <div class="page-head">
-            <div class="page-kicker">Operación / Clientes</div>
+            <div class="page-kicker">OperaciÃ³n / Clientes</div>
             <h1 class="page-title">Clientes</h1>
           </div>
 
           <div class="toolbar" style="margin-bottom:22px">
             <div class="search-wrap">
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input class="inp" id="clienteSearchInput" type="search" placeholder="Buscar cliente…" />
+              <input class="inp" id="clienteSearchInput" type="search" placeholder="Buscar clienteâ€¦" />
             </div>
             <a class="btn btn-accent" href="nueva-reparacion.html">
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -79,7 +79,7 @@
               <div class="empty-ico">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </div>
-              <h3>Cargando clientes…</h3>
+              <h3>Cargando clientesâ€¦</h3>
             </div>
           </div>
         </div>
@@ -103,7 +103,7 @@
         const filtered = q ? clientes.filter(c => (c.nombre + ' ' + (c.telefono || '')).toLowerCase().includes(q)) : clientes;
 
         if (!filtered.length) {
-          grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ico"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h3>${q ? 'Sin resultados' : 'No hay clientes registrados'}</h3><p>${q ? 'Probá con otro nombre o teléfono.' : 'Los clientes aparecen acá cuando creás una reparación.'}</p></div>`;
+          grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ico"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h3>${q ? 'Sin resultados' : 'No hay clientes registrados'}</h3><p>${q ? 'ProbÃ¡ con otro nombre o telÃ©fono.' : 'Los clientes aparecen acÃ¡ cuando creÃ¡s una reparaciÃ³n.'}</p></div>`;
           return;
         }
 
@@ -113,7 +113,7 @@
             <div class="avatar">${_initials(c.nombre)}</div>
             <div class="client-info">
               <div class="client-name">${escapeHtml(c.nombre)}</div>
-              <div class="client-meta">${c.telefono ? escapeHtml(c.telefono) : 'Sin teléfono'}</div>
+              <div class="client-meta">${c.telefono ? escapeHtml(c.telefono) : 'Sin telÃ©fono'}</div>
             </div>
             <div class="client-stat">
               <b class="num">${count}</b>
