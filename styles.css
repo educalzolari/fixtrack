@@ -515,7 +515,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 /* ── Reportes ──────────────────────────────────────────────────────────── */
 .report-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}
 .report-selectors{display:flex;gap:12px}
-.report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-bottom:40px}
+.report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row dense;gap:20px;margin-bottom:40px}
 .rc-col2{grid-column:span 2}.rc-row2{grid-row:span 2}
 .report-card{background:var(--bg-1);border:1px solid var(--line);border-radius:calc(var(--radius)+3px);padding:20px;box-shadow:var(--shadow-sm)}
 .report-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}

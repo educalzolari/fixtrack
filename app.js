@@ -141,8 +141,24 @@ function escapeHtml(value) {
 
 function updateDate() {
   if (currentDate) {
-    currentDate.textContent = new Intl.DateTimeFormat("es-AR").format(new Date());
+    const now = new Date();
+    const fecha = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long" }).format(now);
+    currentDate.textContent = fecha.charAt(0).toUpperCase() + fecha.slice(1);
   }
+}
+
+function updateDashboardStatus() {
+  const el = $("#dashboardStatus");
+  if (!el) return;
+  const activos    = repairs.filter(r => r.estado === "Activo").length;
+  const pendientes = repairs.filter(r => r.estado === "En espera").length;
+  const listos     = repairs.filter(r => r.estado === "Finalizado").length;
+
+  let msg = `Este es el estado de tu taller hoy. Tenés <strong>${activos}</strong> trabajo${activos !== 1 ? "s" : ""} activo${activos !== 1 ? "s" : ""} y <strong>${pendientes}</strong> pendiente${pendientes !== 1 ? "s" : ""}.`;
+  if (listos > 0) {
+    msg += ` Además tenés <strong>${listos}</strong> trabajo${listos !== 1 ? "s" : ""} listo${listos !== 1 ? "s" : ""} para entregar.`;
+  }
+  el.innerHTML = msg;
 }
 
 function getStatusClass(status) {
@@ -375,6 +391,7 @@ function renderAll() {
   renderDashboardTable();
   renderTable();
   renderLastTicket();
+  updateDashboardStatus();
 }
 
 function createRepair(formData) {
@@ -1604,7 +1621,7 @@ let fotosManager = null;
 
 async function initApp() {
   updateDate();
-  repairs = await dbLoad();
+  [repairs, inventario] = await Promise.all([dbLoad(), dbLoadInventario()]);
   window.repairs = repairs;
   const openCount = repairs.filter(r => r.estado === "En espera" || r.estado === "Activo").length;
   if (window.shellSetRepairCount) window.shellSetRepairCount(openCount);
@@ -1695,11 +1712,12 @@ function renderReportsDashboard() {
   const gastos = inMonth.reduce((s, r) => s + expensesTotal(r.gastos || []), 0);
   const ganancia = ingresos - gastos;
   const ticketPromedio = cobradosEnMes.length ? Math.round(ingresos / cobradosEnMes.length) : 0;
+  const gastoPromedio   = cobradosEnMes.length ? Math.round(gastos   / cobradosEnMes.length) : 0;
+  const gananciaPromedio = ticketPromedio - gastoPromedio;
 
   const clientesNuevos = new Set(inMonth.map((r) => r.cliente.toLowerCase().trim())).size;
   const prevClientesNuevos = new Set(inPrevMonth.map((r) => r.cliente.toLowerCase().trim())).size;
 
-  const porEntregar = repairs.filter((r) => r.estado === "Finalizado").length;
 
   function fmtDelta(curr, prev) {
     if (!prev && !curr) return null;
@@ -1732,6 +1750,8 @@ function renderReportsDashboard() {
 
   // Ticket promedio
   setValue("rcTicketValue", formatMoney(ticketPromedio));
+  setValue("rcTicketGasto", formatMoney(gastoPromedio));
+  setValue("rcTicketGanancia", formatMoney(gananciaPromedio));
   setBadge("rcTicketBadge", `Cobrados: ${cobradosEnMes.length}`, "badge-blue");
 
   // Clientes nuevos
@@ -1747,13 +1767,21 @@ function renderReportsDashboard() {
   setValue("rcGananciaValue", formatMoney(ganancia));
   setBadge("rcGananciaBadge", "Gan = Ing-Gas", "badge-blue");
 
-  // Inventario (placeholder)
-  setValue("rcInventarioValue", formatMoney(0));
-  setBadge("rcInventarioBadge", "Articulos: 0", "badge-gray");
+  // Inventario
+  const invValorCosto  = inventario.reduce((s, i) => s + i.stock * i.precioCosto,  0);
+  const invValorVenta  = inventario.reduce((s, i) => s + i.stock * i.precioVenta,  0);
+  const invArticulos   = inventario.length;
+  setValue("rcInventarioValue", formatMoney(invValorCosto));
+  setValue("rcInventarioVenta", formatMoney(invValorVenta));
+  setBadge("rcInventarioBadge", `${invArticulos} artículo${invArticulos !== 1 ? "s" : ""}`, "badge-gray");
 
   // Por entregar (Finalizado pero aún no retirado)
+  const porEntregarRepairs = repairs.filter((r) => r.estado === "Finalizado");
+  const porEntregarMonto = porEntregarRepairs.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  const porEntregar = porEntregarRepairs.length;
   setValue("rcEntregarValue", porEntregar);
-  setBadge("rcEntregarBadge", porEntregar ? `Listos, sin retirar` : "Ninguno pendiente", porEntregar ? "badge-blue" : "badge-green");
+  setValue("rcEntregarMonto", formatMoney(porEntregarMonto));
+  setBadge("rcEntregarBadge", porEntregar ? `${porEntregar} listo${porEntregar !== 1 ? "s" : ""}` : "Ninguno pendiente", porEntregar ? "badge-blue" : "badge-green");
 
   renderWeeklyChart();
   renderTop5Table(inMonth);
@@ -2062,7 +2090,6 @@ function setupInventario() {
 
 async function initInventario() {
   if (!document.getElementById("invTableBody")) return;
-  inventario = await dbLoadInventario();
   renderInvTable();
   setupInventario();
 }
