@@ -121,7 +121,7 @@ button,input,select,textarea{font:inherit}
 .scrim{display:none}
 
 /* ── Main / topbar ─────────────────────────────────────────────────────── */
-.main{position:relative;z-index:1;height:100%;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;min-width:0}
+.main{position:relative;z-index:1;height:100%;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
 .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;
   padding:14px 30px;background:color-mix(in oklch,var(--bg) 82%,transparent);
   backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-shrink:0;
@@ -622,7 +622,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
   .scrim{display:block;position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .26s}
   .app.drawer-open .scrim{opacity:1;pointer-events:auto}
   .menu-btn{display:inline-flex}
-  .page{padding:16px}
+  .page{padding:16px;overflow-x:hidden}
   .topbar{padding:12px 16px}
   .page-title{font-size:27px}
   .fields{grid-template-columns:1fr}
@@ -645,11 +645,15 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
   .theme-grid{grid-template-columns:repeat(2,1fr)}
   .tbl thead{display:none}
   .tbl,.tbl tbody{display:block;width:100%}
-  .tbl tbody tr.row{display:flex;align-items:center;position:relative;padding:0}
+  .tbl tbody tr.row{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;position:relative;padding:0}
   .tbl tbody tr.row::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--line);pointer-events:none}
   .tbl tbody tr.row td{display:none;border:none}
-  .tbl tbody tr.row td:nth-child(2){display:block;flex:1;padding:12px 16px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  .tbl tbody tr.row td.row-actions{display:table-cell;flex-shrink:0;padding:12px 12px 12px 0;width:auto}
+  .tbl tbody tr.row td:nth-child(2){display:block;grid-column:1;grid-row:1;padding:12px 16px 3px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .tbl tbody tr.row td:nth-child(3){display:block;grid-column:1;grid-row:2;padding:0 16px 12px;min-width:0;overflow:hidden}
+  .tbl tbody tr.row td:nth-child(3) .cell-stack{display:block}
+  .tbl tbody tr.row td:nth-child(3) .cell-stack strong{font-size:12px;font-weight:500;color:var(--text-2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tbl tbody tr.row td:nth-child(3) .cell-stack span{display:none}
+  .tbl tbody tr.row td.row-actions{display:flex;grid-column:2;grid-row:1/3;align-items:center;padding:12px 12px 12px 0;width:auto}
   .tbl .grp{display:block}
   .tbl .grp td{display:block;padding:8px 16px}
   .report-grid{grid-template-columns:1fr}
