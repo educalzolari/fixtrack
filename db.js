@@ -139,6 +139,16 @@ async function dbUpsert(repair) {
   if (error) console.error("Error actualizando reparacion:", error);
 }
 
+async function dbUpsertAndReturn(repair) {
+  const { data, error } = await _db
+    .from("reparaciones")
+    .upsert(repairToRow(repair), { onConflict: "id" })
+    .select()
+    .single();
+  if (error) { console.error("Error actualizando reparacion:", error); return null; }
+  return rowToRepair(data);
+}
+
 async function dbDelete(id) {
   const { error } = await _db.from("reparaciones").delete().eq("id", id);
   if (error) console.error("Error eliminando reparacion:", error);

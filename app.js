@@ -1306,10 +1306,15 @@ if (form) {
       }
     }
 
+    // Preguntar WhatsApp ANTES de los awaits — los navegadores bloquean window.open() después de async
+    let repair = createRepair(new FormData(form));
+    const doWhatsApp = repair.telefono
+      ? confirm(`¿Enviar WhatsApp a ${repair.cliente} con los datos de la orden?`)
+      : false;
+
     const submitBtn = form.querySelector('[type="submit"]');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Guardando..."; }
 
-    let repair = createRepair(new FormData(form));
     const saved = await dbInsert(repair);
     if (saved) repair = saved;
 
@@ -1319,7 +1324,8 @@ if (form) {
       const urls = await dbUploadFotos(repair.id, files);
       if (urls.length) {
         repair.fotos = { recepcion: urls, reparacion: [], entrega: [] };
-        await dbUpsert(repair);
+        const fotosSaved = await dbUpsertAndReturn(repair);
+        if (fotosSaved) repair = fotosSaved;
       }
     }
 
@@ -1327,9 +1333,7 @@ if (form) {
     form.reset();
     if (sel) { sel.value = ""; $("#nuevoClienteFields").style.display = "none"; }
     renderAll();
-    if (repair.telefono && confirm(`¿Enviar WhatsApp a ${repair.cliente} con los datos de la orden?`)) {
-      sendWhatsAppOrder(repair);
-    }
+    if (doWhatsApp) sendWhatsAppOrder(repair);
     window.location.href = "reparaciones.html";
   });
 }
