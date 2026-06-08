@@ -638,13 +638,16 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
   .report-header{display:grid}
   .edit-action-bar{flex-direction:column;align-items:stretch}
   .edit-action-left,.edit-action-right{justify-content:stretch}
-  .finance-summary,.expense-form,.finish-form{grid-template-columns:1fr}
+  .finance-summary,.expense-form,.finish-form{grid-template-columns:minmax(0,1fr)}
   .finish-panel{display:grid}
-  .nuevo-cliente-grid{grid-template-columns:1fr}
-  .fotos-edit-grid{grid-template-columns:1fr}
+  .nuevo-cliente-grid{grid-template-columns:minmax(0,1fr)}
+  .fotos-edit-grid{grid-template-columns:minmax(0,1fr)}
   .filter-bar{flex-direction:column}
   .filter-bar .inp,.filter-bar .sel{max-width:100%!important;width:100%}
-  .field-grid{grid-template-columns:1fr}
+  .field-grid{grid-template-columns:minmax(0,1fr)}
+  .field-grid .field{min-width:0}
+  .expenses-section{padding:14px;overflow:hidden}
+  .edit-action-left,.edit-action-right{flex-wrap:wrap}
   .expense-type-toggle{flex-direction:row}
 }
 @media (max-width:768px){
