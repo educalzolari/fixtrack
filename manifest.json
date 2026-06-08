@@ -1,0 +1,24 @@
+{
+  "name": "1Fixtrack!",
+  "short_name": "1Fixtrack",
+  "description": "Gestión de reparaciones para tu taller",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#13121f",
+  "theme_color": "#13121f",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
