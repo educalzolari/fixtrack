@@ -124,7 +124,8 @@ button,input,select,textarea{font:inherit}
 .main{position:relative;z-index:1;height:100%;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;min-width:0}
 .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;
   padding:14px 30px;background:color-mix(in oklch,var(--bg) 82%,transparent);
-  backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-shrink:0}
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line);flex-shrink:0;
+  width:100%;box-sizing:border-box}
 .topbar .crumb{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--text-3)}
 .topbar .crumb b{color:var(--text-2);font-weight:500}
 .topbar-spacer{flex:1}
@@ -233,7 +234,7 @@ button,input,select,textarea{font:inherit}
 .sc-cancelado{--sc:oklch(0.65 0.2 18)}
 
 /* ── Table ─────────────────────────────────────────────────────────────── */
-.tbl-wrap{background:var(--bg-1);border:1px solid var(--line);border-radius:calc(var(--radius) + 3px);overflow:hidden}
+.tbl-wrap{background:var(--bg-1);border:1px solid var(--line);border-radius:calc(var(--radius) + 3px);overflow-x:auto;overflow-y:hidden}
 .tbl{width:100%;border-collapse:collapse}
 .tbl thead th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--text-3);text-align:left;font-weight:500;padding:13px 18px;border-bottom:1px solid var(--line);
