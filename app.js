@@ -230,6 +230,47 @@ function renderStats() {
       : 0;
   monthDelta.textContent = `${delta >= 0 ? "+" : ""}${delta}%`;
   monthDelta.className = delta >= 0 ? "delta up" : "delta down";
+
+  // Barra segmentada — Reparaciones del mes por estado
+  const repairsBar = document.getElementById("repairsBar");
+  const repairsLegend = document.getElementById("repairsLegend");
+  if (repairsBar && thisMonth.length) {
+    const segs = [
+      { label: "En espera", key: "En espera",  color: "var(--st-espera)" },
+      { label: "Activo",    key: "Activo",      color: "var(--st-activo)" },
+      { label: "Finalizado",key: "Finalizado",  color: "var(--st-finalizado)" },
+      { label: "Cancelado", key: "Cancelado",   color: "var(--text-3)" },
+    ].map(s => ({ ...s, count: thisMonth.filter(r => r.estado === s.key).length }))
+     .filter(s => s.count > 0);
+    const total = segs.reduce((a, s) => a + s.count, 0);
+    repairsBar.innerHTML = segs.map(s =>
+      `<div class="kpi-seg" style="width:${(s.count/total*100).toFixed(1)}%;background:${s.color}" title="${s.label}: ${s.count}"></div>`
+    ).join("");
+    if (repairsLegend) repairsLegend.innerHTML = segs.map(s =>
+      `<span class="kpi-seg-dot" style="background:${s.color}"></span><span>${s.label} <b>${s.count}</b></span>`
+    ).join("");
+  }
+
+  // Barras ingresos / egresos — desde movimientos del mes
+  const salesBars = document.getElementById("salesBars");
+  if (salesBars) {
+    const ym = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
+    const movMes = movimientos.filter(m => m.fecha?.startsWith(ym));
+    const ingresos = movMes.filter(m => m.tipo === "ingreso").reduce((s, m) => s + m.monto, 0);
+    const egresos  = movMes.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
+    const maxVal   = Math.max(ingresos, egresos, 1);
+    salesBars.innerHTML = `
+      <div class="kpi-flow-row">
+        <span class="kpi-flow-lbl">Ingresos</span>
+        <div class="kpi-flow-track"><div class="kpi-flow-fill kpi-flow-in" style="width:${(ingresos/maxVal*100).toFixed(1)}%"></div></div>
+        <span class="kpi-flow-val">${formatMoney(ingresos)}</span>
+      </div>
+      <div class="kpi-flow-row">
+        <span class="kpi-flow-lbl">Egresos</span>
+        <div class="kpi-flow-track"><div class="kpi-flow-fill kpi-flow-out" style="width:${(egresos/maxVal*100).toFixed(1)}%"></div></div>
+        <span class="kpi-flow-val">${formatMoney(egresos)}</span>
+      </div>`;
+  }
 }
 
 function renderDashboardTable() {

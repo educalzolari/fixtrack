@@ -197,6 +197,24 @@ button,input,select,textarea{font:inherit}
 .kpi-accent{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--clr,var(--accent))}
 .kpi.is-accent .kpi-num{color:var(--accent)}
 .kpi.is-accent .kpi-ico{background:color-mix(in oklch,var(--accent) 18%,transparent);color:var(--accent)}
+
+/* KPI segmented bar (Reparaciones) */
+.kpi-seg-bar{display:flex;height:5px;border-radius:99px;overflow:hidden;gap:2px;margin-top:16px;background:var(--bg-2)}
+.kpi-seg{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.kpi-seg-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.kpi-seg-legend span{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:4px}
+.kpi-seg-legend span b{color:var(--text-2);font-weight:600}
+.kpi-seg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* KPI flow bars (Ventas) */
+.kpi-flow-bars{display:flex;flex-direction:column;gap:7px;margin-top:16px}
+.kpi-flow-row{display:flex;align-items:center;gap:8px}
+.kpi-flow-lbl{font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:.06em;min-width:52px}
+.kpi-flow-track{flex:1;height:5px;background:color-mix(in oklch,var(--accent) 15%,transparent);border-radius:99px;overflow:hidden}
+.kpi-flow-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.kpi-flow-in{background:var(--st-finalizado)}
+.kpi-flow-out{background:oklch(0.65 0.2 18)}
+.kpi-flow-val{font-family:var(--num-font);font-size:11px;font-weight:600;color:var(--text-2);min-width:72px;text-align:right;white-space:nowrap}
 .delta{display:inline-flex;align-items:center;gap:3px;font-family:var(--num-font);font-weight:600;font-size:12px;
   padding:2px 7px;border-radius:99px}
 .delta.up{color:var(--st-finalizado);background:color-mix(in oklch,var(--st-finalizado) 15%,transparent)}
