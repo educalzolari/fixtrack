@@ -1548,6 +1548,7 @@ function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteE
 
   let pendingFiles = [];
   let savedUrls = [...existingUrls];
+  console.log(`[fotos] createFotoSection ${gridId} existingUrls:`, existingUrls);
 
   function updateMeta() {
     if (!meta) return;
@@ -1642,6 +1643,7 @@ function setupFotos() {
 function setupFotosEdit(repair) {
   if (!repair) return null;
   const fotos = repair.fotos || { recepcion: [], reparacion: [], entrega: [] };
+  console.log("[fotos] setupFotosEdit recepcion:", fotos.recepcion);
 
   async function deleteAndSave(section, url) {
     await dbDeleteFoto(url);
