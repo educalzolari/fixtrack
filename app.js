@@ -688,15 +688,31 @@ function renderSavedPatternPreview(image) {
   `;
 }
 
-function setupEditForm() {
+async function setupEditForm() {
   if (!editForm) return;
 
-  const repair = getRepairFromUrl();
-  if (!repair) {
-    editForm.innerHTML = `<div class="empty-ticket wide">No se encontro la reparacion seleccionada.</div>`;
+  const params = new URLSearchParams(window.location.search);
+  const editId = Number(params.get("id"));
+  if (!editId) {
+    editForm.innerHTML = `<div class="empty-ticket wide">No se encontró la reparación seleccionada.</div>`;
     renderEditSummary(null);
     return;
   }
+
+  // Cargar directo desde DB para tener siempre los datos más frescos (fotos, etc.)
+  const fresh = await dbLoadOne(editId);
+  let repair = fresh || getRepairFromUrl();
+  if (!repair) {
+    editForm.innerHTML = `<div class="empty-ticket wide">No se encontró la reparación seleccionada.</div>`;
+    renderEditSummary(null);
+    return;
+  }
+
+  // Sincronizar el array local con los datos frescos
+  const idx = repairs.findIndex(r => Number(r.id) === Number(repair.id));
+  if (idx !== -1) repairs[idx] = repair;
+
+  console.log("[fotos] repair.fotos al abrir edición:", JSON.stringify(repair.fotos));
 
   fillFormFromRepair(editForm, repair);
   editingExpenses = [...(repair.gastos || [])];
@@ -1322,9 +1338,11 @@ if (form) {
     if (files.length) {
       if (submitBtn) submitBtn.textContent = `Subiendo fotos (0/${files.length})...`;
       const urls = await dbUploadFotos(repair.id, files);
+      console.log("[fotos] URLs subidas:", urls);
       if (urls.length) {
         repair.fotos = { recepcion: urls, reparacion: [], entrega: [] };
         const fotosSaved = await dbUpsertAndReturn(repair);
+        console.log("[fotos] guardado en DB:", fotosSaved?.fotos);
         if (fotosSaved) repair = fotosSaved;
       }
     }
@@ -1689,7 +1707,7 @@ async function initApp() {
   const openCount = repairs.filter(r => r.estado === "En espera" || r.estado === "Activo").length;
   if (window.shellSetRepairCount) window.shellSetRepairCount(openCount);
   document.dispatchEvent(new Event("repairsLoaded"));
-  setupEditForm();
+  await setupEditForm();
   setupPatternCanvas();
   fotosManager = setupFotos();
   await setupClienteSelect();

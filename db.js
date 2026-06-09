@@ -126,6 +126,16 @@ async function dbLoad() {
   return data.map(rowToRepair);
 }
 
+async function dbLoadOne(id) {
+  const { data, error } = await _db
+    .from("reparaciones")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) { console.error("Error cargando reparacion:", error); return null; }
+  return rowToRepair(data);
+}
+
 async function dbInsert(repair) {
   const { data, error } = await _db.from("reparaciones").insert(repairToRow(repair)).select().single();
   if (error) { console.error("Error insertando reparacion:", error); return null; }
