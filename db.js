@@ -163,6 +163,19 @@ async function dbUpsertAndReturn(repair) {
   return rowToRepair(data);
 }
 
+async function dbUpdateFotos(id, fotos) {
+  console.log("[fotos] dbUpdateFotos id:", id, "fotos:", JSON.stringify(fotos));
+  const { data, error } = await _db
+    .from("reparaciones")
+    .update({ fotos })
+    .eq("id", id)
+    .select("id, fotos")
+    .single();
+  if (error) { console.error("[fotos] dbUpdateFotos error:", error); return null; }
+  console.log("[fotos] dbUpdateFotos guardado OK:", JSON.stringify(data.fotos));
+  return normalizeFotos(data.fotos);
+}
+
 async function dbDelete(id) {
   const { error } = await _db.from("reparaciones").delete().eq("id", id);
   if (error) console.error("Error eliminando reparacion:", error);

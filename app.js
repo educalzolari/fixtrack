@@ -778,6 +778,7 @@ async function setupEditForm() {
 
     updatedRepair.fotos = currentFotos;
     await dbUpsert(updatedRepair);
+    await dbUpdateFotos(updatedRepair.id, currentFotos);
     repairs = repairs.map((item) => (Number(item.id) === Number(updatedRepair.id) ? updatedRepair : item));
     window.location.href = "reparaciones.html";
   });
@@ -1340,10 +1341,9 @@ if (form) {
       const urls = await dbUploadFotos(repair.id, files);
       console.log("[fotos] URLs subidas:", urls);
       if (urls.length) {
-        repair.fotos = { recepcion: urls, reparacion: [], entrega: [] };
-        const fotosSaved = await dbUpsertAndReturn(repair);
-        console.log("[fotos] guardado en DB:", fotosSaved?.fotos);
-        if (fotosSaved) repair = fotosSaved;
+        const fotosNuevas = { recepcion: urls, reparacion: [], entrega: [] };
+        const savedFotos = await dbUpdateFotos(repair.id, fotosNuevas);
+        repair.fotos = savedFotos || fotosNuevas;
       }
     }
 
@@ -1650,7 +1650,7 @@ function setupFotosEdit(repair) {
     const current = repairs.find((r) => Number(r.id) === Number(repair.id));
     if (current) {
       current.fotos[section] = current.fotos[section].filter((u) => u !== url);
-      await dbUpsert(current);
+      await dbUpdateFotos(current.id, current.fotos);
     }
   }
 
