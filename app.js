@@ -1769,6 +1769,7 @@ async function initApp() {
   setupReportsDashboard();
   await initMovimientos();
   await migrateGastosMovimientos();
+  renderReportsDashboard();
 }
 
 async function migrateGastosMovimientos() {
