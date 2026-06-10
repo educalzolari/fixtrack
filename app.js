@@ -1772,8 +1772,19 @@ async function initApp() {
 }
 
 async function migrateGastosMovimientos() {
-  const migKey = "fixtrack_mov_v2";
+  const migKey = "fixtrack_mov_v3";
   if (localStorage.getItem(migKey)) return;
+
+  // Limpiar ingresos de reparaciones "Finalizado" que se crearon con la lógica vieja (al finalizar, no al entregar)
+  for (const repair of repairs) {
+    if (repair.estado === "Finalizado") {
+      const viejoMov = movimientos.find(m => m.reparacionId === repair.id && m.categoria === "Reparación");
+      if (viejoMov) {
+        await dbDeleteMovimiento(viejoMov.id);
+        movimientos = movimientos.filter(m => m.id !== viejoMov.id);
+      }
+    }
+  }
 
   for (const repair of repairs) {
     // Gastos individuales
