@@ -1772,16 +1772,59 @@ async function initApp() {
 }
 
 async function migrateGastosMovimientos() {
-  const migKey = "fixtrack_gastos_mov_v1";
+  const migKey = "fixtrack_mov_v2";
   if (localStorage.getItem(migKey)) return;
+
   for (const repair of repairs) {
-    if (!(repair.gastos || []).length) continue;
-    const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
-    if (yaExiste) continue;
-    const newMov = await dbSyncGastosMovimientos(repair);
-    movimientos = [...newMov, ...movimientos];
+    // Gastos individuales
+    if ((repair.gastos || []).length) {
+      const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
+      if (!yaExiste) {
+        const newMov = await dbSyncGastosMovimientos(repair);
+        movimientos = [...newMov, ...movimientos];
+      }
+    }
+
+    // Anticipo — usa fechaIngreso como fecha aproximada
+    if (repair.anticipo > 0) {
+      const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Anticipo");
+      if (!yaExiste) {
+        const saved = await dbInsertMovimiento({
+          fecha: repair.fechaIngreso || new Date().toISOString().slice(0, 10),
+          descripcion: `Anticipo — Reparación #${repair.id} · ${repair.cliente} (${repair.marca} ${repair.modelo})`.trim(),
+          categoria: "Anticipo",
+          tipo: "ingreso",
+          monto: repair.anticipo,
+          reparacionId: repair.id,
+        });
+        if (saved) movimientos = [saved, ...movimientos];
+      }
+    }
+
+    // Entrega — solo reparaciones ya entregadas
+    if (repair.estado === "Entregado" && repair.fechaEntregaReal) {
+      const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Reparación");
+      if (!yaExiste) {
+        const costoFinal = repair.cierre?.costoFinal || repair.costoAproximado || 0;
+        const anticipo = repair.anticipo || 0;
+        const saldo = costoFinal - anticipo;
+        if (saldo > 0) {
+          const antStr = anticipo > 0 ? ` (anticipo previo: $${anticipo})` : "";
+          const saved = await dbInsertMovimiento({
+            fecha: repair.fechaEntregaReal,
+            descripcion: `Entrega #${repair.id} · ${repair.cliente} — ${repair.marca} ${repair.modelo}${antStr}`.trim(),
+            categoria: "Reparación",
+            tipo: "ingreso",
+            monto: saldo,
+            reparacionId: repair.id,
+          });
+          if (saved) movimientos = [saved, ...movimientos];
+        }
+      }
+    }
   }
-  localStorage.setItem(migKey, "1");
+
+  localStorage.setItem(migKey, migKey);
 }
 
 initApp();
