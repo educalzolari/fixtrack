@@ -1906,12 +1906,16 @@ function renderReportsDashboard() {
   const prevInMonthConPrecio = inPrevMonth.filter(r => r.estado !== "Cancelado" && (r.cierre?.costoFinal || r.costoAproximado));
   const prevFacturado = prevInMonthConPrecio.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
 
+  const finalizadoIds = new Set(repairs.filter(r => r.estado === "Finalizado").map(r => Number(r.id)));
+
   const movMes = movimientos.filter(m => {
     if (!m.fecha) return false;
     const [y, mo] = m.fecha.split("-");
     return Number(mo) - 1 === month && Number(y) === year;
   });
-  const cobrado = movMes.filter(m => m.tipo === "ingreso").reduce((s, m) => s + m.monto, 0);
+  const cobrado = movMes
+    .filter(m => m.tipo === "ingreso" && !(m.categoria === "Reparación" && finalizadoIds.has(Number(m.reparacionId))))
+    .reduce((s, m) => s + m.monto, 0);
   const gastos  = movMes.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
   const ganancia = cobrado - gastos;
 
