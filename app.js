@@ -1772,19 +1772,20 @@ async function initApp() {
 }
 
 async function migrateGastosMovimientos() {
-  const migKey = "fixtrack_mov_v3";
-  if (localStorage.getItem(migKey)) return;
-
-  // Limpiar ingresos de reparaciones "Finalizado" que se crearon con la lógica vieja (al finalizar, no al entregar)
+  // Paso 1: siempre limpiar ingresos de reparaciones "Finalizado" (sin localStorage guard)
   for (const repair of repairs) {
     if (repair.estado === "Finalizado") {
-      const viejoMov = movimientos.find(m => m.reparacionId === repair.id && m.categoria === "Reparación");
-      if (viejoMov) {
-        await dbDeleteMovimiento(viejoMov.id);
-        movimientos = movimientos.filter(m => m.id !== viejoMov.id);
+      const viejosMov = movimientos.filter(m => m.reparacionId === repair.id && m.categoria === "Reparación");
+      for (const m of viejosMov) {
+        await dbDeleteMovimiento(m.id);
+        movimientos = movimientos.filter(x => x.id !== m.id);
       }
     }
   }
+
+  // Paso 2: crear movimientos faltantes (solo corre una vez)
+  const migKey = "fixtrack_mov_v4";
+  if (localStorage.getItem(migKey)) return;
 
   for (const repair of repairs) {
     // Gastos individuales
@@ -1796,7 +1797,7 @@ async function migrateGastosMovimientos() {
       }
     }
 
-    // Anticipo — usa fechaIngreso como fecha aproximada
+    // Anticipo
     if (repair.anticipo > 0) {
       const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Anticipo");
       if (!yaExiste) {
