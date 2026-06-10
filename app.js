@@ -1539,6 +1539,40 @@ if (deliverForm) {
 
 // drawer handled by shell.js via #menuBtn
 
+function openLightbox(url) {
+  let lb = document.getElementById("lightbox");
+  if (!lb) {
+    lb = document.createElement("div");
+    lb.id = "lightbox";
+    lb.className = "lightbox hidden";
+    lb.innerHTML = `
+      <div class="lightbox-bar">
+        <a class="lightbox-btn" id="lbDownload" download>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar
+        </a>
+        <button class="lightbox-btn" id="lbClose">✕ Cerrar</button>
+      </div>
+      <img id="lbImg" src="" alt="Foto" />`;
+    document.body.appendChild(lb);
+    lb.addEventListener("click", (e) => { if (e.target === lb) closeLightbox(); });
+    document.getElementById("lbClose").addEventListener("click", closeLightbox);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
+  }
+  document.getElementById("lbImg").src = url;
+  const dl = document.getElementById("lbDownload");
+  dl.href = url;
+  dl.download = url.split("/").pop();
+  lb.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  const lb = document.getElementById("lightbox");
+  if (lb) lb.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
 function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteExisting = null, inputIdExtra = null) {
   const grid  = $(`#${gridId}`);
   const input = $(`#${inputId}`);
@@ -1565,6 +1599,7 @@ function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteE
     const img = document.createElement("img");
     img.src = url;
     img.alt = "Foto guardada";
+    img.addEventListener("click", () => openLightbox(url));
 
     const btn = document.createElement("button");
     btn.type = "button";
