@@ -1915,7 +1915,10 @@ function renderReportsDashboard() {
   });
 
   console.log("[DEBUG cobrado] finalizadoIds:", [...finalizadoIds]);
-  console.log("[DEBUG cobrado] movMes ingresos:", movMes.filter(m => m.tipo === "ingreso").map(m => ({ id: m.id, cat: m.categoria, monto: m.monto, repId: m.reparacionId })));
+  movMes.filter(m => m.tipo === "ingreso").forEach((m, i) => {
+    const excluido = m.categoria === "Reparación" && finalizadoIds.has(Number(m.reparacionId));
+    console.log(`[DEBUG mov ${i+1}] cat="${m.categoria}" repId=${m.reparacionId} monto=${m.monto} excluido=${excluido}`);
+  });
 
   const cobrado = movMes
     .filter(m => m.tipo === "ingreso" && !(m.categoria === "Reparación" && finalizadoIds.has(Number(m.reparacionId))))
