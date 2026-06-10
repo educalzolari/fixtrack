@@ -1181,7 +1181,7 @@ function setupPatternCanvas() {
   if (clearPatternButton) clearPatternButton.addEventListener("click", () => {
     if (!selected.length || confirm("¿Borrar el patron dibujado?")) clearPattern();
   });
-  if (form) form.addEventListener("reset", () => window.setTimeout(clearPattern, 0));
+  if (form) form.addEventListener("reset", () => { console.log("[form] reset disparado"); window.setTimeout(clearPattern, 0); });
 
   drawPattern();
 }
