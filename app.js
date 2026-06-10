@@ -1913,6 +1913,10 @@ function renderReportsDashboard() {
     const [y, mo] = m.fecha.split("-");
     return Number(mo) - 1 === month && Number(y) === year;
   });
+
+  console.log("[DEBUG cobrado] finalizadoIds:", [...finalizadoIds]);
+  console.log("[DEBUG cobrado] movMes ingresos:", movMes.filter(m => m.tipo === "ingreso").map(m => ({ id: m.id, cat: m.categoria, monto: m.monto, repId: m.reparacionId })));
+
   const cobrado = movMes
     .filter(m => m.tipo === "ingreso" && !(m.categoria === "Reparación" && finalizadoIds.has(Number(m.reparacionId))))
     .reduce((s, m) => s + m.monto, 0);
