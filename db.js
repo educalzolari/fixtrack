@@ -348,27 +348,54 @@ async function dbDeleteMovimientosByReparacion(reparacionId) {
   if (error) console.error("Error eliminando movimientos de reparacion:", error);
 }
 
-async function dbSyncIngresoMovimiento(repair, costoFinal) {
-  await _db.from("movimientos").delete().eq("reparacion_id", repair.id).eq("categoria", "Reparación");
+async function dbSyncAnticipoMovimiento(repair) {
+  await _db.from("movimientos").delete().eq("reparacion_id", repair.id).eq("categoria", "Anticipo");
+  if (!repair.anticipo || repair.anticipo <= 0) return null;
+  const today = new Date().toISOString().slice(0, 10);
   return await dbInsertMovimiento({
-    fecha: repair.cierre?.fechaFinalizacion || new Date().toISOString().slice(0, 10),
-    descripcion: `Reparación #${repair.id} — ${repair.cliente}`,
-    categoria: "Reparación",
+    fecha: today,
+    descripcion: `Anticipo — Reparación #${repair.id} · ${repair.cliente} (${repair.marca} ${repair.modelo})`.trim(),
+    categoria: "Anticipo",
     tipo: "ingreso",
-    monto: costoFinal,
+    monto: repair.anticipo,
     reparacionId: repair.id,
   });
 }
 
-async function dbSyncGastosMovimiento(repair, total) {
+async function dbSyncGastosMovimientos(repair) {
   await _db.from("movimientos").delete().eq("reparacion_id", repair.id).eq("categoria", "Gasto de reparación");
-  if (total <= 0) return null;
+  const gastos = repair.gastos || [];
+  if (!gastos.length) return [];
+  const today = new Date().toISOString().slice(0, 10);
+  const results = [];
+  for (const g of gastos) {
+    if (!g.total || g.total <= 0) continue;
+    const saved = await dbInsertMovimiento({
+      fecha: g.fecha || repair.fechaIngreso || today,
+      descripcion: `${g.concepto} — Reparación #${repair.id} · ${repair.cliente}`,
+      categoria: "Gasto de reparación",
+      tipo: "egreso",
+      monto: g.total,
+      reparacionId: repair.id,
+    });
+    if (saved) results.push(saved);
+  }
+  return results;
+}
+
+async function dbSyncEntregaMovimiento(repair) {
+  await _db.from("movimientos").delete().eq("reparacion_id", repair.id).eq("categoria", "Reparación");
+  const costoFinal = repair.cierre?.costoFinal || repair.costoAproximado || 0;
+  const anticipo = repair.anticipo || 0;
+  const saldo = costoFinal - anticipo;
+  if (saldo <= 0) return null;
+  const antStr = anticipo > 0 ? ` (anticipo previo: $${anticipo})` : "";
   return await dbInsertMovimiento({
-    fecha: new Date().toISOString().slice(0, 10),
-    descripcion: `Gastos reparación #${repair.id} — ${repair.cliente}`,
-    categoria: "Gasto de reparación",
-    tipo: "egreso",
-    monto: total,
+    fecha: repair.fechaEntregaReal || new Date().toISOString().slice(0, 10),
+    descripcion: `Entrega #${repair.id} · ${repair.cliente} — ${repair.marca} ${repair.modelo}${antStr}`.trim(),
+    categoria: "Reparación",
+    tipo: "ingreso",
+    monto: saldo,
     reparacionId: repair.id,
   });
 }

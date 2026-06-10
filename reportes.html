@@ -70,18 +70,31 @@
             </div>
           </div>
 
-          <div class="report-grid stagger">
+          <!-- KPI Row: 5 cards -->
+          <div class="kpi-row stagger">
 
-            <!-- Fila 1: Dinero -->
             <div class="report-card">
               <div class="report-card-top">
                 <span class="rc-icon rc-green">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </span>
-                <span class="report-badge badge-gray" id="rcIngresosBadge">Sin datos</span>
+                <span class="report-badge badge-gray" id="rcFacturadoBadge">Sin datos</span>
+                <span class="rc-help" title="Total de reparaciones ingresadas este mes que tienen precio asignado, sin importar si ya fueron cobradas. Excluye canceladas.">?</span>
               </div>
-              <p class="rc-label">Ingresos Totales</p>
-              <strong class="rc-value" id="rcIngresosValue">$ 0,00</strong>
+              <p class="rc-label">Facturado</p>
+              <strong class="rc-value" id="rcFacturadoValue">$ 0,00</strong>
+            </div>
+
+            <div class="report-card">
+              <div class="report-card-top">
+                <span class="rc-icon rc-teal">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                <span class="report-badge badge-blue" id="rcCobradoBadge">0 mov.</span>
+                <span class="rc-help" title="Dinero real cobrado este mes: anticipos recibidos + saldos de entregas. Puede incluir reparaciones de meses anteriores.">?</span>
+              </div>
+              <p class="rc-label">Cobrado</p>
+              <strong class="rc-value" id="rcCobradoValue">$ 0,00</strong>
             </div>
 
             <div class="report-card">
@@ -90,33 +103,39 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
                 </span>
                 <span class="report-badge badge-gray" id="rcGastosBadge">Sin datos</span>
+                <span class="rc-help" title="Total de egresos registrados en movimientos este mes: gastos de reparación, compras, gastos operativos y retiros.">?</span>
               </div>
-              <p class="rc-label">Gastos Totales</p>
+              <p class="rc-label">Gastos</p>
               <strong class="rc-value" id="rcGastosValue">$ 0,00</strong>
             </div>
 
             <div class="report-card">
               <div class="report-card-top">
-                <span class="rc-icon rc-teal">
+                <span class="rc-icon rc-purple">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
                 </span>
-                <span class="report-badge badge-blue" id="rcGananciaBadge">Gan = Ing-Gas</span>
+                <span class="report-badge badge-blue" id="rcGananciaBadge">Positiva</span>
+                <span class="rc-help" title="Ganancia del mes = Cobrado − Gastos. Refleja el resultado real en efectivo del período.">?</span>
               </div>
-              <p class="rc-label">Ganancia Estimada</p>
+              <p class="rc-label">Ganancia del mes</p>
               <strong class="rc-value" id="rcGananciaValue">$ 0,00</strong>
             </div>
 
             <div class="report-card">
               <div class="report-card-top">
-                <span class="rc-icon rc-purple">
+                <span class="rc-icon rc-amber">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 </span>
-                <span class="report-badge badge-blue" id="rcTicketBadge">Ventas: 0</span>
+                <span class="report-badge badge-blue" id="rcTicketBadge">0 rep.</span>
+                <span class="rc-help" title="Facturado ÷ cantidad de reparaciones con precio ingresadas este mes.">?</span>
               </div>
               <p class="rc-label">Ticket Promedio</p>
               <strong class="rc-value" id="rcTicketValue">$ 0,00</strong>
-              <p style="margin-top:5px;font-size:12px;color:var(--text-3)">Gasto prom: <span id="rcTicketGasto" style="font-weight:600;color:var(--text-2)">$ 0,00</span> · Ganancia prom: <span id="rcTicketGanancia" style="font-weight:600;color:var(--text-2)">$ 0,00</span></p>
             </div>
+
+          </div>
+
+          <div class="report-grid stagger">
 
             <!-- Fila 2: Operación + Gráfico -->
             <div class="report-card">

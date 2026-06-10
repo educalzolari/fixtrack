@@ -543,6 +543,8 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .mov-monto{font-family:var(--num-font);font-weight:700;font-size:15px;text-align:right;white-space:nowrap}
 .mov-fecha{font-family:var(--font-mono);font-size:12px;color:var(--text-3);white-space:nowrap}
 .mov-auto-tag{font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.08em;background:color-mix(in oklch,var(--accent) 18%,transparent);color:var(--accent);border-radius:3px;padding:1px 5px;margin-left:7px;vertical-align:middle}
+.mov-rep-link{font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-left:8px}
+.cell-price{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--accent)}
 
 @media (max-width:900px){
   .mov-summary{grid-template-columns:minmax(0,1fr)}
@@ -552,10 +554,13 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 /* ── Reportes ──────────────────────────────────────────────────────────── */
 .report-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}
 .report-selectors{display:flex;gap:12px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;margin-bottom:20px}
 .report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row dense;gap:20px;margin-bottom:40px}
 .rc-col2{grid-column:span 2}.rc-row2{grid-row:span 2}
 .report-card{background:var(--bg-1);border:1px solid var(--line);border-radius:calc(var(--radius)+3px);padding:20px;box-shadow:var(--shadow-sm)}
-.report-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.report-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.rc-help{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);background:transparent;color:var(--text-3);font-size:11px;font-weight:700;font-family:var(--font-mono);cursor:default;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:auto;position:relative}
+.rc-help:hover{border-color:var(--accent);color:var(--accent)}
 .rc-icon{width:46px;height:46px;border-radius:calc(var(--radius)+2px);display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--bg-2)}
 .rc-label{color:var(--text-3);font-family:var(--font-mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
 .rc-value{display:block;font-family:var(--num-font);font-size:26px;font-weight:700;color:var(--text);line-height:1.2}
@@ -647,6 +652,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 /* ── Responsive ────────────────────────────────────────────────────────── */
 @media (max-width:1100px){
   .kpi-grid,.qa-grid{grid-template-columns:repeat(2,1fr)}
+  .kpi-row{grid-template-columns:repeat(3,minmax(0,1fr))}
   .report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .rc-row2{grid-row:auto}
 }
@@ -702,6 +708,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
   .tbl tbody tr.clickable-row td.row-actions{display:flex;grid-column:2;grid-row:1/3;align-items:center;padding:12px 12px 12px 0;width:auto}
   .tbl .grp{display:block}
   .tbl .grp td{display:block;padding:8px 16px}
+  .kpi-row{grid-template-columns:repeat(2,minmax(0,1fr))}
   .report-grid{grid-template-columns:1fr}
   .rc-col2,.rc-row2{grid-column:auto;grid-row:auto}
   .chart-wrap{min-height:240px}

@@ -338,6 +338,7 @@ function repairRow(repair) {
         <div class="cell-stack service-stack">
           <strong>${escapeHtml(serviceTitle(repair))}</strong>
           <span>${escapeHtml(serviceDetail(repair))}</span>
+          ${(repair.cierre?.costoFinal || repair.costoAproximado) ? `<span class="cell-price">${formatMoney(repair.cierre?.costoFinal || repair.costoAproximado)}</span>` : ""}
         </div>
       </td>
       <td class="row-actions">
@@ -779,6 +780,13 @@ async function setupEditForm() {
     updatedRepair.fotos = currentFotos;
     await dbUpsert(updatedRepair);
     await dbUpdateFotos(updatedRepair.id, currentFotos);
+
+    if (updatedRepair.estado !== "Cancelado") {
+      const antMov = await dbSyncAnticipoMovimiento(updatedRepair);
+      movimientos = movimientos.filter(m => !(m.reparacionId === updatedRepair.id && m.categoria === "Anticipo"));
+      if (antMov) movimientos = [antMov, ...movimientos];
+    }
+
     repairs = repairs.map((item) => (Number(item.id) === Number(updatedRepair.id) ? updatedRepair : item));
     window.location.href = "reparaciones.html";
   });
@@ -823,10 +831,10 @@ async function restoreStockForExpenses(expenses) {
 
 async function syncGastosMovimientoLocal(repair) {
   if (!repair?.id) return;
-  const total = editingExpenses.reduce((s, e) => s + (e.total || 0), 0);
-  const saved = await dbSyncGastosMovimiento(repair, total);
+  const repairWithExpenses = { ...repair, gastos: editingExpenses };
+  const saved = await dbSyncGastosMovimientos(repairWithExpenses);
   movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
-  if (saved) movimientos = [saved, ...movimientos];
+  movimientos = [...saved, ...movimientos];
 }
 
 function setupExpenses() {
@@ -901,6 +909,7 @@ function setupExpenses() {
 
         editingExpenses = [...editingExpenses, {
           id: Date.now(),
+          fecha: today,
           concepto: item.nombre,
           montoUnitario,
           cantidad,
@@ -919,6 +928,7 @@ function setupExpenses() {
 
         editingExpenses = [...editingExpenses, {
           id: Date.now(),
+          fecha: today,
           concepto,
           montoUnitario,
           cantidad,
@@ -1000,10 +1010,6 @@ function setupFinishFlow() {
 
       await dbUpsert(finalizedRepair);
       repairs = repairs.map((item) => (Number(item.id) === Number(finalizedRepair.id) ? finalizedRepair : item));
-
-      const ingresoMov = await dbSyncIngresoMovimiento(finalizedRepair, costoFinal);
-      movimientos = movimientos.filter(m => !(m.reparacionId === finalizedRepair.id && m.categoria === "Reparación"));
-      if (ingresoMov) movimientos = [ingresoMov, ...movimientos];
 
       closeFinishModal();
 
@@ -1333,7 +1339,13 @@ if (form) {
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Guardando..."; }
 
     const saved = await dbInsert(repair);
-    if (saved) repair = saved;
+    if (saved) {
+      repair = saved;
+      if (repair.anticipo > 0) {
+        const antMov = await dbSyncAnticipoMovimiento(repair);
+        if (antMov) movimientos = [antMov, ...movimientos];
+      }
+    }
 
     const files = fotosManager ? fotosManager.getFiles() : [];
     if (files.length) {
@@ -1532,6 +1544,11 @@ if (deliverForm) {
     repair.estado = "Entregado";
     repair.fechaEntregaReal = fechaEntregaReal;
     await dbUpsert(repair);
+
+    const entregaMov = await dbSyncEntregaMovimiento(repair);
+    movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
+    if (entregaMov) movimientos = [entregaMov, ...movimientos];
+
     closeDeliver();
     renderAll();
   });
@@ -1751,6 +1768,20 @@ async function initApp() {
   renderAll();
   setupReportsDashboard();
   await initMovimientos();
+  await migrateGastosMovimientos();
+}
+
+async function migrateGastosMovimientos() {
+  const migKey = "fixtrack_gastos_mov_v1";
+  if (localStorage.getItem(migKey)) return;
+  for (const repair of repairs) {
+    if (!(repair.gastos || []).length) continue;
+    const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
+    if (yaExiste) continue;
+    const newMov = await dbSyncGastosMovimientos(repair);
+    movimientos = [...newMov, ...movimientos];
+  }
+  localStorage.setItem(migKey, "1");
 }
 
 initApp();
@@ -1814,25 +1845,21 @@ function renderReportsDashboard() {
   const finalized = inMonth.filter((r) => r.estado === "Finalizado" || r.estado === "Entregado");
   const prevFinalized = inPrevMonth.filter((r) => r.estado === "Finalizado" || r.estado === "Entregado");
 
-  const cobradosEnMes = repairs.filter((r) => {
-    if (r.estado !== "Entregado" || !r.fechaEntregaReal) return false;
-    const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
-    return d.getMonth() === month && d.getFullYear() === year;
-  });
-  const prevCobradosEnMes = repairs.filter((r) => {
-    if (r.estado !== "Entregado" || !r.fechaEntregaReal) return false;
-    const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
-    return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
-  });
+  const inMonthConPrecio = inMonth.filter(r => r.estado !== "Cancelado" && (r.cierre?.costoFinal || r.costoAproximado));
+  const facturado = inMonthConPrecio.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  const prevInMonthConPrecio = inPrevMonth.filter(r => r.estado !== "Cancelado" && (r.cierre?.costoFinal || r.costoAproximado));
+  const prevFacturado = prevInMonthConPrecio.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
 
-  const ingresos = cobradosEnMes.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
-  const prevIngresos = prevCobradosEnMes.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  const movMes = movimientos.filter(m => {
+    if (!m.fecha) return false;
+    const [y, mo] = m.fecha.split("-");
+    return Number(mo) - 1 === month && Number(y) === year;
+  });
+  const cobrado = movMes.filter(m => m.tipo === "ingreso").reduce((s, m) => s + m.monto, 0);
+  const gastos  = movMes.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
+  const ganancia = cobrado - gastos;
 
-  const gastos = inMonth.reduce((s, r) => s + expensesTotal(r.gastos || []), 0);
-  const ganancia = ingresos - gastos;
-  const ticketPromedio = cobradosEnMes.length ? Math.round(ingresos / cobradosEnMes.length) : 0;
-  const gastoPromedio   = cobradosEnMes.length ? Math.round(gastos   / cobradosEnMes.length) : 0;
-  const gananciaPromedio = ticketPromedio - gastoPromedio;
+  const ticketPromedio = inMonthConPrecio.length ? Math.round(facturado / inMonthConPrecio.length) : 0;
 
   const clientesNuevos = new Set(inMonth.map((r) => r.cliente.toLowerCase().trim())).size;
   const prevClientesNuevos = new Set(inPrevMonth.map((r) => r.cliente.toLowerCase().trim())).size;
@@ -1857,34 +1884,36 @@ function renderReportsDashboard() {
     if (el) el.textContent = text;
   }
 
-  // Ingresos
-  setValue("rcIngresosValue", formatMoney(ingresos));
-  const ingDelta = fmtDelta(ingresos, prevIngresos);
-  setBadge("rcIngresosBadge", ingDelta ?? "Sin datos", ingDelta ? (ingresos >= prevIngresos ? "badge-green" : "badge-red") : "badge-red");
+  // Facturado
+  setValue("rcFacturadoValue", formatMoney(facturado));
+  const facDelta = fmtDelta(facturado, prevFacturado);
+  setBadge("rcFacturadoBadge", facDelta ?? "Sin datos", facDelta ? (facturado >= prevFacturado ? "badge-green" : "badge-red") : "badge-gray");
+
+  // Cobrado
+  setValue("rcCobradoValue", formatMoney(cobrado));
+  setBadge("rcCobradoBadge", `${movMes.filter(m => m.tipo === "ingreso").length} mov.`, "badge-blue");
+
+  // Gastos
+  setValue("rcGastosValue", formatMoney(gastos));
+  setBadge("rcGastosBadge", `${movMes.filter(m => m.tipo === "egreso").length} mov.`, gastos ? "badge-gray" : "badge-green");
+
+  // Ganancia
+  setValue("rcGananciaValue", formatMoney(ganancia));
+  setBadge("rcGananciaBadge", ganancia >= 0 ? "Positiva" : "Negativa", ganancia >= 0 ? "badge-green" : "badge-red");
+
+  // Ticket promedio
+  setValue("rcTicketValue", formatMoney(ticketPromedio));
+  setBadge("rcTicketBadge", `${inMonthConPrecio.length} rep.`, "badge-blue");
 
   // Reparaciones completadas
   setValue("rcReparacionesValue", finalized.length);
   const repDelta = fmtDelta(finalized.length, prevFinalized.length);
   setBadge("rcReparacionesBadge", repDelta ?? "0%", finalized.length >= prevFinalized.length ? "badge-green" : "badge-red");
 
-  // Ticket promedio
-  setValue("rcTicketValue", formatMoney(ticketPromedio));
-  setValue("rcTicketGasto", formatMoney(gastoPromedio));
-  setValue("rcTicketGanancia", formatMoney(gananciaPromedio));
-  setBadge("rcTicketBadge", `Cobrados: ${cobradosEnMes.length}`, "badge-blue");
-
   // Clientes nuevos
   setValue("rcClientesValue", clientesNuevos);
   const cliDelta = fmtDelta(clientesNuevos, prevClientesNuevos);
   setBadge("rcClientesBadge", cliDelta ?? "Sin datos", cliDelta ? (clientesNuevos >= prevClientesNuevos ? "badge-green" : "badge-red") : "badge-gray");
-
-  // Gastos
-  setValue("rcGastosValue", formatMoney(gastos));
-  setBadge("rcGastosBadge", gastos ? formatMoney(gastos) : "Sin datos", gastos ? "badge-gray" : "badge-red");
-
-  // Ganancia
-  setValue("rcGananciaValue", formatMoney(ganancia));
-  setBadge("rcGananciaBadge", "Gan = Ing-Gas", "badge-blue");
 
   // Inventario
   const invValorCosto  = inventario.reduce((s, i) => s + i.stock * i.precioCosto,  0);
@@ -2218,6 +2247,7 @@ initInventario();
 // ===== MOVIMIENTOS PAGE =====
 
 const CATEGORIA_TIPO = {
+  "Anticipo":            "ingreso",
   "Reparación":          "ingreso",
   "Venta":               "ingreso",
   "Otro ingreso":        "ingreso",
@@ -2227,7 +2257,7 @@ const CATEGORIA_TIPO = {
   "Retiro":              "egreso",
 };
 
-const CATEGORIAS_INGRESO = ["Reparación", "Venta", "Otro ingreso"];
+const CATEGORIAS_INGRESO = ["Anticipo", "Reparación", "Venta", "Otro ingreso"];
 const CATEGORIAS_EGRESO  = ["Gasto de reparación", "Compra de stock", "Gasto operativo", "Retiro"];
 
 function formatFechaCorta(fecha) {
@@ -2248,13 +2278,14 @@ function renderMovTable(filtered) {
     const signo = esIngreso ? "+" : "−";
     const colorClass = esIngreso ? "mov-pos" : "mov-neg";
     const catClass = esIngreso ? "pill done" : "pill waiting";
-    const autoTag = m.reparacionId ? `<span class="mov-auto-tag">AUTO</span>` : "";
+    const rep = m.reparacionId ? repairs.find(r => Number(r.id) === Number(m.reparacionId)) : null;
+    const repLink = rep ? `<span class="mov-rep-link">Reparación #${rep.id} · ${escapeHtml(rep.cliente)} — ${escapeHtml(rep.marca)} ${escapeHtml(rep.modelo)}</span>` : "";
     return `<tr class="clickable-row" data-mov-id="${m.id}">
       <td><span class="mov-fecha">${formatFechaCorta(m.fecha)}</span></td>
       <td>
         <div class="cell-stack">
-          <strong>${escapeHtml(m.descripcion)}${autoTag}</strong>
-          <span><span class="${catClass}">${escapeHtml(m.categoria)}</span></span>
+          <strong>${escapeHtml(m.descripcion)}</strong>
+          <span><span class="${catClass}">${escapeHtml(m.categoria)}</span>${repLink}</span>
         </div>
       </td>
       <td class="mov-monto ${colorClass}">${signo} ${formatMoney(m.monto)}</td>
