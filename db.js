@@ -1,13 +1,16 @@
 function normalizeFotos(raw) {
+  console.log("[fotos] normalizeFotos input type:", typeof raw, "value:", JSON.stringify(raw));
   if (typeof raw === "string") {
     try { raw = JSON.parse(raw); } catch { return { recepcion: [], reparacion: [], entrega: [] }; }
   }
   if (raw && !Array.isArray(raw) && typeof raw === "object") {
-    return {
+    const result = {
       recepcion:  Array.isArray(raw.recepcion)  ? raw.recepcion  : [],
       reparacion: Array.isArray(raw.reparacion) ? raw.reparacion : [],
       entrega:    Array.isArray(raw.entrega)    ? raw.entrega    : [],
     };
+    console.log("[fotos] normalizeFotos output recepcion:", result.recepcion);
+    return result;
   }
   return { recepcion: Array.isArray(raw) ? raw : [], reparacion: [], entrega: [] };
 }
@@ -133,6 +136,7 @@ async function dbLoadOne(id) {
     .eq("id", id)
     .single();
   if (error) { console.error("Error cargando reparacion:", error); return null; }
+  console.log("[fotos] dbLoadOne raw data.fotos:", JSON.stringify(data.fotos));
   return rowToRepair(data);
 }
 
