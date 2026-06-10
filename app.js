@@ -1750,6 +1750,7 @@ async function initApp() {
   await setupClienteSelect();
   renderAll();
   setupReportsDashboard();
+  await initMovimientos();
 }
 
 initApp();
@@ -2385,5 +2386,3 @@ async function initMovimientos() {
     renderMov();
   });
 }
-
-initMovimientos();
