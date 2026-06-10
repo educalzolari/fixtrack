@@ -42,7 +42,7 @@ function repairToRow(r) {
     observaciones: r.observaciones || "",
     cierre: r.cierre || null,
     telefono: r.telefono || null,
-    fotos: r.fotos || { recepcion: [], reparacion: [], entrega: [] },
+    fotos: JSON.stringify(r.fotos || { recepcion: [], reparacion: [], entrega: [] }),
     fecha_entrega_real: r.fechaEntregaReal || "",
   };
 }
@@ -165,9 +165,10 @@ async function dbUpsertAndReturn(repair) {
 
 async function dbUpdateFotos(id, fotos) {
   console.log("[fotos] dbUpdateFotos id:", id, "fotos:", JSON.stringify(fotos));
+  const fotosValue = typeof fotos === "string" ? fotos : JSON.stringify(fotos);
   const { data, error } = await _db
     .from("reparaciones")
-    .update({ fotos })
+    .update({ fotos: fotosValue })
     .eq("id", id)
     .select("id, fotos")
     .single();
