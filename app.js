@@ -569,7 +569,7 @@ function updateExpenseTotalPreview() {
   const price = expenseMode === "inv"
     ? Number($("#expInvPrice")?.value || 0)
     : Number($("#expenseUnitPrice")?.value || 0);
-  if (totalEl) totalEl.value = formatMoney(price * qty);
+  if (totalEl) totalEl.textContent = formatMoney(price * qty);
 }
 
 let expenseMode = "free"; // "free" | "inv"
@@ -589,6 +589,14 @@ function openExpenseModal() {
   if (freeFields) freeFields.style.display = "";
   if (invFields)  invFields.style.display  = "none";
 
+  // reset price inputs
+  const unitPriceEl = $("#expenseUnitPrice");
+  const invPriceEl  = $("#expInvPrice");
+  if (unitPriceEl) { unitPriceEl.style.display = ""; unitPriceEl.disabled = false; }
+  if (invPriceEl)  { invPriceEl.style.display  = "none"; invPriceEl.disabled = true; }
+  const stockNote = $("#expStockNote");
+  if (stockNote) stockNote.style.display = "none";
+
   // popular select de inventario
   const sel = $("#expInvSelect");
   if (sel) {
@@ -600,6 +608,7 @@ function openExpenseModal() {
         opt.value = i.id;
         opt.dataset.precio = i.precioCosto;
         opt.dataset.nombre = i.nombre;
+        opt.dataset.stock  = i.stock;
         opt.textContent = `${i.nombre} — stock: ${i.stock}`;
         sel.appendChild(opt);
       });
@@ -751,6 +760,32 @@ async function setupEditForm() {
 
   editForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    const clienteSel = $("#clienteSelect");
+    if (clienteSel) {
+      if (!clienteSel.value) { alert("Seleccioná un cliente o elegí '+ Nuevo cliente'."); return; }
+      if (clienteSel.value === "__nuevo__") {
+        const nombre = ($("#nuevoNombre")?.value || "").trim();
+        if (!nombre) { alert("El nombre del cliente es obligatorio."); return; }
+        const savedCliente = await dbInsertCliente({
+          nombre,
+          telefono:  ($("#nuevoTelefono")?.value  || "").trim(),
+          correo:    ($("#nuevoCorreo")?.value     || "").trim(),
+          direccion: ($("#nuevoDireccion")?.value  || "").trim(),
+        });
+        if (!savedCliente) { alert("No se pudo guardar el cliente. Revisá la conexión."); return; }
+        $("#hiddenCliente").value  = savedCliente.nombre;
+        $("#hiddenTelefono").value = savedCliente.telefono;
+        const opt = document.createElement("option");
+        opt.value = savedCliente.id;
+        opt.dataset.nombre = savedCliente.nombre;
+        opt.dataset.telefono = savedCliente.telefono;
+        opt.textContent = savedCliente.nombre;
+        clienteSel.insertBefore(opt, clienteSel.querySelector('option[value="__nuevo__"]'));
+        clienteSel.value = savedCliente.id;
+      }
+    }
+
     syncExpensesInput();
     const updatedRepair = formToRepair(new FormData(editForm), repair);
 
@@ -852,6 +887,9 @@ function setupExpenses() {
     $("#expTypeInv").classList.remove("active");
     $("#expFreeFields").style.display = "";
     $("#expInvFields").style.display  = "none";
+    const up = $("#expenseUnitPrice"); const ip = $("#expInvPrice");
+    if (up) { up.style.display = ""; up.disabled = false; }
+    if (ip) { ip.style.display = "none"; ip.disabled = true; }
     updateExpenseTotalPreview();
   });
 
@@ -861,10 +899,13 @@ function setupExpenses() {
     $("#expTypeFree").classList.remove("active");
     $("#expFreeFields").style.display = "none";
     $("#expInvFields").style.display  = "";
+    const up = $("#expenseUnitPrice"); const ip = $("#expInvPrice");
+    if (up) { up.style.display = "none"; up.disabled = true; }
+    if (ip) { ip.style.display = ""; ip.disabled = false; }
     updateExpenseTotalPreview();
   });
 
-  // al elegir ítem del inventario, precargar precio
+  // al elegir ítem del inventario, precargar precio y stock note
   $("#expInvSelect")?.addEventListener("change", () => {
     const sel = $("#expInvSelect");
     const opt = sel.selectedOptions[0];
@@ -873,6 +914,14 @@ function setupExpenses() {
       priceInput.value = opt.dataset.precio;
     } else if (priceInput) {
       priceInput.value = "";
+    }
+    const stockNote = $("#expStockNote");
+    const stockText = $("#expStockText");
+    if (stockNote && stockText && opt?.dataset.stock) {
+      stockText.textContent = `${opt.dataset.stock} unid. en stock · costo ${formatMoney(opt.dataset.precio || 0)} c/u`;
+      stockNote.style.display = "";
+    } else if (stockNote) {
+      stockNote.style.display = "none";
     }
     updateExpenseTotalPreview();
   });
@@ -1729,12 +1778,11 @@ async function setupClienteSelect() {
     sel.insertBefore(opt, nuevoOpt);
   });
 
-  sel.addEventListener("change", () => {
-    const val = sel.value;
-    const panel = $("#nuevoClienteFields");
-    const hiddenNombre = $("#hiddenCliente");
-    const hiddenTel = $("#hiddenTelefono");
+  const panel = $("#nuevoClienteFields");
+  const hiddenNombre = $("#hiddenCliente");
+  const hiddenTel = $("#hiddenTelefono");
 
+  function applySelection(val) {
     if (val === "__nuevo__") {
       panel.style.display = "";
       hiddenNombre.value = "";
@@ -1749,7 +1797,41 @@ async function setupClienteSelect() {
       hiddenNombre.value = "";
       hiddenTel.value = "";
     }
-  });
+  }
+
+  sel.addEventListener("change", () => applySelection(sel.value));
+
+  // Sincronizar hiddenCliente/Telefono mientras el usuario tipea en el panel de nuevo cliente
+  const inputNuevoNombre = $("#nuevoNombre");
+  const inputNuevoTel    = $("#nuevoTelefono");
+  if (inputNuevoNombre && hiddenNombre) {
+    inputNuevoNombre.addEventListener("input", () => {
+      if (sel.value === "__nuevo__") hiddenNombre.value = inputNuevoNombre.value;
+    });
+  }
+  if (inputNuevoTel && hiddenTel) {
+    inputNuevoTel.addEventListener("input", () => {
+      if (sel.value === "__nuevo__") hiddenTel.value = inputNuevoTel.value;
+    });
+  }
+
+  // En la página de edición: pre-seleccionar el cliente actual
+  if (hiddenNombre && hiddenNombre.value) {
+    const nombreActual = hiddenNombre.value.toLowerCase().trim();
+    const match = [...sel.options].find(o => o.dataset.nombre && o.dataset.nombre.toLowerCase().trim() === nombreActual);
+    if (match) {
+      sel.value = match.value;
+      applySelection(match.value);
+    } else {
+      // El nombre no está en la lista: mostrar panel de nuevo cliente con el nombre ya cargado
+      sel.value = "__nuevo__";
+      const inputNombre = $("#nuevoNombre");
+      const inputTel = $("#nuevoTelefono");
+      if (inputNombre) inputNombre.value = hiddenNombre.value;
+      if (inputTel && hiddenTel) inputTel.value = hiddenTel.value;
+      panel.style.display = "";
+    }
+  }
 }
 
 let fotosManager = null;

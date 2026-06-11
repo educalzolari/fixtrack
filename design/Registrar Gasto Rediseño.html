@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registrar gasto — Rediseño</title>
+<style>
+  :root{
+    --bg:#0e1118;
+    --modal:#171b26;
+    --inset:#10141d;
+    --line:#262c3b;
+    --line-2:#343b4e;
+    --text:#eef0f6;
+    --text-2:#9aa1b4;
+    --text-3:#6b7283;
+    --accent:#c9b6f8;
+    --accent-ink:#161025;
+    --ok:#7fd4a3;
+    --radius:10px;
+    --font:'DM Sans',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:var(--bg)}
+  body{font-family:var(--font);color:var(--text);padding:48px 40px 72px;
+    -webkit-font-smoothing:antialiased}
+
+  .page-head{max-width:1180px;margin:0 auto 36px}
+  .page-head .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .page-head h1{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .page-head p{color:var(--text-2);font-size:14px;margin-top:6px;max-width:640px;line-height:1.55}
+
+  .stage{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  .state-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .state-label::before{content:"";width:8px;height:8px;border-radius:99px;background:var(--accent)}
+
+  /* ── Modal ─────────────────────────────────────────────── */
+  .modal{background:var(--modal);border:1px solid var(--line);border-radius:16px;
+    width:100%;max-width:520px;padding:28px;box-shadow:0 24px 60px -18px rgba(0,0,0,.6)}
+  .m-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}
+  .m-head h2{font-size:21px;font-weight:700;letter-spacing:-.015em}
+  .m-head p{font-size:13.5px;color:var(--text-2);margin-top:4px}
+  .m-close{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;
+    color:var(--text-2);font-size:16px;cursor:pointer;flex-shrink:0;display:grid;place-items:center}
+  .m-close:hover{border-color:var(--line-2);color:var(--text)}
+
+  /* field group: label glued to its control, generous gap BETWEEN groups */
+  .field{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+  .field label{font-size:12.5px;font-weight:600;color:var(--text-2);letter-spacing:.01em}
+  .field .hint{font-weight:400;color:var(--text-3)}
+  .inp{height:46px;background:var(--inset);border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--text);font:inherit;font-size:14.5px;padding:0 14px;width:100%;outline:none}
+  .inp::placeholder{color:var(--text-3)}
+  .inp:focus{border-color:var(--accent)}
+  select.inp{appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa1b4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer}
+
+  /* segmented control = its own labelled field, full width */
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--inset);
+    border:1px solid var(--line);border-radius:calc(var(--radius) + 2px);padding:4px}
+  .seg button{height:40px;border:none;border-radius:calc(var(--radius) - 2px);background:transparent;
+    color:var(--text-2);font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px}
+  .seg button.on{background:var(--accent);color:var(--accent-ink)}
+  .seg button:not(.on):hover{color:var(--text)}
+
+  /* qty × price row */
+  .row-2{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-bottom:18px}
+  .row-2 .field{margin-bottom:0}
+  .times{height:46px;display:grid;place-items:center;color:var(--text-3);font-size:15px;font-weight:600;padding:0 2px}
+
+  .prefix-wrap{position:relative}
+  .prefix-wrap .inp{padding-left:30px}
+  .prefix-wrap::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    color:var(--text-3);font-size:14.5px;pointer-events:none}
+
+  /* total = computed summary, not an input */
+  .total{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--inset);border:1px dashed var(--line-2);border-radius:var(--radius);
+    padding:14px 16px;margin-bottom:24px}
+  .total .t-lbl{font-size:13px;color:var(--text-2);font-weight:600}
+  .total .t-sub{font-size:11.5px;color:var(--text-3);margin-top:2px}
+  .total .t-num{font-size:22px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+
+  /* inventory variant extras */
+  .stock-note{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ok);margin-top:-10px;margin-bottom:18px}
+  .stock-note .dot{width:7px;height:7px;border-radius:99px;background:var(--ok)}
+
+  .m-foot{display:flex;justify-content:flex-end;gap:10px}
+  .btn{height:46px;padding:0 22px;border-radius:var(--radius);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--line-2)}
+  .btn-accent{background:var(--accent);border:none;color:var(--accent-ink)}
+  .btn-accent:hover{filter:brightness(1.06)}
+
+  /* ── handoff notes ─────────────────────────────────────── */
+  .notes{max-width:1180px;margin:44px auto 0;background:var(--modal);border:1px solid var(--line);
+    border-radius:16px;padding:28px 32px}
+  .notes h2{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px;color:var(--accent)}
+  .notes ol{margin-left:18px;display:flex;flex-direction:column;gap:12px}
+  .notes li{font-size:13.5px;line-height:1.6;color:var(--text-2)}
+  .notes li b{color:var(--text);font-weight:600}
+  .notes code{font-family:ui-monospace,monospace;font-size:12px;background:var(--inset);
+    border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="kicker">Rediseño · modal de gastos</div>
+  <h1>Registrar gasto</h1>
+  <p>Cada etiqueta queda pegada a su campo, el origen del gasto pasa a ser un selector de ancho completo arriba de todo, y el total deja de ser editable: se calcula solo de cantidad × monto.</p>
+</div>
+
+<div class="stage">
+
+  <!-- ════════ Estado A: Gasto libre ════════ -->
+  <div data-screen-label="Estado: Gasto libre">
+    <div class="state-label">Estado A — Gasto libre</div>
+    <div class="modal">
+      <div class="m-head">
+        <div>
+          <h2>Registrar gasto</h2>
+          <p>Se descuenta de la ganancia de esta reparación.</p>
+        </div>
+        <button class="m-close" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="field">
+        <label>Origen del gasto</label>
+        <div class="seg">
+          <button class="on">Gasto libre</button>
+          <button>Del inventario</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Concepto</label>
+        <input class="inp" placeholder="Ej.: módulo, batería, flete…" />
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Cantidad</label>
+          <input class="inp" value="1" />
+        </div>
+        <div class="times">×</div>
+        <div class="field">
+          <label>Monto unitario</label>
+          <div class="prefix-wrap"><input class="inp" placeholder="0" /></div>
+        </div>
+      </div>
+
+      <div class="total">
+        <div>
+          <div class="t-lbl">Total del gasto</div>
+          <div class="t-sub">Se calcula solo: cantidad × monto unitario</div>
+        </div>
+        <div class="t-num">$ 0</div>
+      </div>
+
+      <div class="m-foot">
+        <button class="btn btn-ghost">Cancelar</button>
+        <button class="btn btn-accent">Agregar gasto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ Estado B: Del inventario ════════ -->
+  <div data-screen-label="Estado: Del inventario">
+    <div class="state-label">Estado B — Del inventario</div>
+    <div class="modal">
+      <div class="m-head">
+        <div>
+          <h2>Registrar gasto</h2>
+          <p>Usa un repuesto del stock; se descuenta del inventario.</p>
+        </div>
+        <button class="m-close" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="field">
+        <label>Origen del gasto</label>
+        <div class="seg">
+          <button>Gasto libre</button>
+          <button class="on">Del inventario</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Repuesto del inventario</label>
+        <select class="inp">
+          <option>Módulo display · Samsung A54 — $ 18.500</option>
+        </select>
+      </div>
+      <div class="stock-note"><span class="dot"></span>6 unidades en stock · costo $ 18.500 c/u</div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Cantidad</label>
+          <input class="inp" value="1" />
+        </div>
+        <div class="times">×</div>
+        <div class="field">
+          <label>Monto unitario <span class="hint">· del inventario</span></label>
+          <div class="prefix-wrap"><input class="inp" value="18.500" disabled style="opacity:.65" /></div>
+        </div>
+      </div>
+
+      <div class="total">
+        <div>
+          <div class="t-lbl">Total del gasto</div>
+          <div class="t-sub">Se calcula solo: cantidad × monto unitario</div>
+        </div>
+        <div class="t-num">$ 18.500</div>
+      </div>
+
+      <div class="m-foot">
+        <button class="btn btn-ghost">Cancelar</button>
+        <button class="btn btn-accent">Agregar gasto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ Notas para Claude Code ════════ -->
+<div class="notes" data-screen-label="Notas de handoff">
+  <h2>Notas de implementación (para Claude Code)</h2>
+  <ol>
+    <li><b>Una sola columna, orden vertical.</b> El modal deja la grilla de 2 columnas irregular. Orden: origen → concepto/repuesto → cantidad × monto → total → acciones. Ancho del modal: ~520px.</li>
+    <li><b>Etiqueta pegada a su campo.</b> Cada par etiqueta+campo es un grupo con <code>gap: 7px</code> interno y <code>18px</code> de separación entre grupos. Así nunca queda ambiguo a qué campo corresponde una etiqueta (era el problema principal: «Monto unitario» parecía flotar entre dos campos).</li>
+    <li><b>El selector «Gasto libre / Del inventario» va arriba, ancho completo, con su propia etiqueta</b> («Origen del gasto»). Antes competía visualmente con los campos de la derecha.</li>
+    <li><b>Cantidad × Monto unitario en una fila con un «×» entre medio</b> — comunica que se multiplican.</li>
+    <li><b>«Total» NO es un input editable:</b> es una fila de resumen (borde punteado) que se recalcula en vivo. Subtítulo: «Se calcula solo: cantidad × monto unitario».</li>
+    <li><b>Modo inventario:</b> el campo Concepto se reemplaza por un select de repuestos; el monto unitario se autocompleta desde el stock y queda deshabilitado; debajo del select una línea verde muestra stock disponible.</li>
+    <li><b>Prefijo «$» dentro del campo de monto</b>, alineado a la izquierda, color tenue.</li>
+    <li>El subtítulo del header cambia según el modo para explicar qué hace cada uno.</li>
+  </ol>
+</div>
+
+</body>
+</html>

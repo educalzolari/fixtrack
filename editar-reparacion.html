@@ -77,14 +77,15 @@
                 <span class="form-sec-t">Cliente</span>
                 <span class="form-sec-n">01 / 03</span>
               </div>
+              <input type="hidden" name="cliente" id="hiddenCliente" />
+              <input type="hidden" name="telefono" id="hiddenTelefono" />
               <div class="field-grid">
                 <label class="field">
-                  <span class="field-label">Nombre y apellido</span>
-                  <input class="inp" required name="cliente" type="text" />
-                </label>
-                <label class="field">
-                  <span class="field-label">Teléfono WhatsApp</span>
-                  <input class="inp" name="telefono" type="tel" />
+                  <span class="field-label">Cliente</span>
+                  <select class="sel" id="clienteSelect">
+                    <option value="">Seleccionar cliente…</option>
+                    <option value="__nuevo__">+ Nuevo cliente</option>
+                  </select>
                 </label>
                 <label class="field">
                   <span class="field-label">Estado</span>
@@ -97,10 +98,6 @@
                   </select>
                 </label>
                 <label class="field">
-                  <span class="field-label">Fecha estimada de entrega</span>
-                  <input class="inp" name="fechaEntrega" type="date" />
-                </label>
-                <label class="field">
                   <span class="field-label">Costo aproximado</span>
                   <input class="inp" required name="costoAproximado" type="number" min="0" step="100" />
                 </label>
@@ -108,6 +105,27 @@
                   <span class="field-label">Anticipo recibido</span>
                   <input class="inp" name="anticipo" type="number" min="0" step="100" />
                 </label>
+              </div>
+              <div id="nuevoClienteFields" class="nuevo-cliente-panel" style="display:none">
+                <p class="nuevo-cliente-title">Datos del nuevo cliente</p>
+                <div class="nuevo-cliente-grid">
+                  <div class="field">
+                    <label class="lbl" for="nuevoNombre">Nombre y Apellido <span class="opt">requerido</span></label>
+                    <input class="inp" id="nuevoNombre" type="text" placeholder="Nombre y apellido" autocomplete="off" />
+                  </div>
+                  <div class="field">
+                    <label class="lbl" for="nuevoTelefono">Teléfono WhatsApp</label>
+                    <input class="inp" id="nuevoTelefono" type="tel" placeholder="Ej: 1123456789" />
+                  </div>
+                  <div class="field">
+                    <label class="lbl" for="nuevoCorreo">Correo electrónico</label>
+                    <input class="inp" id="nuevoCorreo" type="email" placeholder="correo@ejemplo.com" />
+                  </div>
+                  <div class="field">
+                    <label class="lbl" for="nuevoDireccion">Dirección</label>
+                    <input class="inp" id="nuevoDireccion" type="text" placeholder="Calle, número, ciudad" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -304,57 +322,74 @@
 
     <!-- Modal: Gasto -->
     <div class="modal-backdrop" id="expenseModal" aria-hidden="true">
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="expenseModalTitle">
+      <div class="modal-card exp-modal-card" role="dialog" aria-modal="true" aria-labelledby="expenseModalTitle">
         <div class="modal-heading">
           <div>
             <h2 id="expenseModalTitle">Registrar gasto</h2>
-            <p>Desde el inventario o ingresá un gasto libre.</p>
+            <p id="expenseModalSub">Se descuenta de la ganancia de esta reparación.</p>
           </div>
           <button class="btn-icon" id="closeExpenseModal" type="button" aria-label="Cerrar">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <form id="expenseForm" class="expense-form">
-          <!-- Toggle tipo de gasto -->
-          <div class="expense-type-toggle">
-            <button class="expense-type-btn active" id="expTypeFree" type="button">Gasto libre</button>
-            <button class="expense-type-btn" id="expTypeInv" type="button">Del inventario</button>
+
+          <!-- Origen del gasto -->
+          <div class="exp-field">
+            <span class="exp-lbl">Origen del gasto</span>
+            <div class="exp-seg">
+              <button class="exp-seg-btn active" id="expTypeFree" type="button">Gasto libre</button>
+              <button class="exp-seg-btn" id="expTypeInv" type="button">Del inventario</button>
+            </div>
           </div>
 
-          <!-- Gasto libre -->
+          <!-- Concepto (gasto libre) -->
           <div id="expFreeFields">
-            <label class="field">
-              <span class="field-label">Concepto</span>
+            <div class="exp-field">
+              <label class="exp-lbl" for="expConcepto">Concepto</label>
               <input class="inp" id="expConcepto" type="text" placeholder="Módulo, batería, flete…" />
-            </label>
-            <label class="field">
-              <span class="field-label">Monto unitario</span>
-              <input class="inp" id="expenseUnitPrice" type="number" min="0" step="100" placeholder="0" />
-            </label>
+            </div>
           </div>
 
-          <!-- Desde inventario -->
+          <!-- Repuesto (inventario) -->
           <div id="expInvFields" style="display:none">
-            <label class="field">
-              <span class="field-label">Ítem del inventario</span>
+            <div class="exp-field">
+              <label class="exp-lbl" for="expInvSelect">Repuesto del inventario</label>
               <select class="sel" id="expInvSelect">
                 <option value="">Seleccionar…</option>
               </select>
-            </label>
-            <label class="field">
-              <span class="field-label">Precio unitario</span>
-              <input class="inp" id="expInvPrice" type="number" min="0" step="1" placeholder="0" />
-            </label>
+            </div>
+            <div class="exp-stock-note" id="expStockNote" style="display:none">
+              <span class="exp-stock-dot"></span>
+              <span id="expStockText"></span>
+            </div>
           </div>
 
-          <label class="field">
-            <span class="field-label">Cantidad</span>
-            <input class="inp" required id="expenseQuantity" type="number" min="1" step="1" value="1" />
-          </label>
-          <label class="field">
-            <span class="field-label">Total</span>
-            <input class="inp" id="expenseTotal" type="text" value="$ 0" readonly />
-          </label>
+          <!-- Cantidad × Monto unitario -->
+          <div class="exp-row2">
+            <div class="exp-field">
+              <label class="exp-lbl" for="expenseQuantity">Cantidad</label>
+              <input class="inp" required id="expenseQuantity" type="number" min="1" step="1" value="1" />
+            </div>
+            <div class="exp-times">×</div>
+            <div class="exp-field">
+              <label class="exp-lbl">Monto unitario</label>
+              <div class="exp-prefix-wrap">
+                <input class="inp" id="expenseUnitPrice" type="number" min="0" step="100" placeholder="0" />
+                <input class="inp" id="expInvPrice" type="number" min="0" step="1" placeholder="0" style="display:none" disabled />
+              </div>
+            </div>
+          </div>
+
+          <!-- Total (solo visualización) -->
+          <div class="exp-total-row">
+            <div>
+              <div class="exp-total-lbl">Total del gasto</div>
+              <div class="exp-total-sub">cantidad × monto unitario</div>
+            </div>
+            <span id="expenseTotal" class="exp-total-num">$ 0</span>
+          </div>
+
           <div class="modal-actions">
             <button class="btn btn-ghost" id="cancelExpenseModal" type="button">Cancelar</button>
             <button class="btn btn-accent" type="submit">Agregar gasto</button>
