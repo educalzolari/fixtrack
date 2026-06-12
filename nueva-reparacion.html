@@ -94,161 +94,135 @@
         <div class="page">
           <div class="page-head">
             <div class="page-kicker">Operación / Carga</div>
-            <h1 class="page-title">Formulario de carga</h1>
+            <h1 class="page-title">Nueva Reparación</h1>
           </div>
 
-          <form id="repairForm" class="form-grid">
+          <form id="repairForm" class="nr-form">
             <input type="hidden" name="cliente" id="hiddenCliente" />
             <input type="hidden" name="telefono" id="hiddenTelefono" />
 
-            <!-- â”€â”€ 01 Cliente â”€â”€ -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <span class="form-sec-t">Cliente</span>
-                <span class="form-sec-n">01 / 03</span>
-              </div>
-              <div class="fields">
-                <div class="field col-4">
-                  <label class="lbl" for="clienteSelect">Seleccionar cliente <span class="opt">requerido</span></label>
-                  <select class="sel" id="clienteSelect">
-                    <option value="">Seleccionar cliente…</option>
-                    <option value="__nuevo__">+ Nuevo cliente</option>
-                  </select>
-                </div>
-              </div>
-              <div id="nuevoClienteFields" class="nuevo-cliente-panel" style="display:none">
-                <p class="nuevo-cliente-title">Datos del nuevo cliente</p>
-                <div class="nuevo-cliente-grid">
-                  <div class="field">
-                    <label class="lbl" for="nuevoNombre">Nombre y Apellido <span class="opt">requerido</span></label>
-                    <input class="inp" id="nuevoNombre" type="text" placeholder="Nombre y apellido" autocomplete="off" />
-                  </div>
-                  <div class="field">
-                    <label class="lbl" for="nuevoTelefono">Teléfono WhatsApp</label>
-                    <input class="inp" id="nuevoTelefono" type="tel" placeholder="Ej: 1123456789" />
-                  </div>
-                  <div class="field">
-                    <label class="lbl" for="nuevoCorreo">Correo electrónico</label>
-                    <input class="inp" id="nuevoCorreo" type="email" placeholder="correo@ejemplo.com" />
-                  </div>
-                  <div class="field">
-                    <label class="lbl" for="nuevoDireccion">Dirección</label>
-                    <input class="inp" id="nuevoDireccion" type="text" placeholder="Calle, número, ciudad" />
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div class="nr-wrap">
 
-            <!-- â”€â”€ 02 Equipo â”€â”€ -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                </div>
-                <span class="form-sec-t">Datos del equipo</span>
-                <span class="form-sec-n">02 / 03</span>
-              </div>
-              <div class="fields">
-                <div class="field col-12">
-                  <label class="lbl">Tipo de dispositivo <span class="opt">requerido</span></label>
-                  <div class="chips" id="tipoChips">
-                    <button type="button" class="chip" data-tipo="Celular">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                      Celular
-                    </button>
-                    <button type="button" class="chip" data-tipo="Tablet">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                      Tablet
-                    </button>
-                    <button type="button" class="chip" data-tipo="Laptop">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-                      Laptop
-                    </button>
-                    <button type="button" class="chip" data-tipo="Consola">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="18" cy="13" r="1" fill="currentColor"/></svg>
-                      Consola
-                    </button>
-                    <button type="button" class="chip" data-tipo="Otro">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                      Otro
-                    </button>
-                  </div>
-                  <!-- hidden input that app.js reads via name="dispositivo" -->
-                  <input type="hidden" name="dispositivo" id="dispositivoHidden" required />
-                  <span class="hint" id="tipoHint" style="display:none;color:oklch(0.65 0.2 20)">Seleccioná el tipo de dispositivo</span>
-                </div>
-                <div class="field col-4">
-                  <label class="lbl" for="marcaInput">Marca <span class="opt">requerido</span></label>
-                  <input class="inp" id="marcaInput" name="marca" type="text" placeholder="Samsung, Motorola, iPhone…" required />
-                </div>
-                <div class="field col-4">
-                  <label class="lbl" for="modeloInput">Modelo <span class="opt">requerido</span></label>
-                  <input class="inp" id="modeloInput" name="modelo" type="text" placeholder="A32, G22, 11 Pro…" required />
-                </div>
-                <div class="field col-4">
-                  <label class="lbl" for="imeiInput">IMEI / Serie <span class="opt">opcional</span></label>
-                  <input class="inp" id="imeiInput" name="identificador" type="text" placeholder="Número de serie o IMEI" />
-                </div>
-              </div>
-            </div>
+              <!-- ── Columna principal: 01–05 ── -->
+              <div class="nr-main">
 
-            <!-- â”€â”€ 03 Acceso y trabajo â”€â”€ -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </div>
-                <span class="form-sec-t">Acceso y trabajo</span>
-                <span class="form-sec-n">03 / 03</span>
-              </div>
-              <div class="fields">
-                <!-- Contraseña + Patrón -->
-                <div class="field col-12">
-                  <div class="pattern-block">
-                    <div class="pattern-canvas-wrap">
-                      <label class="lbl" for="pinInput">Contraseña / PIN <span class="opt">opcional</span></label>
-                      <input class="inp" id="pinInput" name="passwordDispositivo" type="text" autocomplete="off" placeholder="PIN o clave" maxlength="12" style="margin-bottom:14px" />
-                      <label class="lbl">Patrón de desbloqueo <span class="opt">opcional</span></label>
-                      <canvas id="patternCanvas" width="200" height="200" aria-label="Dibujar patrón de desbloqueo"></canvas>
-                      <button class="btn btn-ghost btn-sm" id="clearPattern" type="button">Limpiar patrón</button>
-                    </div>
-                    <div id="savedPatternPreview" class="pattern-preview">
-                      <span>Sin patrón guardado.</span>
+                <!-- 01 · Cliente -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">01</span>
+                    <span class="edit-sec-t">Cliente</span>
+                  </div>
+                  <div class="edit-field">
+                    <label class="edit-lbl" for="clienteSelect">Seleccionar cliente</label>
+                    <select class="sel" id="clienteSelect">
+                      <option value="">Seleccionar cliente…</option>
+                      <option value="__nuevo__">+ Nuevo cliente</option>
+                    </select>
+                  </div>
+                  <div id="nuevoClienteFields" class="nuevo-cliente-panel" style="display:none">
+                    <p class="nuevo-cliente-title">Datos del nuevo cliente</p>
+                    <div class="nuevo-cliente-grid">
+                      <div class="field">
+                        <label class="lbl" for="nuevoNombre">Nombre y Apellido <span class="opt">requerido</span></label>
+                        <input class="inp" id="nuevoNombre" type="text" placeholder="Nombre y apellido" autocomplete="off" />
+                      </div>
+                      <div class="field">
+                        <label class="lbl" for="nuevoTelefono">Teléfono WhatsApp</label>
+                        <input class="inp" id="nuevoTelefono" type="tel" placeholder="Ej: 1123456789" />
+                      </div>
+                      <div class="field">
+                        <label class="lbl" for="nuevoCorreo">Correo electrónico</label>
+                        <input class="inp" id="nuevoCorreo" type="email" placeholder="correo@ejemplo.com" />
+                      </div>
+                      <div class="field">
+                        <label class="lbl" for="nuevoDireccion">Dirección</label>
+                        <input class="inp" id="nuevoDireccion" type="text" placeholder="Calle, número, ciudad" />
+                      </div>
                     </div>
                   </div>
-                  <input type="hidden" name="patronImagen" id="patronImagen" />
-                  <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
                 </div>
 
-                <div class="field col-12">
-                  <label class="lbl" for="problemaInput">Problema reportado <span class="opt">requerido</span></label>
-                  <textarea class="inp" id="problemaInput" name="problema" rows="3" placeholder="Detalle de la falla informada por el cliente" required></textarea>
-                </div>
-                <div class="field col-6">
-                  <label class="lbl" for="accesoriosInput">Accesorios</label>
-                  <input class="inp" id="accesoriosInput" name="accesorios" type="text" placeholder="Cargador, funda, SIM, memoria…" />
-                </div>
-                <div class="field col-3">
-                  <label class="lbl" for="costoInput">Presupuesto estimado</label>
-                  <input class="inp" id="costoInput" name="costoAproximado" type="number" min="0" step="100" placeholder="0" />
-                </div>
-                <div class="field col-3">
-                  <label class="lbl" for="anticipoInput">Anticipo recibido</label>
-                  <input class="inp" id="anticipoInput" name="anticipo" type="number" min="0" step="100" placeholder="0" />
-                </div>
-                <div class="field col-12">
-                  <label class="lbl" for="observacionesInput">Observaciones adicionales <span class="opt">opcional</span></label>
-                  <textarea class="inp" id="observacionesInput" name="observaciones" rows="3" placeholder="Notas internas, estado físico, condiciones de garantía…"></textarea>
+                <!-- 02 · Equipo -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">02</span>
+                    <span class="edit-sec-t">Equipo</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="edit-field">
+                      <label class="edit-lbl">Tipo de dispositivo</label>
+                      <div class="nr-chips" id="tipoChips">
+                        <button type="button" class="chip" data-tipo="Celular">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                          Celular
+                        </button>
+                        <button type="button" class="chip" data-tipo="Tablet">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                          Tablet
+                        </button>
+                        <button type="button" class="chip" data-tipo="Laptop">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                          Laptop
+                        </button>
+                        <button type="button" class="chip" data-tipo="Consola">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="18" cy="13" r="1" fill="currentColor"/></svg>
+                          Consola
+                        </button>
+                        <button type="button" class="chip" data-tipo="Otro">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                          Otro
+                        </button>
+                      </div>
+                      <input type="hidden" name="dispositivo" id="dispositivoHidden" required />
+                      <span class="hint" id="tipoHint" style="display:none;color:oklch(0.65 0.2 20)">Seleccioná el tipo de dispositivo</span>
+                    </div>
+                    <div class="nr-pair">
+                      <div class="edit-field">
+                        <label class="edit-lbl" for="marcaInput">Marca</label>
+                        <input class="inp" id="marcaInput" name="marca" type="text" placeholder="Samsung, Motorola…" required />
+                      </div>
+                      <div class="edit-field">
+                        <label class="edit-lbl" for="modeloInput">Modelo</label>
+                        <input class="inp" id="modeloInput" name="modelo" type="text" placeholder="A32, G22, 11 Pro…" required />
+                      </div>
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="imeiInput">IMEI / Serie <span class="edit-opt">· opcional</span></label>
+                      <input class="inp edit-mono" id="imeiInput" name="identificador" type="text" inputmode="numeric" placeholder="Número de serie o IMEI" />
+                    </div>
+                  </div>
                 </div>
 
-                <!-- Fotos -->
-                <div class="field col-12">
-                  <label class="lbl">Registro fotográfico <span class="opt">opcional</span></label>
-                  <p class="hint">Tomá fotos del estado del equipo. Se comprimen automáticamente antes de subir.</p>
-                  <div class="foto-grid" id="fotoPreviewGrid" style="margin-top:10px">
+                <!-- 03 · Problema -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">03</span>
+                    <span class="edit-sec-t">Problema</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="problemaInput">Problema reportado</label>
+                      <textarea class="inp" id="problemaInput" name="problema" rows="3" placeholder="Detalle de la falla informada por el cliente" required></textarea>
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="accesoriosInput">Accesorios que deja <span class="edit-opt">· opcional</span></label>
+                      <input class="inp" id="accesoriosInput" name="accesorios" type="text" placeholder="Cargador, funda, SIM, memoria…" />
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="observacionesInput">Observaciones internas <span class="edit-opt">· opcional</span></label>
+                      <textarea class="inp" id="observacionesInput" name="observaciones" rows="2" placeholder="Estado físico, condiciones de garantía…"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 04 · Fotos del estado -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">04</span>
+                    <span class="edit-sec-t">Fotos del estado</span>
+                    <span class="edit-opt" style="margin-left:auto;font-size:11.5px">opcional</span>
+                  </div>
+                  <div class="foto-grid" id="fotoPreviewGrid">
                     <label class="foto-add" for="fotoInputCamara" title="Tomar foto">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
                       <span>Cámara</span>
@@ -262,20 +236,86 @@
                   <input type="file" id="fotoInputGaleria" accept="image/*" multiple style="display:none" />
                   <p class="foto-meta" id="fotoMeta"></p>
                 </div>
-              </div>
-            </div>
 
-            <!-- â”€â”€ Barra de acción sticky â”€â”€ -->
-            <div class="form-bar">
-              <span class="note" id="formProgress">Completá los campos requeridos</span>
-              <span class="sp"></span>
-              <button class="btn btn-ghost" type="reset">Limpiar</button>
-              <button class="btn btn-accent" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Guardar reparación
-              </button>
-            </div>
+                <!-- 05 · Acceso al equipo -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">05</span>
+                    <span class="edit-sec-t">Acceso al equipo</span>
+                    <span class="edit-opt" style="margin-left:auto;font-size:11.5px">opcional</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:14px">
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="pinInput">Contraseña / PIN <span class="edit-opt">· opcional</span></label>
+                      <input class="inp edit-mono" id="pinInput" name="passwordDispositivo" type="text" autocomplete="off" placeholder="PIN o clave" maxlength="12" />
+                    </div>
+                    <div class="nr-pattern-mini">
+                      <div class="nr-pv" id="savedPatternPreview"></div>
+                      <div class="nr-pv-tx">
+                        <b>Patrón de desbloqueo</b>
+                        <span>Dibujalo acá o pedíselo al cliente por WhatsApp.</span>
+                      </div>
+                      <button class="btn btn-soft nr-draw-btn" type="button" id="drawPatternBtn">Dibujar</button>
+                    </div>
+                    <div class="nr-pattern-draw" id="patternDrawWrap" style="display:none">
+                      <canvas id="patternCanvas" width="200" height="200" aria-label="Dibujar patrón de desbloqueo"></canvas>
+                      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                        <button class="btn btn-ghost btn-sm" id="clearPattern" type="button">Limpiar patrón</button>
+                        <button class="btn btn-ghost btn-sm" id="requestPatternButton" type="button">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                          Solicitar por WhatsApp
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <input type="hidden" name="patronImagen" id="patronImagen" />
+                  <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
+                </div>
 
+              </div><!-- /nr-main -->
+
+              <!-- ── Barra lateral: 06 Dinero + Guardar ── -->
+              <div class="nr-rail">
+
+                <!-- 06 · Dinero -->
+                <div class="edit-rail-card">
+                  <div class="edit-rail-h">Dinero</div>
+                  <div style="display:flex;flex-direction:column;gap:14px">
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="costoInput">Presupuesto estimado <span class="edit-opt">· opcional</span></label>
+                      <div class="nr-prefix">
+                        <input class="inp" id="costoInput" name="costoAproximado" type="number" min="0" step="100" placeholder="0" inputmode="numeric" />
+                      </div>
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl" for="anticipoInput">Anticipo recibido <span class="edit-opt">· opcional</span></label>
+                      <div class="nr-prefix">
+                        <input class="inp" id="anticipoInput" name="anticipo" type="number" min="0" step="100" placeholder="0" inputmode="numeric" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!--
+                  form-bar vive aquí dentro del rail.
+                  Desktop → position:static, flex-direction:column, styled como tarjeta.
+                  Mobile  → position:fixed, flex-direction:row, barra inferior exactamente igual que antes.
+                -->
+                <div class="form-bar nr-rail-bar">
+                  <div class="nr-progress">
+                    <span id="formProgress">Completá los campos requeridos</span>
+                    <div class="nr-progress-track"><div class="nr-progress-fill" id="formProgressBar"></div></div>
+                  </div>
+                  <button class="nr-reset-link" type="reset">Limpiar</button>
+                  <button class="btn btn-accent nr-save-btn" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Guardar reparación
+                  </button>
+                </div>
+
+              </div><!-- /nr-rail -->
+
+            </div><!-- /nr-wrap -->
           </form>
         </div>
       </div>
@@ -285,7 +325,7 @@
     <script src="db.js"></script>
     <script src="app.js"></script>
     <script>
-      /* â”€â”€ Chips de tipo de dispositivo â”€â”€ */
+      /* Chips de tipo de dispositivo */
       (function() {
         const chips = document.querySelectorAll('#tipoChips .chip');
         const hidden = document.getElementById('dispositivoHidden');
@@ -298,9 +338,11 @@
           });
         });
 
-        /* â”€â”€ Progress counter â”€â”€ */
+        /* Progress counter */
         const form = document.getElementById('repairForm');
         const note = document.getElementById('formProgress');
+        const bar  = document.getElementById('formProgressBar');
+        const TOTAL = 4;
         const required = [
           () => !!document.getElementById('clienteSelect')?.value && document.getElementById('clienteSelect').value !== '',
           () => !!hidden.value,
@@ -309,19 +351,29 @@
         ];
         function updateProgress() {
           const done = required.filter(fn => fn()).length;
-          note.textContent = done >= 4 ? 'Listo para guardar âœ“' : `${done}/4 campos requeridos completados`;
+          note.textContent = done >= TOTAL ? 'Listo para guardar ✓' : `${done}/${TOTAL} campos requeridos completados`;
+          if (bar) bar.style.width = `${(done / TOTAL) * 100}%`;
         }
         form?.addEventListener('input', updateProgress);
         form?.addEventListener('change', updateProgress);
         updateProgress();
 
-        /* â”€â”€ Validación de tipo al submit â”€â”€ */
+        /* Validación de tipo al submit */
         form?.addEventListener('submit', function(e) {
           if (!hidden.value) {
             e.preventDefault();
             document.getElementById('tipoHint').style.display = '';
             chips[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
+        });
+
+        /* Patrón: revelar/ocultar canvas con botón Dibujar */
+        const drawBtn = document.getElementById('drawPatternBtn');
+        const drawWrap = document.getElementById('patternDrawWrap');
+        drawBtn?.addEventListener('click', function() {
+          const open = drawWrap.style.display === 'none';
+          drawWrap.style.display = open ? '' : 'none';
+          drawBtn.textContent = open ? 'Ocultar' : 'Dibujar';
         });
       })();
     </script>

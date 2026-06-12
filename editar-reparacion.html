@@ -63,258 +63,288 @@
             <h1 class="page-title">Editar Reparación</h1>
           </div>
 
-          <form id="editRepairForm" class="form-grid">
+          <form id="editRepairForm">
             <input type="hidden" name="id" />
             <input type="hidden" name="fechaIngreso" />
             <input type="hidden" name="patronImagen" id="patronImagen" />
             <input type="hidden" name="patronSecuencia" id="patronSecuencia" />
             <input type="hidden" name="gastosJson" id="gastosJson" />
+            <input type="hidden" name="cliente" id="hiddenCliente" />
+            <input type="hidden" name="telefono" id="hiddenTelefono" />
 
-            <!-- 01 / Cliente -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-                <span class="form-sec-t">Cliente</span>
-                <span class="form-sec-n">01 / 03</span>
-              </div>
-              <input type="hidden" name="cliente" id="hiddenCliente" />
-              <input type="hidden" name="telefono" id="hiddenTelefono" />
-              <div class="field-grid">
-                <label class="field">
-                  <span class="field-label">Cliente</span>
-                  <select class="sel" id="clienteSelect">
-                    <option value="">Seleccionar cliente…</option>
-                    <option value="__nuevo__">+ Nuevo cliente</option>
-                  </select>
-                </label>
-                <label class="field">
-                  <span class="field-label">Estado</span>
-                  <select class="sel" required name="estado">
-                    <option>En espera</option>
-                    <option>Activo</option>
-                    <option>Finalizado</option>
-                    <option>Entregado</option>
-                    <option>Cancelado</option>
-                  </select>
-                </label>
-                <label class="field">
-                  <span class="field-label">Costo aproximado</span>
-                  <input class="inp" required name="costoAproximado" type="number" min="0" step="100" />
-                </label>
-                <label class="field">
-                  <span class="field-label">Anticipo recibido</span>
-                  <input class="inp" name="anticipo" type="number" min="0" step="100" />
-                </label>
-              </div>
-              <div id="nuevoClienteFields" class="nuevo-cliente-panel" style="display:none">
-                <p class="nuevo-cliente-title">Datos del nuevo cliente</p>
-                <div class="nuevo-cliente-grid">
-                  <div class="field">
-                    <label class="lbl" for="nuevoNombre">Nombre y Apellido <span class="opt">requerido</span></label>
-                    <input class="inp" id="nuevoNombre" type="text" placeholder="Nombre y apellido" autocomplete="off" />
+            <div class="edit-wrap">
+
+              <!-- ── Columna principal ── -->
+              <div class="edit-main">
+
+                <!-- 01 · Cliente -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">01</span>
+                    <span class="edit-sec-t">Cliente</span>
                   </div>
-                  <div class="field">
-                    <label class="lbl" for="nuevoTelefono">Teléfono WhatsApp</label>
-                    <input class="inp" id="nuevoTelefono" type="tel" placeholder="Ej: 1123456789" />
+                  <div class="edit-field">
+                    <label class="edit-lbl" for="clienteSelect">Seleccionar cliente</label>
+                    <select class="sel" id="clienteSelect">
+                      <option value="">Seleccionar cliente…</option>
+                      <option value="__nuevo__">+ Nuevo cliente</option>
+                    </select>
                   </div>
-                  <div class="field">
-                    <label class="lbl" for="nuevoCorreo">Correo electrónico</label>
-                    <input class="inp" id="nuevoCorreo" type="email" placeholder="correo@ejemplo.com" />
-                  </div>
-                  <div class="field">
-                    <label class="lbl" for="nuevoDireccion">Dirección</label>
-                    <input class="inp" id="nuevoDireccion" type="text" placeholder="Calle, número, ciudad" />
+                  <div id="nuevoClienteFields" class="nuevo-cliente-panel" style="display:none">
+                    <p class="nuevo-cliente-title">Datos del nuevo cliente</p>
+                    <div class="nuevo-cliente-grid">
+                      <div class="field">
+                        <label class="lbl" for="nuevoNombre">Nombre y Apellido <span class="opt">requerido</span></label>
+                        <input class="inp" id="nuevoNombre" type="text" placeholder="Nombre y apellido" autocomplete="off" />
+                      </div>
+                      <div class="field">
+                        <label class="lbl" for="nuevoTelefono">Teléfono WhatsApp</label>
+                        <input class="inp" id="nuevoTelefono" type="tel" placeholder="Ej: 1123456789" />
+                      </div>
+                      <div class="field">
+                        <label class="lbl" for="nuevoCorreo">Correo electrónico</label>
+                        <input class="inp" id="nuevoCorreo" type="email" placeholder="correo@ejemplo.com" />
+                      </div>
+                      <div class="field">
+                        <label class="lbl" for="nuevoDireccion">Dirección</label>
+                        <input class="inp" id="nuevoDireccion" type="text" placeholder="Calle, número, ciudad" />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <!-- 02 / Dispositivo -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
-                <span class="form-sec-t">Dispositivo</span>
-                <span class="form-sec-n">02 / 03</span>
-              </div>
-              <div class="field-grid">
-                <label class="field">
-                  <span class="field-label">Tipo de dispositivo</span>
-                  <select class="sel" required name="dispositivo">
-                    <option>Celular</option>
-                    <option>Tablet</option>
-                    <option>Laptop</option>
-                    <option>Consola</option>
-                    <option>Otro</option>
-                  </select>
-                </label>
-                <label class="field">
-                  <span class="field-label">Marca</span>
-                  <input class="inp" required name="marca" type="text" />
-                </label>
-                <label class="field">
-                  <span class="field-label">Modelo</span>
-                  <input class="inp" required name="modelo" type="text" />
-                </label>
-                <label class="field">
-                  <span class="field-label">IMEI / ESN / SN</span>
-                  <input class="inp" name="identificador" type="text" />
-                </label>
-                <label class="field">
-                  <span class="field-label">Contraseña / PIN</span>
-                  <input class="inp" name="passwordDispositivo" type="text" autocomplete="off" maxlength="12" />
-                </label>
-                <label class="field">
-                  <span class="field-label">Accesorios</span>
-                  <input class="inp" name="accesorios" type="text" />
-                </label>
-              </div>
-            </div>
-
-            <!-- 03 / Acceso y trabajo -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-                <span class="form-sec-t">Acceso y trabajo</span>
-                <span class="form-sec-n">03 / 03</span>
-              </div>
-              <div class="field-grid">
-                <div class="field field-wide">
-                  <span class="field-label">Patrón de desbloqueo</span>
-                  <div class="pattern-preview" id="savedPatternPreview"></div>
-                  <div class="pattern-card" style="margin-top:10px">
-                    <canvas id="patternCanvas" width="200" height="200" aria-label="Dibujar patrón de desbloqueo"></canvas>
+                <!-- 02 · Equipo -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">02</span>
+                    <span class="edit-sec-t">Equipo</span>
                   </div>
-                  <div style="display:flex;gap:8px;margin-top:8px">
-                    <button class="btn btn-ghost" id="clearPattern" type="button">Limpiar patrón</button>
-                    <button class="btn btn-ghost" id="requestPatternButton" type="button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      Solicitar por WhatsApp
+                  <div class="edit-grid2">
+                    <div class="edit-field">
+                      <label class="edit-lbl">Tipo de dispositivo</label>
+                      <select class="sel" required name="dispositivo">
+                        <option>Celular</option>
+                        <option>Tablet</option>
+                        <option>Laptop</option>
+                        <option>Consola</option>
+                        <option>Otro</option>
+                      </select>
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl">Marca</label>
+                      <input class="inp" required name="marca" type="text" />
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl">Modelo</label>
+                      <input class="inp" required name="modelo" type="text" />
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl">IMEI / ESN / SN <span class="edit-opt">· opcional</span></label>
+                      <input class="inp edit-mono" name="identificador" type="text" />
+                    </div>
+                    <div class="edit-field edit-wide">
+                      <label class="edit-lbl">Accesorios <span class="edit-opt">· opcional</span></label>
+                      <input class="inp" name="accesorios" type="text" placeholder="Funda, cargador, SIM…" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 03 · Acceso al equipo -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">03</span>
+                    <span class="edit-sec-t">Acceso al equipo</span>
+                  </div>
+                  <div class="edit-acceso-grid">
+                    <div class="edit-pattern-col">
+                      <div class="pattern-preview" id="savedPatternPreview"></div>
+                      <div class="pattern-card">
+                        <canvas id="patternCanvas" width="200" height="200" aria-label="Dibujar patrón de desbloqueo"></canvas>
+                      </div>
+                      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                        <button class="btn btn-ghost" id="clearPattern" type="button">Limpiar patrón</button>
+                        <button class="btn btn-ghost" id="requestPatternButton" type="button">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                          Solicitar por WhatsApp
+                        </button>
+                      </div>
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl">Contraseña / PIN <span class="edit-opt">· opcional</span></label>
+                      <input class="inp edit-mono" name="passwordDispositivo" type="text" autocomplete="off" maxlength="12" placeholder="••••" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 04 · Trabajo -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">04</span>
+                    <span class="edit-sec-t">Trabajo</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="edit-field">
+                      <label class="edit-lbl">Descripción del problema</label>
+                      <textarea class="inp" required name="problema" rows="4"></textarea>
+                    </div>
+                    <div class="edit-field">
+                      <label class="edit-lbl">Observaciones adicionales <span class="edit-opt">· opcional</span></label>
+                      <textarea class="inp" name="observaciones" rows="3"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 05 · Fotos -->
+                <div class="edit-sec">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">05</span>
+                    <span class="edit-sec-t">Registro fotográfico</span>
+                  </div>
+                  <div class="fotos-edit-grid">
+                    <div class="foto-subseccion">
+                      <p class="foto-subseccion-title">Recepción</p>
+                      <p class="foto-hint">Estado del equipo al ingresar.</p>
+                      <div class="foto-grid" id="fotoGridRecepcion">
+                        <label class="foto-add" for="fotoInputRecepcionCam" title="Tomar foto">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                          <span>Cámara</span>
+                        </label>
+                        <label class="foto-add foto-add-gallery" for="fotoInputRecepcionGal" title="Elegir de galería">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                          <span>Galería</span>
+                        </label>
+                      </div>
+                      <input type="file" id="fotoInputRecepcionCam" accept="image/*" capture="environment" style="display:none" />
+                      <input type="file" id="fotoInputRecepcionGal" accept="image/*" multiple style="display:none" />
+                      <p class="foto-meta" id="fotoMetaRecepcion"></p>
+                    </div>
+                    <div class="foto-subseccion">
+                      <p class="foto-subseccion-title">Reparación</p>
+                      <p class="foto-hint">Fotos durante el proceso.</p>
+                      <div class="foto-grid" id="fotoGridReparacion">
+                        <label class="foto-add" for="fotoInputReparacionCam" title="Tomar foto">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                          <span>Cámara</span>
+                        </label>
+                        <label class="foto-add foto-add-gallery" for="fotoInputReparacionGal" title="Elegir de galería">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                          <span>Galería</span>
+                        </label>
+                      </div>
+                      <input type="file" id="fotoInputReparacionCam" accept="image/*" capture="environment" style="display:none" />
+                      <input type="file" id="fotoInputReparacionGal" accept="image/*" multiple style="display:none" />
+                      <p class="foto-meta" id="fotoMetaReparacion"></p>
+                    </div>
+                    <div class="foto-subseccion">
+                      <p class="foto-subseccion-title">Entrega</p>
+                      <p class="foto-hint">Estado final al entregar.</p>
+                      <div class="foto-grid" id="fotoGridEntrega">
+                        <label class="foto-add" for="fotoInputEntregaCam" title="Tomar foto">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                          <span>Cámara</span>
+                        </label>
+                        <label class="foto-add foto-add-gallery" for="fotoInputEntregaGal" title="Elegir de galería">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                          <span>Galería</span>
+                        </label>
+                      </div>
+                      <input type="file" id="fotoInputEntregaCam" accept="image/*" capture="environment" style="display:none" />
+                      <input type="file" id="fotoInputEntregaGal" accept="image/*" multiple style="display:none" />
+                      <p class="foto-meta" id="fotoMetaEntrega"></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 06 · Gastos -->
+                <div class="edit-sec expenses-section" aria-labelledby="expensesTitle">
+                  <div class="edit-sec-head">
+                    <span class="edit-sec-num">06</span>
+                    <span class="edit-sec-t">Gastos registrados</span>
+                    <button class="btn btn-soft" id="openExpenseModal" type="button" style="margin-left:auto">Registrar gasto</button>
+                  </div>
+                  <div class="tbl-wrap">
+                    <table class="tbl expenses-table">
+                      <thead>
+                        <tr>
+                          <th>Concepto</th>
+                          <th>Monto unit.</th>
+                          <th>Cant.</th>
+                          <th>Total</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="expensesTable"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div><!-- /edit-main -->
+
+              <!-- ── Barra lateral ── -->
+              <div class="edit-rail">
+
+                <!-- Estado -->
+                <div class="edit-rail-card">
+                  <div class="edit-rail-h">Estado del trabajo</div>
+                  <div class="edit-field">
+                    <select class="sel" required name="estado">
+                      <option>En espera</option>
+                      <option>Activo</option>
+                      <option>Finalizado</option>
+                      <option>Entregado</option>
+                      <option>Cancelado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Dinero -->
+                <div class="edit-rail-card">
+                  <div class="edit-rail-h">Dinero</div>
+                  <div class="edit-field">
+                    <label class="edit-lbl">Costo aproximado</label>
+                    <input class="inp" required name="costoAproximado" type="number" min="0" step="100" />
+                  </div>
+                  <div class="edit-field" style="margin-top:14px">
+                    <label class="edit-lbl">Anticipo recibido <span class="edit-opt">· opcional</span></label>
+                    <input class="inp" name="anticipo" type="number" min="0" step="100" />
+                  </div>
+                  <div class="edit-fin-rows">
+                    <div class="edit-fin-row">
+                      <span>Costo reparación</span><strong id="repairIncomeTotal">$ 0</strong>
+                    </div>
+                    <div class="edit-fin-row">
+                      <span>Total gastos</span><strong id="expensesGrandTotal">$ 0</strong>
+                    </div>
+                    <div class="edit-fin-row edit-fin-total">
+                      <span>Ganancia estimada</span><strong id="profitTotal">$ 0</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="edit-rail-card">
+                  <div class="edit-rail-h">Acciones</div>
+                  <div class="edit-rail-actions">
+                    <button class="btn btn-accent" id="saveEditButton" type="submit">Guardar cambios</button>
+                    <button class="btn btn-success" id="openFinishModal" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Finalizar reparación
                     </button>
+                    <button class="btn btn-ghost whatsapp-btn" id="notifyClientButton" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                      Notificar por WhatsApp
+                    </button>
+                    <button class="btn btn-ghost" id="enableEditButton" type="button" style="display:none">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      Editar
+                    </button>
+                    <a class="edit-cancel-link" href="reparaciones.html">Cancelar y volver</a>
                   </div>
                 </div>
-                <label class="field field-wide">
-                  <span class="field-label">Descripción del problema</span>
-                  <textarea class="inp" required name="problema" rows="4"></textarea>
-                </label>
-                <label class="field field-wide">
-                  <span class="field-label">Observaciones adicionales</span>
-                  <textarea class="inp" name="observaciones" rows="4"></textarea>
-                </label>
-              </div>
-            </div>
 
-            <!-- Fotos -->
-            <div class="form-sec">
-              <div class="form-sec-head">
-                <div class="form-sec-ico"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg></div>
-                <span class="form-sec-t">Registro fotográfico</span>
-              </div>
-              <div class="fotos-edit-grid">
-                <div class="foto-subseccion">
-                  <p class="foto-subseccion-title">Recepción</p>
-                  <p class="foto-hint">Estado del equipo al ingresar.</p>
-                  <div class="foto-grid" id="fotoGridRecepcion">
-                    <label class="foto-add" for="fotoInputRecepcionCam" title="Tomar foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                      <span>Cámara</span>
-                    </label>
-                    <label class="foto-add foto-add-gallery" for="fotoInputRecepcionGal" title="Elegir de galería">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                      <span>Galería</span>
-                    </label>
-                  </div>
-                  <input type="file" id="fotoInputRecepcionCam" accept="image/*" capture="environment" style="display:none" />
-                  <input type="file" id="fotoInputRecepcionGal" accept="image/*" multiple style="display:none" />
-                  <p class="foto-meta" id="fotoMetaRecepcion"></p>
-                </div>
-                <div class="foto-subseccion">
-                  <p class="foto-subseccion-title">Reparación</p>
-                  <p class="foto-hint">Fotos durante el proceso.</p>
-                  <div class="foto-grid" id="fotoGridReparacion">
-                    <label class="foto-add" for="fotoInputReparacionCam" title="Tomar foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                      <span>Cámara</span>
-                    </label>
-                    <label class="foto-add foto-add-gallery" for="fotoInputReparacionGal" title="Elegir de galería">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                      <span>Galería</span>
-                    </label>
-                  </div>
-                  <input type="file" id="fotoInputReparacionCam" accept="image/*" capture="environment" style="display:none" />
-                  <input type="file" id="fotoInputReparacionGal" accept="image/*" multiple style="display:none" />
-                  <p class="foto-meta" id="fotoMetaReparacion"></p>
-                </div>
-                <div class="foto-subseccion">
-                  <p class="foto-subseccion-title">Entrega</p>
-                  <p class="foto-hint">Estado final al entregar.</p>
-                  <div class="foto-grid" id="fotoGridEntrega">
-                    <label class="foto-add" for="fotoInputEntregaCam" title="Tomar foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                      <span>Cámara</span>
-                    </label>
-                    <label class="foto-add foto-add-gallery" for="fotoInputEntregaGal" title="Elegir de galería">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                      <span>Galería</span>
-                    </label>
-                  </div>
-                  <input type="file" id="fotoInputEntregaCam" accept="image/*" capture="environment" style="display:none" />
-                  <input type="file" id="fotoInputEntregaGal" accept="image/*" multiple style="display:none" />
-                  <p class="foto-meta" id="fotoMetaEntrega"></p>
-                </div>
-              </div>
-            </div>
+              </div><!-- /edit-rail -->
 
-            <!-- Gastos -->
-            <div class="form-sec expenses-section" aria-labelledby="expensesTitle">
-              <div class="form-sec-head">
-                <div class="form-sec-ico"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                <span class="form-sec-t">Gastos registrados</span>
-                <button class="btn btn-soft" id="openExpenseModal" type="button" style="margin-left:auto">Registrar gasto</button>
-              </div>
-
-              <div class="finance-summary">
-                <div><span>Costo reparación</span><strong id="repairIncomeTotal">$ 0</strong></div>
-                <div><span>Total gastos</span><strong id="expensesGrandTotal">$ 0</strong></div>
-                <div><span>Ganancia estimada</span><strong id="profitTotal">$ 0</strong></div>
-              </div>
-
-              <div class="tbl-wrap">
-                <table class="tbl expenses-table">
-                  <thead>
-                    <tr>
-                      <th>Concepto</th>
-                      <th>Monto unit.</th>
-                      <th>Cant.</th>
-                      <th>Total</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody id="expensesTable"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Barra de acciones -->
-            <div class="edit-action-bar">
-              <div class="edit-action-left">
-                <button class="btn btn-accent" id="openFinishModal" type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  Finalizar reparación
-                </button>
-                <button class="btn btn-ghost whatsapp-btn" id="notifyClientButton" type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  Notificar por WhatsApp
-                </button>
-              </div>
-              <div class="edit-action-right">
-                <a class="btn btn-ghost" href="reparaciones.html">Cancelar</a>
-                <button class="btn btn-ghost" id="enableEditButton" type="button" style="display:none">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  Editar
-                </button>
-                <button class="btn btn-accent" id="saveEditButton" type="submit">Guardar cambios</button>
-              </div>
-            </div>
+            </div><!-- /edit-wrap -->
           </form>
         </div>
       </div>
