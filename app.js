@@ -186,11 +186,21 @@ function truncateText(value, maxLength = 34) {
 }
 
 function serviceTitle(repair) {
-  return truncateText(repair.problema || "Servicio sin detallar", 36).toUpperCase();
+  const text = (repair.problema || "").trim();
+  if (!text) return "Servicio sin detallar";
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function serviceDetail(repair) {
-  return truncateText(repair.observaciones || repair.accesorios || repair.identificador || "Sin detalle adicional", 42);
+  if (repair.accesorios && repair.accesorios.trim()) return `Accesorio: ${repair.accesorios.trim()}`;
+  if (repair.observaciones && repair.observaciones.trim()) return truncateText(repair.observaciones, 42);
+  return "";
+}
+
+function formatDateShort(value) {
+  if (!value) return "-";
+  const parts = value.split("-");
+  return `${parts[2]}/${parts[1]}`;
 }
 
 function renderStats() {
@@ -303,50 +313,53 @@ const GROUP_LABELS = {
 const LOCKED_STATES = ["Finalizado", "Entregado"];
 
 function repairRow(repair) {
-  const locked = LOCKED_STATES.includes(repair.estado);
+  const id = repair.id;
+  const precio = repair.cierre?.costoFinal || repair.costoAproximado || 0;
+  const priceCell = precio > 0
+    ? `<b class="rw-price">${formatMoney(precio)}</b>`
+    : `<span class="rw-tbd">A cotizar</span>`;
 
-  const entregaBtn = repair.estado === "Finalizado"
-    ? `<button class="btn-icon deliver deliver-icon" data-id="${repair.id}" title="Marcar como entregado">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      </button>`
-    : "";
-  const activarBtn = repair.estado === "En espera"
-    ? `<button class="btn-icon ok activar-icon" data-id="${repair.id}" title="Pasar a Activo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </button>`
-    : "";
-  const finalizarBtn = repair.estado === "Activo"
-    ? `<button class="btn-icon ok finalizar-icon" data-id="${repair.id}" title="Finalizar reparación">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </button>`
-    : "";
+  let stepBtn = "";
+  if (repair.estado === "En espera") {
+    stepBtn = `<button class="btn-step activar-icon" type="button" data-id="${id}">Iniciar</button>`;
+  } else if (repair.estado === "Activo") {
+    stepBtn = `<button class="btn-step finalizar-icon" type="button" data-id="${id}">Finalizar</button>`;
+  } else if (repair.estado === "Finalizado") {
+    stepBtn = `<button class="btn-step deliver-icon" type="button" data-id="${id}">Entregar</button>`;
+  }
+
+  const svcTitle  = serviceTitle(repair);
+  const svcDetail = serviceDetail(repair);
+
   return `
-    <tr class="clickable-row" data-edit-id="${repair.id}">
+    <tr class="clickable-row" data-edit-id="${id}">
       <td>
         <div class="cell-stack id-stack">
-          <span class="cell-nro">#${repair.id}</span>
-          <span class="cell-date">${formatDate(repair.fechaIngreso)}</span>
+          <span class="cell-nro">#${id}</span>
+          <span class="cell-date">${formatDateShort(repair.fechaIngreso)}</span>
         </div>
       </td>
       <td>
         <div class="cell-stack">
           <strong>${escapeHtml(repair.cliente)}</strong>
-          <span>${escapeHtml(repairDeviceLabel(repair))}</span>
+          <span class="cell-dim">${escapeHtml(repairDeviceLabel(repair))}</span>
         </div>
       </td>
-      <td>
-        <div class="cell-stack service-stack">
-          <strong>${escapeHtml(serviceTitle(repair))}</strong>
-          <span>${escapeHtml(serviceDetail(repair))}</span>
-          ${(repair.cierre?.costoFinal || repair.costoAproximado) ? `<span class="cell-price">${formatMoney(repair.cierre?.costoFinal || repair.costoAproximado)}</span>` : ""}
-        </div>
+      <td class="rw-svc">
+        <div class="rw-svc-main">${escapeHtml(svcTitle)}</div>
+        ${svcDetail ? `<div class="rw-svc-sub">${escapeHtml(svcDetail)}</div>` : ""}
       </td>
-      <td class="row-actions">
-        <div class="row-actions-inner">
-          ${activarBtn}${finalizarBtn}${entregaBtn}
-          <button class="btn-icon del delete-icon" data-id="${repair.id}" title="Eliminar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
+      <td class="rw-price-cell">${priceCell}</td>
+      <td class="rw-act">
+        <div class="rw-act-inner">
+          ${stepBtn}
+          <div class="rw-more">
+            <button class="rw-more-btn" type="button" aria-label="Más opciones">···</button>
+            <div class="rw-more-menu">
+              <a class="rw-more-item" href="editar-reparacion.html?id=${id}">Editar</a>
+              <button class="rw-more-item rw-del delete-icon" type="button" data-id="${id}">Eliminar</button>
+            </div>
+          </div>
         </div>
       </td>
     </tr>`;
@@ -354,11 +367,12 @@ function repairRow(repair) {
 
 function groupHeaderRow(estado, count) {
   const sc = getStatusClass(estado);
-  return `<tr class="grp">
+  return `<tr class="rw-grp">
     <td colspan="5">
-      <span class="grp-head">
-        <span class="pill ${sc}">${escapeHtml(estado)}</span>
-        <span class="grp-count">${count}</span>
+      <span class="rw-grp-inner">
+        <span class="rw-grp-dot ${sc}-dot"></span>
+        <span class="rw-grp-name">${escapeHtml(estado)}</span>
+        <span class="rw-grp-n">${count}</span>
       </span>
     </td>
   </tr>`;
