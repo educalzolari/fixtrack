@@ -228,6 +228,22 @@ async function dbInsertCliente(cliente) {
   return rowToCliente(data);
 }
 
+async function dbUpdateCliente(cliente) {
+  const { data, error } = await _db
+    .from("clientes")
+    .update({ nombre: cliente.nombre, telefono: cliente.telefono || "", correo: cliente.correo || "", direccion: cliente.direccion || "" })
+    .eq("id", cliente.id)
+    .select()
+    .single();
+  if (error) { console.error("Error actualizando cliente:", error); return null; }
+  return rowToCliente(data);
+}
+
+async function dbDeleteCliente(id) {
+  const { error } = await _db.from("clientes").delete().eq("id", id);
+  if (error) console.error("Error eliminando cliente:", error);
+}
+
 // ── Inventario ───────────────────────────────────────────
 
 function rowToItem(row) {

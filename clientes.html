@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=6" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#13121f" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,10 +32,7 @@
           <a class="nav-item active" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
           <a class="nav-item" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
           <div class="nav-label">Negocio</div>
-          <a class="nav-item" href="movimientos.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-            Movimientos
-          </a>
+          <a class="nav-item" href="movimientos.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Movimientos</a>
           <a class="nav-item" href="inventario.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario</a>
           <a class="nav-item" href="proveedores.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Proveedores</a>
           <a class="nav-item" href="configuracion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a>
@@ -63,68 +60,459 @@
             <h1 class="page-title">Clientes</h1>
           </div>
 
+          <!-- Franja de métricas -->
+          <div class="cl-metrics stagger">
+            <div class="cl-metric">
+              <div class="cl-metric-bar" style="--clr:var(--accent)"></div>
+              <div class="cl-metric-label">En cartera</div>
+              <div class="cl-metric-num num" id="clMetricTotal">—</div>
+            </div>
+            <div class="cl-metric">
+              <div class="cl-metric-bar" style="--clr:var(--st-activo)"></div>
+              <div class="cl-metric-label">Con trabajo activo</div>
+              <div class="cl-metric-num num" id="clMetricActivo">—</div>
+            </div>
+            <div class="cl-metric is-accent">
+              <div class="cl-metric-bar"></div>
+              <div class="cl-metric-label">Facturado total</div>
+              <div class="cl-metric-num" id="clMetricFact">—</div>
+            </div>
+          </div>
+
+          <!-- Toolbar -->
           <div class="toolbar" style="margin-bottom:22px">
             <div class="search-wrap">
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input class="inp" id="clienteSearchInput" type="search" placeholder="Buscar cliente…" />
             </div>
-            <a class="btn btn-accent" href="nueva-reparacion.html">
+            <select class="sel" id="clSortSelect" style="width:auto;min-width:170px">
+              <option value="nombre">Nombre (A–Z)</option>
+              <option value="trabajos">Más trabajos</option>
+              <option value="facturado">Más facturado</option>
+              <option value="activo">Con trabajo activo</option>
+            </select>
+            <button class="btn btn-accent" id="clNewBtn" type="button">
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Nuevo cliente
-            </a>
+            </button>
           </div>
 
-          <div class="client-grid stagger" id="clientesGrid">
+          <!-- Grid -->
+          <div class="cl-grid stagger" id="clientesGrid">
             <div class="empty" style="grid-column:1/-1">
-              <div class="empty-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </div>
+              <div class="empty-ico"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
               <h3>Cargando clientes…</h3>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <!-- ── Modal edición / alta ───────────────────────────────────────────── -->
+      <div class="modal-backdrop" id="clModal" aria-hidden="true">
+        <div class="modal-card" style="width:100%;max-width:420px">
+          <div class="modal-heading">
+            <div><h2 id="clModalTitle">Nuevo cliente</h2></div>
+            <button class="icon-button" id="clModalClose" type="button" aria-label="Cerrar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="cl-modal-form">
+            <div class="field">
+              <label class="field-label" for="clFieldNombre">Nombre y apellido <span style="color:var(--accent)">*</span></label>
+              <input class="inp" id="clFieldNombre" name="nombre" required placeholder="Ej: Juan Pérez" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="clFieldTelefono">Teléfono</label>
+              <input class="inp" id="clFieldTelefono" name="telefono" type="tel" placeholder="+54 9 11 1234-5678" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="clFieldCorreo">Correo electrónico</label>
+              <input class="inp" id="clFieldCorreo" name="correo" type="email" placeholder="juan@email.com" />
+            </div>
+          </div>
+          <div class="modal-actions" style="margin-top:24px">
+            <button class="btn btn-ghost" id="clModalCancel" type="button">Cancelar</button>
+            <button class="btn btn-accent" id="clModalSave" type="button" disabled>Crear cliente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Drawer ficha del cliente ──────────────────────────────────────── -->
+      <div class="cl-drawer-wrap" id="clDrawer" aria-hidden="true">
+        <div class="cl-drawer-scrim" id="clDrawerScrim"></div>
+        <aside class="cl-drawer" role="complementary" aria-label="Ficha del cliente">
+          <div class="cl-drawer-head">
+            <div class="cl-avatar cl-avatar-lg" id="clDrAvatar"></div>
+            <div class="cl-drawer-head-info">
+              <div class="cl-drawer-name" id="clDrName"></div>
+              <div id="clDrActiveTag"></div>
+            </div>
+            <button class="icon-button" id="clDrawerClose" type="button" aria-label="Cerrar ficha">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+
+          <div class="cl-drawer-body">
+            <div class="cl-drawer-sec">
+              <div class="cl-drawer-sh">Contacto</div>
+              <div id="clDrContact"></div>
+            </div>
+            <div class="cl-drawer-sec">
+              <div class="cl-drawer-sh">Resumen</div>
+              <div class="cl-stat-row" id="clDrStats"></div>
+            </div>
+            <div class="cl-drawer-sec">
+              <div class="cl-drawer-sh">Historial de reparaciones</div>
+              <div id="clDrHistory"></div>
+            </div>
+          </div>
+
+          <div class="cl-drawer-foot">
+            <button class="btn btn-ghost" id="clDrEditBtn" type="button">Editar datos</button>
+            <a class="btn btn-accent" href="nueva-reparacion.html" style="flex:1;justify-content:center">Nueva reparación</a>
+          </div>
+        </aside>
+      </div>
+
+    </div><!-- /app -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
     <script>
+      // ── State ─────────────────────────────────────────────────────────────
+      let _clientes = [];
+      let _editingId = null;
+      let _drawerClienteId = null;
+
+      // ── Helpers ───────────────────────────────────────────────────────────
       function _initials(name) {
         return (name || '?').trim().split(/\s+/).slice(0, 2).map(w => (w[0] || '').toUpperCase()).join('');
       }
 
+      function _clientReps(nombre) {
+        return (window.repairs || []).filter(r =>
+          (r.cliente || '').toLowerCase().trim() === (nombre || '').toLowerCase().trim()
+        );
+      }
+
+      function _clientStats(nombre) {
+        const reps = _clientReps(nombre);
+        const activos = reps.filter(r => r.estado === 'Activo').length;
+        const facturado = reps.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+        const dates = reps.map(r => r.fechaEntregaReal || r.fechaIngreso).filter(Boolean).sort();
+        const ultimaVisita = dates.length ? formatDate(dates[dates.length - 1]) : '—';
+        return { total: reps.length, activos, facturado, ultimaVisita };
+      }
+
+      function _stateClass(estado) {
+        const m = { 'En espera': 'sc-espera', 'Activo': 'sc-activo', 'Finalizado': 'sc-finalizado', 'Entregado': 'sc-entregado', 'Cancelado': 'sc-cancelado' };
+        return m[estado] || 'sc-espera';
+      }
+
+      function _sortList(list, sort) {
+        if (sort === 'trabajos') return [...list].sort((a, b) => _clientStats(b.nombre).total - _clientStats(a.nombre).total);
+        if (sort === 'facturado') return [...list].sort((a, b) => _clientStats(b.nombre).facturado - _clientStats(a.nombre).facturado);
+        if (sort === 'activo') return [...list].sort((a, b) => _clientStats(b.nombre).activos - _clientStats(a.nombre).activos);
+        return [...list].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+      }
+
+      // ── Metrics ───────────────────────────────────────────────────────────
+      function _renderMetrics(clientes) {
+        const reps = window.repairs || [];
+        document.getElementById('clMetricTotal').textContent = clientes.length;
+        const activos = clientes.filter(c =>
+          reps.some(r => (r.cliente || '').toLowerCase().trim() === (c.nombre || '').toLowerCase().trim() && r.estado === 'Activo')
+        ).length;
+        document.getElementById('clMetricActivo').textContent = activos;
+        const facturado = reps.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+        document.getElementById('clMetricFact').textContent = formatMoney(facturado);
+      }
+
+      // ── Card HTML ─────────────────────────────────────────────────────────
+      function _cardHtml(c) {
+        const stats = _clientStats(c.nombre);
+        const initials = _initials(c.nombre);
+        const phone = c.telefono || '';
+        const waPhone = phone.replace(/\D/g, '');
+        const activeTag = stats.activos > 0
+          ? `<span class="cl-active-tag">${stats.activos} activo${stats.activos > 1 ? 's' : ''}</span>` : '';
+        const phoneLine = phone
+          ? `<div class="cl-card-phone">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.37 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              ${escapeHtml(phone)}
+            </div>` : '';
+        const waItem = waPhone
+          ? `<a class="cl-menu-item" href="https://wa.me/${waPhone}" target="_blank" rel="noopener">WhatsApp</a>` : '';
+
+        return `<div class="cl-card" data-id="${c.id}" role="button" tabindex="0">
+          <div class="cl-card-head">
+            <div class="cl-avatar">${escapeHtml(initials)}</div>
+            <div class="cl-card-info">
+              <div class="cl-card-name">${escapeHtml(c.nombre)}</div>
+              ${activeTag}
+            </div>
+            <div class="cl-kebab" data-id="${c.id}">
+              <button class="cl-kebab-btn" type="button" aria-label="Opciones">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </button>
+              <div class="cl-menu" role="menu">
+                <button class="cl-menu-item" data-action="edit" data-id="${c.id}">Editar datos</button>
+                <button class="cl-menu-item" data-action="ficha" data-id="${c.id}">Ver ficha</button>
+                ${waItem}
+                <a class="cl-menu-item" href="nueva-reparacion.html">Nueva reparación</a>
+                <div class="cl-menu-sep"></div>
+                <button class="cl-menu-item danger" data-action="delete" data-id="${c.id}">Eliminar cliente</button>
+              </div>
+            </div>
+          </div>
+          ${phoneLine}
+          <div class="cl-card-stats">
+            <div class="cl-stat-item"><b class="num">${stats.total}</b><span>trabajos</span></div>
+            <div class="cl-stat-item"><b>${formatMoney(stats.facturado)}</b><span>facturado</span></div>
+            <div class="cl-stat-item"><b class="num">${stats.ultimaVisita}</b><span>última visita</span></div>
+          </div>
+        </div>`;
+      }
+
+      // ── renderClientes ────────────────────────────────────────────────────
       async function renderClientes(query) {
         const grid = document.getElementById('clientesGrid');
         let clientes = [];
-        try { clientes = await dbLoadClientes(); } catch {}
-        const reps = window.repairs || [];
-        const q = (query || '').toLowerCase().trim();
-        const filtered = q ? clientes.filter(c => (c.nombre + ' ' + (c.telefono || '')).toLowerCase().includes(q)) : clientes;
+        try { clientes = await dbLoadClientes(); } catch(e) { console.error(e); }
+        _clientes = clientes;
+
+        _renderMetrics(clientes);
+
+        const sort = document.getElementById('clSortSelect')?.value || 'nombre';
+        const q = (query !== undefined ? query : (document.getElementById('clienteSearchInput')?.value || '')).toLowerCase().trim();
+        let filtered = q
+          ? clientes.filter(c => (c.nombre + ' ' + (c.telefono || '') + ' ' + (c.correo || '')).toLowerCase().includes(q))
+          : clientes;
+        filtered = _sortList(filtered, sort);
 
         if (!filtered.length) {
-          grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ico"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h3>${q ? 'Sin resultados' : 'No hay clientes registrados'}</h3><p>${q ? 'Probá con otro nombre o teléfono.' : 'Los clientes aparecen acá cuando creás una reparación.'}</p></div>`;
+          grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+            <div class="empty-ico"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <h3>${q ? 'Sin resultados' : 'No hay clientes registrados'}</h3>
+            <p>${q ? 'Probá con otro nombre o teléfono.' : 'Los clientes aparecen acá cuando creás una reparación.'}</p>
+          </div>`;
           return;
         }
 
-        grid.innerHTML = filtered.map(c => {
-          const count = reps.filter(r => r.cliente?.toLowerCase().trim() === c.nombre?.toLowerCase().trim()).length;
-          return `<div class="client">
-            <div class="avatar">${_initials(c.nombre)}</div>
-            <div class="client-info">
-              <div class="client-name">${escapeHtml(c.nombre)}</div>
-              <div class="client-meta">${c.telefono ? escapeHtml(c.telefono) : 'Sin teléfono'}</div>
-            </div>
-            <div class="client-stat">
-              <b class="num">${count}</b>
-              <span>trabajos</span>
-            </div>
-          </div>`;
-        }).join('');
+        grid.innerHTML = filtered.map(_cardHtml).join('');
       }
 
+      // ── Modal ─────────────────────────────────────────────────────────────
+      function _openModal(cliente) {
+        _editingId = cliente ? cliente.id : null;
+        document.getElementById('clModalTitle').textContent = cliente ? 'Editar cliente' : 'Nuevo cliente';
+        document.getElementById('clModalSave').textContent = cliente ? 'Guardar cambios' : 'Crear cliente';
+        document.getElementById('clFieldNombre').value = cliente?.nombre || '';
+        document.getElementById('clFieldTelefono').value = cliente?.telefono || '';
+        document.getElementById('clFieldCorreo').value = cliente?.correo || '';
+        _updateSaveBtn();
+        document.getElementById('clModal').classList.add('open');
+        setTimeout(() => document.getElementById('clFieldNombre').focus(), 60);
+      }
+
+      function _closeModal() {
+        document.getElementById('clModal').classList.remove('open');
+      }
+
+      function _updateSaveBtn() {
+        document.getElementById('clModalSave').disabled = !document.getElementById('clFieldNombre').value.trim();
+      }
+
+      async function _saveCliente() {
+        const nombre = document.getElementById('clFieldNombre').value.trim();
+        if (!nombre) return;
+        const telefono = document.getElementById('clFieldTelefono').value.trim();
+        const correo = document.getElementById('clFieldCorreo').value.trim();
+        const btn = document.getElementById('clModalSave');
+        btn.disabled = true;
+        btn.textContent = 'Guardando…';
+        try {
+          if (_editingId) {
+            await dbUpdateCliente({ id: _editingId, nombre, telefono, correo });
+            window.showToast?.('Cliente actualizado', nombre, 'accent');
+          } else {
+            await dbInsertCliente({ nombre, telefono, correo });
+            window.showToast?.('Cliente creado', nombre, 'accent');
+          }
+          _closeModal();
+          renderClientes();
+        } catch(e) {
+          console.error(e);
+          window.showToast?.('Error al guardar', 'Intentá de nuevo', '');
+          btn.disabled = false;
+          btn.textContent = _editingId ? 'Guardar cambios' : 'Crear cliente';
+        }
+      }
+
+      // ── Drawer ────────────────────────────────────────────────────────────
+      function _openDrawer(clienteId) {
+        _drawerClienteId = clienteId;
+        const c = _clientes.find(x => x.id === clienteId);
+        if (!c) return;
+        const stats = _clientStats(c.nombre);
+        const reps = _clientReps(c.nombre).sort((a, b) =>
+          (b.fechaIngreso || '').localeCompare(a.fechaIngreso || '')
+        );
+
+        document.getElementById('clDrAvatar').textContent = _initials(c.nombre);
+        document.getElementById('clDrName').textContent = c.nombre;
+        document.getElementById('clDrActiveTag').innerHTML = stats.activos > 0
+          ? `<span class="cl-active-tag">${stats.activos} activo${stats.activos > 1 ? 's' : ''}</span>` : '';
+
+        // Contacto
+        const waPhone = (c.telefono || '').replace(/\D/g, '');
+        let contactHtml = '';
+        if (c.telefono) {
+          const telSafe = escapeHtml(c.telefono);
+          contactHtml += `<div class="cl-drawer-row">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.37 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>${telSafe}</span>
+            <div class="cl-drawer-row-acts">
+              ${waPhone ? `<a class="btn-icon btn" href="https://wa.me/${waPhone}" target="_blank" rel="noopener" title="Abrir WhatsApp" style="width:28px;height:28px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>` : ''}
+              <button class="btn-icon btn" title="Copiar teléfono" style="width:28px;height:28px" onclick="navigator.clipboard.writeText(this.dataset.v)" data-v="${telSafe}"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            </div>
+          </div>`;
+        }
+        if (c.correo) {
+          const correoSafe = escapeHtml(c.correo);
+          contactHtml += `<div class="cl-drawer-row">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>${correoSafe}</span>
+            <div class="cl-drawer-row-acts">
+              <button class="btn-icon btn" title="Copiar correo" style="width:28px;height:28px" onclick="navigator.clipboard.writeText(this.dataset.v)" data-v="${correoSafe}"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            </div>
+          </div>`;
+        }
+        if (!contactHtml) contactHtml = '<p class="cl-drawer-empty">Sin datos de contacto</p>';
+        document.getElementById('clDrContact').innerHTML = contactHtml;
+
+        // Stats
+        document.getElementById('clDrStats').innerHTML = `
+          <div class="cl-stat-item"><b class="num">${stats.total}</b><span>trabajos</span></div>
+          <div class="cl-stat-item"><b>${formatMoney(stats.facturado)}</b><span>facturado</span></div>
+          <div class="cl-stat-item"><b class="num">${stats.ultimaVisita}</b><span>última visita</span></div>`;
+
+        // Historial
+        if (reps.length) {
+          document.getElementById('clDrHistory').innerHTML = reps.map(r => {
+            const sc = _stateClass(r.estado);
+            const costo = r.cierre?.costoFinal || r.costoAproximado || 0;
+            const device = [r.marca, r.modelo].filter(Boolean).join(' ') || r.dispositivo || '—';
+            const problema = r.problema ? r.problema.slice(0, 70) : '—';
+            return `<a class="cl-dr-rep-row" href="editar-reparacion.html?id=${r.id}">
+              <div class="cl-dr-rep-main">
+                <div class="cl-dr-rep-device">${escapeHtml(device)}</div>
+                <div class="cl-dr-rep-service">${escapeHtml(problema)}</div>
+              </div>
+              <div class="cl-dr-rep-right">
+                <span class="pill ${sc}"><span class="dot"></span>${escapeHtml(r.estado)}</span>
+                <span class="cl-dr-rep-cost">${formatMoney(costo)}</span>
+                <span class="cl-dr-rep-date">${r.fechaIngreso ? formatDate(r.fechaIngreso) : '—'}</span>
+              </div>
+            </a>`;
+          }).join('');
+        } else {
+          document.getElementById('clDrHistory').innerHTML = '<p class="cl-drawer-empty">Sin reparaciones registradas.</p>';
+        }
+
+        document.getElementById('clDrawer').classList.add('open');
+        document.getElementById('clDrawer').removeAttribute('aria-hidden');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function _closeDrawer() {
+        document.getElementById('clDrawer').classList.remove('open');
+        document.getElementById('clDrawer').setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      // ── Delete ────────────────────────────────────────────────────────────
+      async function _deleteCliente(id) {
+        const c = _clientes.find(x => x.id === id);
+        if (!c) return;
+        if (!confirm(`¿Eliminar a ${c.nombre}?\nEsta acción no se puede deshacer.`)) return;
+        try {
+          await dbDeleteCliente(id);
+          window.showToast?.('Cliente eliminado', c.nombre, '');
+          renderClientes();
+        } catch(e) {
+          console.error(e);
+          window.showToast?.('Error al eliminar', 'Intentá de nuevo', '');
+        }
+      }
+
+      // ── Menus ─────────────────────────────────────────────────────────────
+      function _closeAllMenus() {
+        document.querySelectorAll('.cl-kebab.open').forEach(k => k.classList.remove('open'));
+      }
+
+      // ── Event listeners ───────────────────────────────────────────────────
       document.getElementById('clienteSearchInput')?.addEventListener('input', e => renderClientes(e.target.value));
-      /* Se llama cuando app.js termina de cargar repairs */
+      document.getElementById('clSortSelect')?.addEventListener('change', () => renderClientes());
+      document.getElementById('clNewBtn')?.addEventListener('click', () => _openModal(null));
+
+      document.getElementById('clModalClose')?.addEventListener('click', _closeModal);
+      document.getElementById('clModalCancel')?.addEventListener('click', _closeModal);
+      document.getElementById('clModalSave')?.addEventListener('click', _saveCliente);
+      document.getElementById('clFieldNombre')?.addEventListener('input', _updateSaveBtn);
+      document.getElementById('clFieldNombre')?.addEventListener('keydown', e => { if (e.key === 'Enter') _saveCliente(); });
+
+      document.getElementById('clModal')?.addEventListener('click', e => {
+        if (e.target === document.getElementById('clModal')) _closeModal();
+      });
+
+      document.getElementById('clDrawerClose')?.addEventListener('click', _closeDrawer);
+      document.getElementById('clDrawerScrim')?.addEventListener('click', _closeDrawer);
+
+      document.getElementById('clDrEditBtn')?.addEventListener('click', () => {
+        const c = _clientes.find(x => x.id === _drawerClienteId);
+        _closeDrawer();
+        if (c) _openModal(c);
+      });
+
+      // Grid delegation
+      document.getElementById('clientesGrid')?.addEventListener('click', e => {
+        const kebabBtn = e.target.closest('.cl-kebab-btn');
+        if (kebabBtn) {
+          e.stopPropagation();
+          const kebab = kebabBtn.closest('.cl-kebab');
+          const wasOpen = kebab.classList.contains('open');
+          _closeAllMenus();
+          if (!wasOpen) kebab.classList.add('open');
+          return;
+        }
+
+        const menuItem = e.target.closest('.cl-menu-item[data-action]');
+        if (menuItem) {
+          e.stopPropagation();
+          _closeAllMenus();
+          const action = menuItem.dataset.action;
+          const id = Number(menuItem.dataset.id);
+          if (action === 'edit') { const c = _clientes.find(x => x.id === id); if (c) _openModal(c); }
+          if (action === 'ficha') _openDrawer(id);
+          if (action === 'delete') _deleteCliente(id);
+          return;
+        }
+
+        if (e.target.closest('.cl-kebab')) { e.stopPropagation(); return; }
+
+        const card = e.target.closest('.cl-card');
+        if (card) { _closeAllMenus(); _openDrawer(Number(card.dataset.id)); }
+      });
+
+      document.addEventListener('click', _closeAllMenus);
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { _closeAllMenus(); _closeModal(); _closeDrawer(); }
+      });
+
+      // Initial load
       document.addEventListener('repairsLoaded', () => renderClientes());
       setTimeout(() => renderClientes(), 1000);
     </script>

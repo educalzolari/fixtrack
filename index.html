@@ -88,6 +88,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
           <span class="crumb">1Fixtrack / <b>Inicio</b></span>
+          <div class="gsearch" id="gsearchWrap">
+            <svg class="gsearch-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="globalSearch" class="gsearch-inp" type="search" placeholder="Buscar cliente o equipo…" autocomplete="off" spellcheck="false" />
+            <kbd class="gsearch-kbd">Ctrl K</kbd>
+            <div class="gsearch-drop" id="gsearchDrop"></div>
+          </div>
           <div class="topbar-spacer"></div>
           <div class="clock">
             <span class="live-dot"></span>
@@ -104,91 +110,83 @@
             <p id="dashboardStatus" style="font-size:14px;color:var(--text-2);margin:0"></p>
           </div>
 
-          <!-- KPIs -->
-          <div class="kpi-grid stagger" aria-label="Resumen del taller">
+          <!-- Banda mixta: hero + KPIs -->
+          <div class="home-band stagger">
 
-            <div class="kpi">
-              <div class="kpi-accent" style="--clr:var(--st-espera)"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">En espera</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <!-- Hero card -->
+            <div class="hero-card">
+              <div class="hero-kicker">Acción rápida</div>
+              <h2 class="hero-title">¿Entró un equipo nuevo?</h2>
+              <p class="hero-sub">Registrá la reparación en segundos y mantené el taller organizado.</p>
+              <a class="btn btn-accent hero-cta" href="nueva-reparacion.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Cargar Reparación
+              </a>
+              <div class="hero-links">
+                <a class="hero-link" href="movimientos.html">
+                  <div class="hero-link-ico"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></div>
+                  <span class="hero-link-label">Registrar Movimiento</span>
+                  <svg class="hero-link-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a class="hero-link" href="reparaciones.html">
+                  <div class="hero-link-ico"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+                  <span class="hero-link-label">Ver Reparaciones</span>
+                  <svg class="hero-link-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a class="hero-link" href="reportes.html">
+                  <div class="hero-link-ico"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+                  <span class="hero-link-label">Resumen de Mes</span>
+                  <svg class="hero-link-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
               </div>
-              <div class="kpi-num num" id="waitingCount">—</div>
-              <div class="kpi-foot">Pendientes de inicio</div>
             </div>
 
-            <div class="kpi">
-              <div class="kpi-accent" style="--clr:var(--st-activo)"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">Trabajos activos</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <!-- KPIs 2×2 -->
+            <div class="home-kpis" aria-label="Resumen del taller">
+
+              <div class="kpi">
+                <div class="kpi-accent" style="--clr:var(--st-espera)"></div>
+                <div class="kpi-top">
+                  <span class="kpi-tag">En espera</span>
+                  <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                </div>
+                <div class="kpi-num num" id="waitingCount">—</div>
+                <div class="kpi-foot">Pendientes de inicio</div>
               </div>
-              <div class="kpi-num num" id="collectCount">—</div>
-              <div class="kpi-foot">En proceso o revisión</div>
+
+              <div class="kpi">
+                <div class="kpi-accent" style="--clr:var(--st-activo)"></div>
+                <div class="kpi-top">
+                  <span class="kpi-tag">Trabajos activos</span>
+                  <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+                </div>
+                <div class="kpi-num num" id="collectCount">—</div>
+                <div class="kpi-foot">En proceso o revisión</div>
+              </div>
+
+              <div class="kpi">
+                <div class="kpi-accent" style="--clr:var(--st-finalizado)"></div>
+                <div class="kpi-top">
+                  <span class="kpi-tag">Reparaciones (mes)</span>
+                  <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                </div>
+                <div class="kpi-num num" id="monthCount">—</div>
+                <div class="kpi-foot"><span id="monthDelta" class="delta">—</span> vs. mes anterior</div>
+                <div class="spark-bars" id="sparkMonth"></div>
+              </div>
+
+              <div class="kpi is-accent">
+                <div class="kpi-accent"></div>
+                <div class="kpi-top">
+                  <span class="kpi-tag">Total ventas</span>
+                  <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                </div>
+                <div class="kpi-num num" id="salesTotal">—</div>
+                <div class="kpi-foot">Ingresos brutos</div>
+                <div class="spark-bars" id="sparkSales"></div>
+              </div>
+
             </div>
-
-            <div class="kpi">
-              <div class="kpi-accent" style="--clr:var(--st-finalizado)"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">Reparaciones (mes)</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-              </div>
-              <div class="kpi-num num" id="monthCount">—</div>
-              <div class="kpi-foot"><span id="monthDelta" class="delta">—</span> vs. mes anterior</div>
-              <div class="spark-bars" id="sparkMonth"></div>
-            </div>
-
-            <div class="kpi is-accent">
-              <div class="kpi-accent"></div>
-              <div class="kpi-top">
-                <span class="kpi-tag">Total ventas</span>
-                <div class="kpi-ico"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-              </div>
-              <div class="kpi-num num" id="salesTotal">—</div>
-              <div class="kpi-foot">Ingresos brutos</div>
-              <div class="spark-bars" id="sparkSales"></div>
-            </div>
-
-          </div>
-
-          <!-- Quick actions -->
-          <div class="section-head" style="margin-top:36px">
-            <div class="section-title">Accesos directos</div>
-          </div>
-          <div class="qa-grid stagger" aria-label="Accesos directos">
-
-            <a class="qa" href="nueva-reparacion.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Cargar Reparación</div>
-            </a>
-
-            <a class="qa" href="movimientos.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Registrar Movimiento</div>
-            </a>
-
-            <a class="qa" href="reparaciones.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Ver Reparaciones</div>
-            </a>
-
-            <a class="qa" href="reportes.html">
-              <div class="qa-ico">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-              </div>
-              <div class="qa-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
-              <div class="qa-title">Resumen de Mes</div>
-            </a>
-
           </div>
 
           <!-- Últimas reparaciones -->
@@ -218,5 +216,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
+    <script src="search.js"></script>
   </body>
 </html>
