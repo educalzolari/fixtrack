@@ -1943,7 +1943,7 @@ initApp();
 let weeklyChartInstance = null;
 
 function setupReportsDashboard() {
-  const grid = document.querySelector(".report-grid");
+  const grid = document.querySelector(".report-grid, .kpi-row, .rc-section-head");
   if (!grid) return;
 
   const monthSelect = $("#reportMonth");
@@ -1997,10 +1997,31 @@ function renderReportsDashboard() {
   const finalized = inMonth.filter((r) => r.estado === "Finalizado" || r.estado === "Entregado");
   const prevFinalized = inPrevMonth.filter((r) => r.estado === "Finalizado" || r.estado === "Entregado");
 
-  const inMonthConPrecio = inMonth.filter(r => r.estado !== "Cancelado" && (r.cierre?.costoFinal || r.costoAproximado));
-  const facturado = inMonthConPrecio.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
-  const prevInMonthConPrecio = inPrevMonth.filter(r => r.estado !== "Cancelado" && (r.cierre?.costoFinal || r.costoAproximado));
-  const prevFacturado = prevInMonthConPrecio.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  // Facturado devengado: reparaciones finalizadas en el mes (por fecha de finalización)
+  const inMonthFin = repairs.filter(r => {
+    if (r.estado === "Cancelado") return false;
+    const fechaFin = r.cierre?.fechaFinalizacion || r.fechaEntregaReal;
+    if (!fechaFin) return false;
+    const d = new Date(`${fechaFin}T00:00:00`);
+    return d.getMonth() === month && d.getFullYear() === year && (r.cierre?.costoFinal || r.costoAproximado);
+  });
+  const facturado = inMonthFin.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+  const prevInMonthFin = repairs.filter(r => {
+    if (r.estado === "Cancelado") return false;
+    const fechaFin = r.cierre?.fechaFinalizacion || r.fechaEntregaReal;
+    if (!fechaFin) return false;
+    const d = new Date(`${fechaFin}T00:00:00`);
+    return d.getMonth() === prevMonth && d.getFullYear() === prevYear && (r.cierre?.costoFinal || r.costoAproximado);
+  });
+  const prevFacturado = prevInMonthFin.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
+
+  // Ganancia devengada = Facturado − gastos de repuestos de esas reparaciones
+  const inMonthFinIds = new Set(inMonthFin.map(r => Number(r.id)));
+  const gastosDevengados = movimientos
+    .filter(m => m.tipo === "egreso" && m.reparacionId && inMonthFinIds.has(Number(m.reparacionId)))
+    .reduce((s, m) => s + m.monto, 0);
+  const gananciaDev = facturado - gastosDevengados;
+  const margenPct = facturado > 0 ? Math.round((gananciaDev / facturado) * 100) : null;
 
   const finalizadoIds = new Set(repairs.filter(r => r.estado === "Finalizado").map(r => Number(r.id)));
 
@@ -2022,7 +2043,7 @@ function renderReportsDashboard() {
   const gastos  = movMes.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
   const ganancia = cobrado - gastos;
 
-  const ticketPromedio = inMonthConPrecio.length ? Math.round(facturado / inMonthConPrecio.length) : 0;
+  const ticketPromedio = inMonthFin.length ? Math.round(facturado / inMonthFin.length) : 0;
 
   const clientesNuevos = new Set(inMonth.map((r) => r.cliente.toLowerCase().trim())).size;
   const prevClientesNuevos = new Set(inPrevMonth.map((r) => r.cliente.toLowerCase().trim())).size;
@@ -2066,7 +2087,7 @@ function renderReportsDashboard() {
 
   // Ticket promedio
   setValue("rcTicketValue", formatMoney(ticketPromedio));
-  setBadge("rcTicketBadge", `${inMonthConPrecio.length} rep.`, "badge-blue");
+  setBadge("rcTicketBadge", `${inMonthFin.length} rep.`, "badge-blue");
 
   // Reparaciones completadas
   setValue("rcReparacionesValue", finalized.length);
@@ -2094,6 +2115,34 @@ function renderReportsDashboard() {
   setValue("rcEntregarMonto", formatMoney(porEntregarMonto));
   setBadge("rcEntregarBadge", porEntregar ? `${porEntregar} listo${porEntregar !== 1 ? "s" : ""}` : "Ninguno pendiente", porEntregar ? "badge-blue" : "badge-green");
 
+  // Saldo pendiente de cobro (global — foto del estado actual, no filtra por mes)
+  const _paidForRep = id => movimientos
+    .filter(m => m.reparacionId === Number(id) && m.tipo === "ingreso")
+    .reduce((s, m) => s + m.monto, 0);
+  const finalizadosGlobal = repairs.filter(r => r.estado === "Finalizado");
+  let saldoFinMonto = 0;
+  finalizadosGlobal.forEach(r => {
+    saldoFinMonto += Math.max(0, (r.cierre?.costoFinal || r.costoAproximado || 0) - _paidForRep(r.id));
+  });
+  const enCursoGlobal = repairs.filter(r =>
+    (r.estado === "Activo" || r.estado === "En espera") && (r.cierre?.costoFinal || r.costoAproximado)
+  );
+  let saldoActMonto = 0;
+  enCursoGlobal.forEach(r => {
+    saldoActMonto += Math.max(0, (r.cierre?.costoFinal || r.costoAproximado || 0) - _paidForRep(r.id));
+  });
+  const saldoPendienteTotal = saldoFinMonto + saldoActMonto;
+  setValue("rcSaldoTotal", formatMoney(saldoPendienteTotal));
+  setValue("rcSaldoFinMonto", formatMoney(saldoFinMonto));
+  setValue("rcSaldoFinCount", `${finalizadosGlobal.length} equipo${finalizadosGlobal.length !== 1 ? "s" : ""}`);
+  setValue("rcSaldoActMonto", formatMoney(saldoActMonto));
+  setValue("rcSaldoActCount", `${enCursoGlobal.length} en proceso`);
+
+  // Ganancia devengada
+  setValue("rcGananciaDevValue", formatMoney(gananciaDev));
+  setBadge("rcGananciaDevBadge", gananciaDev >= 0 ? "Positiva" : "Negativa", gananciaDev >= 0 ? "badge-green" : "badge-red");
+  setValue("rcMargenChip", margenPct !== null ? `Margen ${margenPct}%` : "—");
+
   renderWeeklyChart();
   renderTop5Table(inMonth);
   renderCategoriesChart(inMonth);
@@ -2103,22 +2152,36 @@ function renderWeeklyChart() {
   const canvas = document.getElementById("weeklyChart");
   if (!canvas || typeof Chart === "undefined") return;
 
-  const now = new Date();
-  const dow = now.getDay();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
-  monday.setHours(0, 0, 0, 0);
+  const selMonth = Number($("#reportMonth")?.value ?? new Date().getMonth());
+  const selYear  = Number($("#reportYear")?.value  ?? new Date().getFullYear());
 
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return d.toISOString().slice(0, 10);
-  });
+  const MONTH_NAMES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 
-  const data = days.map((dateStr) =>
-    repairs
-      .filter((r) => r.estado === "Entregado" && r.fechaEntregaReal === dateStr)
-      .reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0)
+  // Build the last 6 months ending at the selected month
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    let m = selMonth - i;
+    let y = selYear;
+    while (m < 0) { m += 12; y--; }
+    months.push({ m, y });
+  }
+
+  const labels = months.map(({ m, y }) => `${MONTH_NAMES[m]} ${y}`);
+
+  const cobradoData = months.map(({ m, y }) =>
+    movimientos.filter(mov => {
+      if (!mov.fecha || mov.tipo !== "ingreso") return false;
+      const [my, mm] = mov.fecha.split("-");
+      return Number(mm) - 1 === m && Number(my) === y;
+    }).reduce((s, mov) => s + mov.monto, 0)
+  );
+
+  const gastosData = months.map(({ m, y }) =>
+    movimientos.filter(mov => {
+      if (!mov.fecha || mov.tipo !== "egreso") return false;
+      const [my, mm] = mov.fecha.split("-");
+      return Number(mm) - 1 === m && Number(my) === y;
+    }).reduce((s, mov) => s + mov.monto, 0)
   );
 
   if (weeklyChartInstance) {
@@ -2126,35 +2189,46 @@ function renderWeeklyChart() {
     weeklyChartInstance = null;
   }
 
+  const gridColor = getComputedStyle(document.documentElement).getPropertyValue("--line").trim() || "rgba(128,128,128,0.2)";
+  const textColor = getComputedStyle(document.documentElement).getPropertyValue("--text-3").trim() || "#999";
+
   weeklyChartInstance = new Chart(canvas, {
-    type: "line",
+    type: "bar",
     data: {
-      labels: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"],
+      labels,
       datasets: [
         {
-          data,
-          borderColor: "#1268f3",
-          backgroundColor: "rgba(18, 104, 243, 0.07)",
-          pointBackgroundColor: "#1268f3",
-          pointRadius: 5,
-          tension: 0.35,
-          fill: true,
+          label: "Cobrado",
+          data: cobradoData,
+          backgroundColor: "rgba(139,92,246,0.72)",
+          borderRadius: 5,
+          borderSkipped: false,
+        },
+        {
+          label: "Gastos",
+          data: gastosData,
+          backgroundColor: "rgba(220,80,80,0.55)",
+          borderRadius: 5,
+          borderSkipped: false,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: true, position: "top", labels: { font: { family: "Hanken Grotesk", size: 11 }, boxWidth: 12, padding: 16, color: textColor } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${formatMoney(ctx.raw)}` } },
+      },
       scales: {
         y: {
           beginAtZero: true,
-          grid: { color: "#e8edf4" },
-          ticks: { font: { family: "Hanken Grotesk", size: 11 } },
+          grid: { color: gridColor },
+          ticks: { font: { family: "Hanken Grotesk", size: 11 }, color: textColor, callback: v => formatMoney(v) },
         },
         x: {
           grid: { display: false },
-          ticks: { font: { family: "Hanken Grotesk", size: 11 } },
+          ticks: { font: { family: "Hanken Grotesk", size: 11 }, color: textColor },
         },
       },
     },
@@ -2429,48 +2503,130 @@ function formatFechaCorta(fecha) {
   return `${d}/${m}/${y}`;
 }
 
+function formatFechaLarga(fecha) {
+  if (!fecha) return "";
+  const [y, mo, d] = fecha.split("-").map(Number);
+  const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+  const meses = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  const dt = new Date(y, mo - 1, d);
+  return `${dias[dt.getDay()]} ${d} ${meses[mo - 1]}`;
+}
+
+// reparacionId presente → automático (generado por el flujo de reparaciones)
+const MOV_CAT_COLOR = {
+  "Anticipo":            "mcc-blue",
+  "Reparación":          "mcc-green",
+  "Venta":               "mcc-violet",
+  "Otro ingreso":        "mcc-gray",
+  "Gasto de reparación": "mcc-amber",
+  "Compra de stock":     "mcc-slate",
+  "Gasto operativo":     "mcc-red",
+  "Retiro":              "mcc-gray",
+};
+
+const MOV_CAT_ICON = {
+  "Anticipo":            `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  "Reparación":          `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+  "Venta":               `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
+  "Otro ingreso":        `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>`,
+  "Gasto de reparación": `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+  "Compra de stock":     `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
+  "Gasto operativo":     `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+  "Retiro":              `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+};
+
+const LOCK_ICO = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+
+function renderMovRow(m) {
+  const esIngreso = m.tipo === "ingreso";
+  const esAuto    = !!m.reparacionId;
+  const signo     = esIngreso ? "+" : "−";
+  const clrClass  = esIngreso ? "mov-pos" : "mov-neg";
+  const cat       = m.categoria || "";
+  const cc        = MOV_CAT_COLOR[cat] || "mcc-gray";
+  const ico       = MOV_CAT_ICON[cat]  || "";
+
+  const repChip = esAuto
+    ? `<a class="mov-rep-chip" href="editar-reparacion.html?id=${m.reparacionId}" title="Ver reparación #${m.reparacionId}">#${m.reparacionId}</a>`
+    : "";
+  const lockChip = esAuto
+    ? `<span class="mov-lock" title="Generado por una reparación — editá desde la reparación">${LOCK_ICO} automático</span>`
+    : "";
+
+  const kebab = esAuto
+    ? `<button class="mov-kebab-btn" disabled title="Generado por una reparación — editá desde la reparación">⋯</button>`
+    : `<div class="mov-kebab">
+        <button class="mov-kebab-btn" data-kebab="${m.id}" type="button">⋯</button>
+        <div class="mov-menu" id="movMenu_${m.id}">
+          <button class="mov-menu-item" data-edit-mov="${m.id}" type="button">Editar</button>
+          <button class="mov-menu-item danger" data-delete-mov="${m.id}" type="button">Eliminar</button>
+        </div>
+      </div>`;
+
+  return `<div class="mov-row ${esAuto ? "mov-row-auto" : "mov-row-manual"}" data-mov-id="${m.id}">
+    <div class="mov-row-ico ${cc}">${ico}</div>
+    <div class="mov-row-body">
+      <span class="mov-row-desc">${escapeHtml(m.descripcion)}</span>
+      <div class="mov-row-chips">
+        <span class="mov-cat-chip ${cc}">${escapeHtml(cat)}</span>
+        ${repChip}${lockChip}
+      </div>
+    </div>
+    <div class="mov-row-right">
+      <span class="mov-row-monto ${clrClass}">${signo} ${formatMoney(m.monto)}</span>
+      ${kebab}
+    </div>
+  </div>`;
+}
+
 function renderMovTable(filtered) {
-  const tbody = document.getElementById("movTableBody");
-  if (!tbody) return;
+  const container = document.getElementById("movTableBody");
+  if (!container) return;
   if (!filtered.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Sin movimientos para este período.</td></tr>`;
+    container.innerHTML = `<div class="mov-empty">Sin movimientos para este período.</div>`;
     return;
   }
-  tbody.innerHTML = filtered.map(m => {
-    const esIngreso = m.tipo === "ingreso";
-    const signo = esIngreso ? "+" : "−";
-    const colorClass = esIngreso ? "mov-pos" : "mov-neg";
-    const catClass = esIngreso ? "pill done" : "pill waiting";
-    const rep = m.reparacionId ? repairs.find(r => Number(r.id) === Number(m.reparacionId)) : null;
-    const repLink = rep ? `<span class="mov-rep-link">Reparación #${rep.id} · ${escapeHtml(rep.cliente)} — ${escapeHtml(rep.marca)} ${escapeHtml(rep.modelo)}</span>` : "";
-    return `<tr class="clickable-row" data-mov-id="${m.id}">
-      <td><span class="mov-fecha">${formatFechaCorta(m.fecha)}</span></td>
-      <td>
-        <div class="cell-stack">
-          <strong>${escapeHtml(m.descripcion)}</strong>
-          <span><span class="${catClass}">${escapeHtml(m.categoria)}</span>${repLink}</span>
-        </div>
-      </td>
-      <td class="mov-monto ${colorClass}">${signo} ${formatMoney(m.monto)}</td>
-      <td class="row-actions">
-        ${!m.reparacionId ? `<button class="btn-icon del" data-delete-mov="${m.id}" title="Eliminar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>` : ""}
-      </td>
-    </tr>`;
+
+  // Agrupar por fecha (orden descendente)
+  const groups = {};
+  filtered.forEach(m => {
+    const d = m.fecha || "0000-00-00";
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(m);
+  });
+
+  const html = Object.keys(groups).sort((a, b) => b.localeCompare(a)).map(date => {
+    const movs = groups[date];
+    const sub  = movs.reduce((s, m) => s + (m.tipo === "ingreso" ? m.monto : -m.monto), 0);
+    const subCls = sub >= 0 ? "mov-pos" : "mov-neg";
+    const subStr = `${sub >= 0 ? "+" : "−"} ${formatMoney(Math.abs(sub))}`;
+    return `<div class="mov-day-group">
+      <div class="mov-day-head">
+        <span class="mov-day-date">${formatFechaLarga(date)}</span>
+        <span class="mov-day-sub ${subCls}">${subStr}</span>
+      </div>
+      ${movs.map(renderMovRow).join("")}
+    </div>`;
   }).join("");
+
+  container.innerHTML = html;
 }
 
 function renderMovSummary(filtered) {
-  const ingresos = filtered.filter(m => m.tipo === "ingreso").reduce((s, m) => s + m.monto, 0);
-  const egresos  = filtered.filter(m => m.tipo === "egreso").reduce((s, m) => s + m.monto, 0);
+  const ing  = filtered.filter(m => m.tipo === "ingreso");
+  const egr  = filtered.filter(m => m.tipo === "egreso");
+  const ingresos  = ing.reduce((s, m) => s + m.monto, 0);
+  const egresos   = egr.reduce((s, m) => s + m.monto, 0);
   const resultado = ingresos - egresos;
   const el = id => document.getElementById(id);
   if (el("movTotalIngresos")) el("movTotalIngresos").textContent = formatMoney(ingresos);
   if (el("movTotalEgresos"))  el("movTotalEgresos").textContent  = formatMoney(egresos);
+  if (el("movCountIngresos")) el("movCountIngresos").textContent = `${ing.length} movimiento${ing.length !== 1 ? "s" : ""}`;
+  if (el("movCountEgresos"))  el("movCountEgresos").textContent  = `${egr.length} movimiento${egr.length !== 1 ? "s" : ""}`;
+  if (el("movCountTotal"))    el("movCountTotal").textContent    = `${filtered.length} en total`;
   if (el("movResultado")) {
     el("movResultado").textContent = formatMoney(resultado);
-    el("movResultado").className = "mov-result-val " + (resultado >= 0 ? "mov-pos" : "mov-neg");
+    el("movResultado").className   = "mov-result-val " + (resultado >= 0 ? "mov-pos" : "mov-neg");
   }
 }
 
@@ -2478,12 +2634,16 @@ function getMovFiltered() {
   const mes  = document.getElementById("movMesSelect")?.value;
   const anio = document.getElementById("movAnioSelect")?.value;
   const cat  = document.getElementById("movCatFilter")?.value || "";
+  const q    = (document.getElementById("movSearch")?.value || "").toLowerCase().trim();
+  const tipo = document.querySelector(".mov-seg-btn.active")?.dataset.tipo || "";
   return movimientos.filter(m => {
     if (!m.fecha) return false;
     const [y, mo] = m.fecha.split("-");
     if (mes  && mo !== mes)  return false;
     if (anio && y  !== anio) return false;
     if (cat  && m.categoria !== cat) return false;
+    if (tipo && m.tipo !== tipo) return false;
+    if (q    && !(m.descripcion || "").toLowerCase().includes(q)) return false;
     return true;
   });
 }
@@ -2494,6 +2654,21 @@ function renderMov() {
   renderMovTable(filtered);
 }
 
+let _editingMovId = null;
+
+function _setMovTipo(tipo) {
+  document.querySelectorAll(".mov-tipo-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tipo === tipo);
+  });
+  const catSel = document.getElementById("movCategoria");
+  if (!catSel) return;
+  if (tipo === "ingreso") {
+    catSel.innerHTML = CATEGORIAS_INGRESO.map(c => `<option value="${c}">${c}</option>`).join("");
+  } else {
+    catSel.innerHTML = CATEGORIAS_EGRESO.map(c => `<option value="${c}">${c}</option>`).join("");
+  }
+}
+
 function openMovModal(mov = null) {
   const modal = document.getElementById("movModal");
   const form  = document.getElementById("movForm");
@@ -2501,16 +2676,26 @@ function openMovModal(mov = null) {
   if (!modal || !form) return;
 
   form.reset();
-  if (title) title.textContent = "Nuevo movimiento";
+  _editingMovId = mov ? mov.id : null;
 
-  const catSel = document.getElementById("movCategoria");
-  if (catSel) {
-    catSel.innerHTML = `<optgroup label="Ingresos">${CATEGORIAS_INGRESO.map(c => `<option value="${c}">${c}</option>`).join("")}</optgroup>
-      <optgroup label="Egresos">${CATEGORIAS_EGRESO.map(c => `<option value="${c}">${c}</option>`).join("")}</optgroup>`;
+  if (title) title.textContent = mov ? "Editar movimiento" : "Nuevo movimiento";
+
+  const tipoInicial = mov ? mov.tipo : "ingreso";
+  _setMovTipo(tipoInicial);
+
+  if (mov) {
+    const catSel = document.getElementById("movCategoria");
+    if (catSel) catSel.value = mov.categoria;
+    const descEl = document.getElementById("movDescripcion");
+    if (descEl) descEl.value = mov.descripcion;
+    const montoEl = document.getElementById("movMonto");
+    if (montoEl) montoEl.value = mov.monto;
+    const fechaEl = document.getElementById("movFecha");
+    if (fechaEl) fechaEl.value = mov.fecha;
+  } else {
+    const fechaEl = document.getElementById("movFecha");
+    if (fechaEl) fechaEl.value = today;
   }
-
-  const fechaInput = document.getElementById("movFecha");
-  if (fechaInput) fechaInput.value = today;
 
   modal.style.display = "flex";
 }
@@ -2518,6 +2703,19 @@ function openMovModal(mov = null) {
 function closeMovModal() {
   const modal = document.getElementById("movModal");
   if (modal) modal.style.display = "none";
+  _editingMovId = null;
+}
+
+function showMovToast(msg) {
+  const t = document.getElementById("movToast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function _closeAllMovMenus() {
+  document.querySelectorAll(".mov-menu.open").forEach(m => m.classList.remove("open"));
 }
 
 async function initMovimientos() {
@@ -2548,12 +2746,36 @@ async function initMovimientos() {
   anioSel?.addEventListener("change", renderMov);
   document.getElementById("movCatFilter")?.addEventListener("change", renderMov);
 
+  // Buscador con debounce leve
+  let _searchTimer;
+  document.getElementById("movSearch")?.addEventListener("input", () => {
+    clearTimeout(_searchTimer);
+    _searchTimer = setTimeout(renderMov, 180);
+  });
+
+  // Segmentado Todos / Ingresos / Egresos
+  document.querySelectorAll(".mov-seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".mov-seg-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderMov();
+    });
+  });
+
+  // Toggle tipo en modal
+  document.getElementById("movTipoToggle")?.addEventListener("click", e => {
+    const btn = e.target.closest(".mov-tipo-btn");
+    if (!btn) return;
+    _setMovTipo(btn.dataset.tipo);
+  });
+
   document.getElementById("newMovBtn")?.addEventListener("click", () => openMovModal());
   document.getElementById("closeMovModal")?.addEventListener("click", closeMovModal);
   document.getElementById("movModal")?.addEventListener("click", e => {
     if (e.target === document.getElementById("movModal")) closeMovModal();
   });
 
+  // Guardar (nuevo o edición)
   document.getElementById("movForm")?.addEventListener("submit", async e => {
     e.preventDefault();
     const fecha       = document.getElementById("movFecha")?.value;
@@ -2562,21 +2784,65 @@ async function initMovimientos() {
     const monto       = Number(document.getElementById("movMonto")?.value || 0);
     if (!descripcion || !monto || !categoria) return;
     const tipo = CATEGORIA_TIPO[categoria] || "egreso";
-    const saved = await dbInsertMovimiento({ fecha, descripcion, categoria, tipo, monto, reparacionId: null });
-    if (saved) {
-      movimientos = [saved, ...movimientos];
-      renderMov();
+
+    if (_editingMovId) {
+      const updated = await dbUpdateMovimiento({ id: _editingMovId, fecha, descripcion, categoria, tipo, monto, reparacionId: null });
+      if (updated) {
+        movimientos = movimientos.map(m => m.id === _editingMovId ? updated : m);
+        renderMov();
+        showMovToast("Movimiento actualizado");
+      }
+    } else {
+      const saved = await dbInsertMovimiento({ fecha, descripcion, categoria, tipo, monto, reparacionId: null });
+      if (saved) {
+        movimientos = [saved, ...movimientos];
+        renderMov();
+        showMovToast("Movimiento guardado");
+      }
     }
     closeMovModal();
   });
 
+  // Clicks en la lista: kebab, editar, eliminar
   document.getElementById("movTableBody")?.addEventListener("click", async e => {
-    const btn = e.target.closest("[data-delete-mov]");
-    if (!btn) return;
-    if (!confirm("¿Eliminar este movimiento?")) return;
-    const id = Number(btn.dataset.deleteMov);
-    await dbDeleteMovimiento(id);
-    movimientos = movimientos.filter(m => m.id !== id);
-    renderMov();
+    // Kebab toggle
+    const kebabBtn = e.target.closest("[data-kebab]");
+    if (kebabBtn) {
+      e.stopPropagation();
+      const id   = kebabBtn.dataset.kebab;
+      const menu = document.getElementById(`movMenu_${id}`);
+      const isOpen = menu?.classList.contains("open");
+      _closeAllMovMenus();
+      if (!isOpen && menu) menu.classList.add("open");
+      return;
+    }
+
+    // Editar
+    const editBtn = e.target.closest("[data-edit-mov]");
+    if (editBtn) {
+      _closeAllMovMenus();
+      const id  = Number(editBtn.dataset.editMov);
+      const mov = movimientos.find(m => m.id === id);
+      if (mov) openMovModal(mov);
+      return;
+    }
+
+    // Eliminar
+    const delBtn = e.target.closest("[data-delete-mov]");
+    if (delBtn) {
+      _closeAllMovMenus();
+      if (!confirm("¿Eliminar este movimiento?")) return;
+      const id = Number(delBtn.dataset.deleteMov);
+      await dbDeleteMovimiento(id);
+      movimientos = movimientos.filter(m => m.id !== id);
+      renderMov();
+      showMovToast("Movimiento eliminado");
+      return;
+    }
+  });
+
+  // Cerrar menús al hacer click fuera
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".mov-kebab")) _closeAllMovMenus();
   });
 }

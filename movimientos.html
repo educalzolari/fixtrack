@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=8" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#13121f" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -22,65 +22,27 @@
       <aside class="sidebar" aria-label="Menú principal">
         <div class="brand">
           <div class="brand-mark">1F</div>
-          <div>
-            <div class="brand-name">1Fixtrack</div>
-            <div class="brand-sub">Workshop OS</div>
-          </div>
+          <div><div class="brand-name">1Fixtrack</div><div class="brand-sub">Workshop OS</div></div>
         </div>
         <nav class="nav">
           <div class="nav-label">Operación</div>
-          <a class="nav-item" href="index.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Inicio
-          </a>
-          <a class="nav-item" href="nueva-reparacion.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            Nueva Reparación
-          </a>
-          <a class="nav-item" href="reparaciones.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
-            Ver Reparaciones
-            <span class="nav-badge" id="repairsBadge" style="display:none"></span>
-          </a>
-          <a class="nav-item" href="clientes.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Clientes
-          </a>
-          <a class="nav-item" href="reportes.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-            Reportes
-          </a>
+          <a class="nav-item" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Inicio</a>
+          <a class="nav-item" href="nueva-reparacion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nueva Reparación</a>
+          <a class="nav-item" href="reparaciones.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Ver Reparaciones<span class="nav-badge" id="repairsBadge" style="display:none"></span></a>
+          <a class="nav-item" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
+          <a class="nav-item" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
           <div class="nav-label">Negocio</div>
-          <a class="nav-item active" href="movimientos.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-            Movimientos
-          </a>
-          <a class="nav-item" href="inventario.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-            Inventario
-          </a>
-          <a class="nav-item" href="proveedores.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            Proveedores
-          </a>
-          <a class="nav-item" href="configuracion.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            Configuración
-          </a>
+          <a class="nav-item active" href="movimientos.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Movimientos</a>
+          <a class="nav-item" href="inventario.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario</a>
+          <a class="nav-item" href="proveedores.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Proveedores</a>
+          <a class="nav-item" href="configuracion.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a>
         </nav>
         <div class="side-foot">
-          <a class="nav-item" href="ayuda.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            Centro de Ayuda
-          </a>
-          <button class="nav-item danger logout" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Salir
-          </button>
+          <a class="nav-item" href="ayuda.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Centro de Ayuda</a>
+          <button class="nav-item danger logout" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Salir</button>
         </div>
       </aside>
 
-      <!-- â”€â”€ Main â”€â”€ -->
       <div class="main">
         <header class="topbar">
           <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú">
@@ -105,24 +67,35 @@
           </div>
 
           <!-- Filtros -->
-          <div class="toolbar" style="margin-bottom:20px">
-            <select class="sel" id="movMesSelect" style="max-width:150px"></select>
-            <select class="sel" id="movAnioSelect" style="max-width:100px"></select>
-            <select class="sel" id="movCatFilter" style="max-width:200px">
-              <option value="">Todas las categorías</option>
-              <optgroup label="Ingresos">
-                <option value="Anticipo">Anticipo</option>
-                <option value="Reparación">Reparación</option>
-                <option value="Venta">Venta</option>
-                <option value="Otro ingreso">Otro ingreso</option>
-              </optgroup>
-              <optgroup label="Egresos">
-                <option value="Gasto de reparación">Gasto de reparación</option>
-                <option value="Compra de stock">Compra de stock</option>
-                <option value="Gasto operativo">Gasto operativo</option>
-                <option value="Retiro">Retiro</option>
-              </optgroup>
-            </select>
+          <div class="mov-toolbar stagger">
+            <div class="mov-filters-row">
+              <select class="sel" id="movMesSelect" style="max-width:140px"></select>
+              <select class="sel" id="movAnioSelect" style="max-width:90px"></select>
+              <select class="sel" id="movCatFilter" style="max-width:190px">
+                <option value="">Todas las categorías</option>
+                <optgroup label="Ingresos">
+                  <option value="Anticipo">Anticipo</option>
+                  <option value="Reparación">Reparación</option>
+                  <option value="Venta">Venta</option>
+                  <option value="Otro ingreso">Otro ingreso</option>
+                </optgroup>
+                <optgroup label="Egresos">
+                  <option value="Gasto de reparación">Gasto de reparación</option>
+                  <option value="Compra de stock">Compra de stock</option>
+                  <option value="Gasto operativo">Gasto operativo</option>
+                  <option value="Retiro">Retiro</option>
+                </optgroup>
+              </select>
+              <div class="mov-search-wrap">
+                <svg class="mov-search-ico" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input class="inp mov-search-inp" id="movSearch" type="text" placeholder="Buscar descripción…" />
+              </div>
+            </div>
+            <div class="mov-seg" role="group">
+              <button class="mov-seg-btn active" data-tipo="" type="button">Todos</button>
+              <button class="mov-seg-btn" data-tipo="ingreso" type="button">Ingresos</button>
+              <button class="mov-seg-btn" data-tipo="egreso" type="button">Egresos</button>
+            </div>
           </div>
 
           <!-- Resumen -->
@@ -133,7 +106,8 @@
               </div>
               <div>
                 <span class="mov-card-label">Ingresos</span>
-                <div id="movTotalIngresos" class="mov-card-val mov-pos">$0</div>
+                <div id="movTotalIngresos" class="mov-card-val mov-pos">$ 0</div>
+                <div id="movCountIngresos" class="mov-count-sub">0 movimientos</div>
               </div>
             </div>
             <div class="mov-card">
@@ -142,71 +116,80 @@
               </div>
               <div>
                 <span class="mov-card-label">Egresos</span>
-                <div id="movTotalEgresos" class="mov-card-val mov-neg">$0</div>
+                <div id="movTotalEgresos" class="mov-card-val mov-neg">$ 0</div>
+                <div id="movCountEgresos" class="mov-count-sub">0 movimientos</div>
               </div>
             </div>
-            <div class="mov-card">
+            <div class="mov-card mov-card-resultado">
               <div class="mov-card-ico mov-ico-res">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
               </div>
               <div>
                 <span class="mov-card-label">Resultado</span>
-                <div id="movResultado" class="mov-result-val mov-pos">$0</div>
+                <div id="movResultado" class="mov-result-val mov-pos">$ 0</div>
+                <div id="movCountTotal" class="mov-count-sub">0 movimientos</div>
               </div>
             </div>
           </div>
 
-          <!-- Tabla -->
-          <div class="tbl-wrap" style="margin-top:24px">
-            <table class="tbl">
-              <thead>
-                <tr>
-                  <th style="width:80px">Fecha</th>
-                  <th>Descripción</th>
-                  <th style="text-align:right;width:140px">Monto</th>
-                  <th style="width:48px"></th>
-                </tr>
-              </thead>
-              <tbody id="movTableBody"></tbody>
-            </table>
-          </div>
+          <!-- Lista libro de caja -->
+          <div id="movTableBody" class="mov-list stagger"></div>
         </div>
       </div>
     </div>
 
-    <!-- Modal nuevo movimiento -->
+    <!-- Modal nuevo / editar movimiento -->
     <div class="modal-backdrop" id="movModal" style="display:none;align-items:center;justify-content:center">
-      <div class="modal-card" style="max-width:460px;width:100%">
+      <div class="modal-card" style="max-width:480px;width:100%">
         <div class="modal-heading">
           <h3 class="modal-title" id="movModalTitle">Nuevo movimiento</h3>
           <button class="icon-button" id="closeMovModal" type="button" aria-label="Cerrar">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-        <form id="movForm" class="field-grid" style="margin-top:20px">
-          <div class="field field-wide">
-            <label class="field-label" for="movDescripcion">Descripción</label>
-            <input class="inp" id="movDescripcion" type="text" placeholder="Ej: Venta celular Samsung A54" required />
+        <form id="movForm" style="margin-top:20px">
+          <!-- Toggle Ingreso / Egreso -->
+          <div style="margin-bottom:18px">
+            <label class="field-label">Tipo</label>
+            <div class="mov-tipo-toggle" id="movTipoToggle">
+              <button class="mov-tipo-btn active" data-tipo="ingreso" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                Ingreso
+              </button>
+              <button class="mov-tipo-btn" data-tipo="egreso" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                Egreso
+              </button>
+            </div>
           </div>
-          <div class="field">
-            <label class="field-label" for="movCategoria">Categoría</label>
-            <select class="sel" id="movCategoria" required></select>
-          </div>
-          <div class="field">
-            <label class="field-label" for="movMonto">Monto</label>
-            <input class="inp" id="movMonto" type="number" min="0" step="100" placeholder="0" required />
-          </div>
-          <div class="field field-wide">
-            <label class="field-label" for="movFecha">Fecha</label>
-            <input class="inp" id="movFecha" type="date" required />
-          </div>
-          <div class="field field-wide" style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-            <button class="btn btn-ghost" type="button" id="cancelMovModal">Cancelar</button>
-            <button class="btn btn-accent" type="submit">Guardar</button>
+          <div class="field-grid">
+            <div class="field field-wide">
+              <label class="field-label" for="movDescripcion">Descripción</label>
+              <input class="inp" id="movDescripcion" type="text" placeholder="Ej: Venta celular Samsung A54" required />
+            </div>
+            <div class="field">
+              <label class="field-label" for="movCategoria">Categoría</label>
+              <select class="sel" id="movCategoria" required></select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="movMonto">Monto</label>
+              <input class="inp" id="movMonto" type="number" min="0" step="100" placeholder="0" required />
+            </div>
+            <div class="field field-wide">
+              <label class="field-label" for="movFecha">Fecha</label>
+              <input class="inp" id="movFecha" type="date" required />
+            </div>
+            <div class="field field-wide" style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+              <button class="btn btn-ghost" type="button" id="cancelMovModal">Cancelar</button>
+              <button class="btn btn-accent" type="submit" id="movSubmitBtn">Guardar</button>
+            </div>
           </div>
         </form>
       </div>
     </div>
+
+    <!-- Toast -->
+    <div id="movToast" class="mov-toast" aria-live="polite"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>

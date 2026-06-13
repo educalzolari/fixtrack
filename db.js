@@ -354,6 +354,17 @@ async function dbInsertMovimiento(m) {
   return rowToMovimiento(data);
 }
 
+async function dbUpdateMovimiento(m) {
+  const { data, error } = await _db
+    .from("movimientos")
+    .update(movimientoToRow(m))
+    .eq("id", m.id)
+    .select()
+    .single();
+  if (error) { console.error("Error actualizando movimiento:", error); return null; }
+  return rowToMovimiento(data);
+}
+
 async function dbDeleteMovimiento(id) {
   const { error } = await _db.from("movimientos").delete().eq("id", id);
   if (error) console.error("Error eliminando movimiento:", error);
