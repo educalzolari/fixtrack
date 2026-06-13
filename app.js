@@ -750,7 +750,9 @@ async function setupEditForm() {
     if (saveEditButton) saveEditButton.style.display = "none";
     if (enableEditButton) enableEditButton.style.display = "";
 
-    const fields = editForm.querySelectorAll("input, select, textarea, button[data-delete-expense], #openExpenseModalButton");
+    const finishModal = document.getElementById("finishModal");
+    const fields = [...editForm.querySelectorAll("input, select, textarea, button[data-delete-expense], #openExpenseModalButton")]
+      .filter(f => !finishModal?.contains(f));
     fields.forEach(f => f.disabled = true);
 
     if (enableEditButton) {

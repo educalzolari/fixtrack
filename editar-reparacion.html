@@ -306,11 +306,11 @@
                   <div class="edit-rail-h">Dinero</div>
                   <div class="edit-field">
                     <label class="edit-lbl">Costo aproximado</label>
-                    <input class="inp" required name="costoAproximado" type="number" min="0" step="100" />
+                    <input class="inp" required name="costoAproximado" type="number" min="0" step="1" />
                   </div>
                   <div class="edit-field" style="margin-top:14px">
                     <label class="edit-lbl">Anticipo recibido <span class="edit-opt">· opcional</span></label>
-                    <input class="inp" name="anticipo" type="number" min="0" step="100" />
+                    <input class="inp" name="anticipo" type="number" min="0" step="1" />
                   </div>
                   <div class="edit-fin-rows">
                     <div class="edit-fin-row">
@@ -409,7 +409,7 @@
             <div class="exp-field">
               <label class="exp-lbl">Monto unitario</label>
               <div class="exp-prefix-wrap">
-                <input class="inp" id="expenseUnitPrice" type="number" min="0" step="100" placeholder="0" />
+                <input class="inp" id="expenseUnitPrice" type="number" min="0" step="1" placeholder="0" />
                 <input class="inp" id="expInvPrice" type="number" min="0" step="1" placeholder="0" style="display:none" disabled />
               </div>
             </div>
@@ -447,7 +447,7 @@
         <form id="finishForm" class="finish-form">
           <label class="field"><span class="field-label">Costo inicial</span><input class="inp" id="finishInitialCost" name="costoInicial" type="text" readonly /></label>
           <label class="field"><span class="field-label">Gastos</span><input class="inp" id="finishExpenses" name="gastos" type="text" readonly /></label>
-          <label class="field"><span class="field-label">Costo final</span><input class="inp" required id="finishFinalCost" name="costoFinal" type="number" min="0" step="100" placeholder="0" /></label>
+          <label class="field"><span class="field-label">Costo final</span><input class="inp" required id="finishFinalCost" name="costoFinal" type="number" min="0" step="1" placeholder="0" /></label>
           <label class="field"><span class="field-label">Ganancia</span><input class="inp" id="finishProfit" name="ganancia" type="text" readonly /></label>
           <label class="field field-wide"><span class="field-label">Solución final</span><textarea class="inp" required id="finishSolution" name="solucionFinal" rows="4" placeholder="Detalle de la solución realizada"></textarea></label>
           <div class="modal-actions">
