@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=7" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#13121f" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,9 +33,10 @@
           <a class="nav-item" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
           <a class="nav-item active" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
           <div class="nav-label">Negocio</div>
-          <a class="nav-item" href="movimientos.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-            Movimientos
+          <a class="nav-item" href="movimientos.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Movimientos</a>
+          <a class="nav-item" href="por-cobrar.html">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Por cobrar
           </a>
           <a class="nav-item" href="inventario.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario</a>
           <a class="nav-item" href="proveedores.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Proveedores</a>
@@ -70,7 +71,10 @@
             </div>
           </div>
 
-          <!-- KPI Row: 5 cards -->
+          <!-- ── 1. Resultado del mes ─────────────────────────────────────── -->
+          <div class="rc-section-head stagger">
+            <h2 class="rc-section-title">Resultado del mes</h2>
+          </div>
           <div class="kpi-row stagger">
 
             <div class="report-card">
@@ -79,9 +83,9 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </span>
                 <span class="report-badge badge-gray" id="rcFacturadoBadge">Sin datos</span>
-                <span class="rc-help" title="Total de reparaciones ingresadas este mes que tienen precio asignado, sin importar si ya fueron cobradas. Excluye canceladas.">?</span>
+                <span class="rc-help" title="Reparaciones finalizadas en el mes (por fecha de finalización), con precio. Excluye canceladas. Criterio devengado: cuando se termina el trabajo, no cuando se ingresó.">?</span>
               </div>
-              <p class="rc-label">Facturado</p>
+              <p class="rc-label">Facturado <span class="rc-label-note">devengado</span></p>
               <strong class="rc-value" id="rcFacturadoValue">$ 0,00</strong>
             </div>
 
@@ -91,7 +95,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </span>
                 <span class="report-badge badge-blue" id="rcCobradoBadge">0 mov.</span>
-                <span class="rc-help" title="Dinero real cobrado este mes: anticipos recibidos + saldos de entregas. Puede incluir reparaciones de meses anteriores.">?</span>
+                <span class="rc-help" title="Plata real que entró este mes: anticipos recibidos + saldos de entregas. Puede incluir reparaciones de meses anteriores (seña un mes, saldo al siguiente).">?</span>
               </div>
               <p class="rc-label">Cobrado</p>
               <strong class="rc-value" id="rcCobradoValue">$ 0,00</strong>
@@ -103,103 +107,146 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
                 </span>
                 <span class="report-badge badge-gray" id="rcGastosBadge">Sin datos</span>
-                <span class="rc-help" title="Total de egresos registrados en movimientos este mes: gastos de reparación, compras, gastos operativos y retiros.">?</span>
+                <span class="rc-help" title="Total de egresos registrados en movimientos este mes: repuestos, compras, gastos operativos y retiros.">?</span>
               </div>
               <p class="rc-label">Gastos</p>
               <strong class="rc-value" id="rcGastosValue">$ 0,00</strong>
             </div>
 
-            <div class="report-card">
+            <!-- Resultado de caja — destacado -->
+            <div class="report-card rc-highlighted">
+              <div class="rc-highlight-bar"></div>
               <div class="report-card-top">
                 <span class="rc-icon rc-purple">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
                 </span>
                 <span class="report-badge badge-blue" id="rcGananciaBadge">Positiva</span>
-                <span class="rc-help" title="Ganancia del mes = Cobrado − Gastos. Refleja el resultado real en efectivo del período.">?</span>
+                <span class="rc-help" title="Resultado de caja = Cobrado − Gastos del mes. Refleja el flujo real de efectivo del período (no la rentabilidad por trabajo).">?</span>
               </div>
-              <p class="rc-label">Ganancia del mes</p>
+              <p class="rc-label">Resultado de caja</p>
               <strong class="rc-value" id="rcGananciaValue">$ 0,00</strong>
+              <p class="rc-formula">Cobrado − Gastos</p>
             </div>
 
-            <div class="report-card">
+            <!-- Ganancia devengada — destacado con chip de margen -->
+            <div class="report-card rc-highlighted">
+              <div class="rc-highlight-bar"></div>
               <div class="report-card-top">
-                <span class="rc-icon rc-amber">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span class="rc-icon rc-purple">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                 </span>
-                <span class="report-badge badge-blue" id="rcTicketBadge">0 rep.</span>
-                <span class="rc-help" title="Facturado ÷ cantidad de reparaciones con precio ingresadas este mes.">?</span>
+                <span class="report-badge badge-gray" id="rcGananciaDevBadge">—</span>
+                <span class="rc-help" title="Ganancia devengada = Facturado (devengado) − repuestos usados en esas reparaciones (cruzando gastos de movimientos por reparación_id). Es rentabilidad bruta, no flujo de caja.">?</span>
               </div>
-              <p class="rc-label">Ticket Promedio</p>
-              <strong class="rc-value" id="rcTicketValue">$ 0,00</strong>
+              <p class="rc-label">Ganancia devengada</p>
+              <strong class="rc-value" id="rcGananciaDevValue">$ 0,00</strong>
+              <p class="rc-formula">Facturado − Repuestos</p>
+              <span class="rc-margen-chip" id="rcMargenChip">—</span>
             </div>
 
           </div>
 
-          <div class="report-grid stagger">
-
-            <!-- Fila 2: Operación + Gráfico -->
-            <div class="report-card">
-              <div class="report-card-top">
-                <span class="rc-icon rc-blue">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                </span>
-                <span class="report-badge badge-green" id="rcReparacionesBadge">0%</span>
-              </div>
-              <p class="rc-label">Reparaciones Completadas</p>
-              <strong class="rc-value" id="rcReparacionesValue">0</strong>
+          <!-- ── 2. Cobranzas ──────────────────────────────────────────────── -->
+          <div class="rc-section-head stagger">
+            <h2 class="rc-section-title">Cobranzas</h2>
+            <span class="rc-section-note">saldo global · no depende del mes</span>
+          </div>
+          <div class="rc-cobranzas-panel stagger">
+            <div class="rc-cobranzas-main">
+              <p class="rc-label">Saldo pendiente total</p>
+              <strong class="rc-value-xl" id="rcSaldoTotal">$ 0,00</strong>
             </div>
-
-            <div class="report-card">
-              <div class="report-card-top">
-                <span class="rc-icon rc-orange">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </span>
-                <span class="report-badge badge-blue" id="rcEntregarBadge">Pendientes: 0</span>
+            <div class="rc-cobranzas-cells">
+              <div class="rc-cobranzas-cell">
+                <p class="rc-label">Listos — sin retirar</p>
+                <strong class="rc-value" id="rcSaldoFinMonto">$ 0,00</strong>
+                <p class="rc-sub" id="rcSaldoFinCount">0 equipos</p>
               </div>
-              <p class="rc-label">Listos — sin retirar</p>
-              <strong class="rc-value" id="rcEntregarValue">0</strong>
-              <p style="margin-top:5px;font-size:12px;color:var(--text-3)">Por cobrar: <span id="rcEntregarMonto" style="font-weight:600;color:var(--text-2)">$ 0,00</span></p>
+              <div class="rc-cobranzas-cell">
+                <p class="rc-label">En curso</p>
+                <strong class="rc-value" id="rcSaldoActMonto">$ 0,00</strong>
+                <p class="rc-sub" id="rcSaldoActCount">0 en proceso</p>
+              </div>
             </div>
+          </div>
 
-            <!-- Gráfico semanal: ocupa col3-4, filas 2-3 -->
-            <div class="panel report-chart-card rc-col2 rc-row2">
-              <p class="rc-chart-title">Ventas de la semana</p>
+          <!-- ── 3. Tendencia y operación ──────────────────────────────────── -->
+          <div class="rc-section-head stagger">
+            <h2 class="rc-section-title">Tendencia y operación</h2>
+          </div>
+          <div class="rc-trend-grid stagger">
+
+            <!-- Gráfico mensual -->
+            <div class="panel report-chart-card">
+              <p class="rc-chart-title">Cobrado vs. Gastos — últimos 6 meses</p>
               <div class="chart-wrap">
                 <canvas id="weeklyChart"></canvas>
               </div>
             </div>
 
-            <!-- Fila 3: Negocio (col1-2 de la fila 3, el gráfico sigue ocupando col3-4) -->
-            <div class="report-card">
-              <div class="report-card-top">
-                <span class="rc-icon rc-gray">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                </span>
-                <span class="report-badge badge-gray" id="rcInventarioBadge">Artículos: 0</span>
-              </div>
-              <p class="rc-label">Inventario — al costo</p>
-              <strong class="rc-value" id="rcInventarioValue">$ 0,00</strong>
-              <p style="margin-top:5px;font-size:12px;color:var(--text-3)">Venta: <span id="rcInventarioVenta" style="font-weight:600;color:var(--text-2)">$ 0,00</span></p>
-            </div>
+            <!-- 2×2 métricas operativas -->
+            <div class="rc-op-grid">
 
-            <div class="report-card">
-              <div class="report-card-top">
-                <span class="rc-icon rc-amber">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </span>
-                <span class="report-badge badge-gray" id="rcClientesBadge">Sin datos</span>
+              <div class="report-card">
+                <div class="report-card-top">
+                  <span class="rc-icon rc-blue" style="width:36px;height:36px;font-size:18px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                  </span>
+                  <span class="report-badge badge-green" id="rcReparacionesBadge">0%</span>
+                </div>
+                <p class="rc-label">Completadas</p>
+                <strong class="rc-value" id="rcReparacionesValue">0</strong>
               </div>
-              <p class="rc-label">Clientes Nuevos</p>
-              <strong class="rc-value" id="rcClientesValue">0</strong>
-            </div>
 
-            <!-- Top 5 -->
-            <div class="panel rc-col2">
-              <div class="section-heading">
-                <h3 class="rc-section-title">Top 5 Reparaciones</h3>
-                <p>Las de mayor valor del mes seleccionado.</p>
+              <div class="report-card">
+                <div class="report-card-top">
+                  <span class="rc-icon rc-amber" style="width:36px;height:36px;font-size:18px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </span>
+                  <span class="report-badge badge-blue" id="rcTicketBadge">0 rep.</span>
+                </div>
+                <p class="rc-label">Ticket Promedio</p>
+                <strong class="rc-value" id="rcTicketValue">$ 0,00</strong>
               </div>
-              <div class="tbl-wrap compact-table">
+
+              <div class="report-card">
+                <div class="report-card-top">
+                  <span class="rc-icon rc-amber" style="width:36px;height:36px;font-size:18px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </span>
+                  <span class="report-badge badge-gray" id="rcClientesBadge">Sin datos</span>
+                </div>
+                <p class="rc-label">Clientes Nuevos</p>
+                <strong class="rc-value" id="rcClientesValue">0</strong>
+              </div>
+
+              <div class="report-card">
+                <div class="report-card-top">
+                  <span class="rc-icon rc-orange" style="width:36px;height:36px;font-size:18px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </span>
+                  <span class="report-badge badge-blue" id="rcEntregarBadge">Ninguno pendiente</span>
+                </div>
+                <p class="rc-label">Listos — sin retirar</p>
+                <strong class="rc-value" id="rcEntregarValue">0</strong>
+                <p style="margin-top:5px;font-size:12px;color:var(--text-3)">Por cobrar: <span id="rcEntregarMonto" style="font-weight:600;color:var(--text-2)">$ 0,00</span></p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── 4. Detalle del mes ─────────────────────────────────────────── -->
+          <div class="rc-section-head stagger">
+            <h2 class="rc-section-title">Detalle del mes</h2>
+          </div>
+          <div class="rc-detail-grid stagger">
+
+            <div class="panel">
+              <div class="section-head" style="margin:0 0 16px">
+                <h3 class="section-title" style="font-size:15px">Top 5 Reparaciones</h3>
+                <span style="font-size:12px;color:var(--text-3)">Mayor valor del mes</span>
+              </div>
+              <div class="tbl-wrap">
                 <table class="tbl">
                   <thead>
                     <tr>
@@ -215,19 +262,40 @@
               </div>
             </div>
 
-            <!-- Categorías -->
-            <div class="panel rc-col2">
-              <div class="section-heading">
-                <h3 class="rc-section-title">Categorías más vendidas</h3>
-                <p>Tipos de dispositivo reparados este mes.</p>
+            <div class="panel">
+              <div class="section-head" style="margin:0 0 16px">
+                <h3 class="section-title" style="font-size:15px">Categorías más vendidas</h3>
+                <span style="font-size:12px;color:var(--text-3)">Dispositivos reparados</span>
               </div>
               <div id="rcCategoriesBody" class="categories-body"></div>
             </div>
 
           </div>
-        </div>
-      </div>
-    </div>
+
+          <!-- ── 5. Estado actual ───────────────────────────────────────────── -->
+          <div class="rc-section-head stagger">
+            <h2 class="rc-section-title">Estado actual</h2>
+            <span class="rc-section-note">foto de hoy · no depende del mes</span>
+          </div>
+          <div class="rc-state-grid stagger">
+
+            <div class="report-card">
+              <div class="report-card-top">
+                <span class="rc-icon rc-gray">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                </span>
+                <span class="report-badge badge-gray" id="rcInventarioBadge">Artículos: 0</span>
+              </div>
+              <p class="rc-label">Inventario — al costo</p>
+              <strong class="rc-value" id="rcInventarioValue">$ 0,00</strong>
+              <p style="margin-top:5px;font-size:12px;color:var(--text-3)">Precio de venta: <span id="rcInventarioVenta" style="font-weight:600;color:var(--text-2)">$ 0,00</span></p>
+            </div>
+
+          </div>
+
+        </div><!-- /page -->
+      </div><!-- /main -->
+    </div><!-- /app -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>

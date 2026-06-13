@@ -1866,6 +1866,7 @@ async function initApp() {
   await initMovimientos();
   await migrateGastosMovimientos();
   renderReportsDashboard();
+  initPorCobrar();
 }
 
 async function migrateGastosMovimientos() {
@@ -2844,5 +2845,313 @@ async function initMovimientos() {
   // Cerrar menús al hacer click fuera
   document.addEventListener("click", e => {
     if (!e.target.closest(".mov-kebab")) _closeAllMovMenus();
+  });
+}
+
+// ===== POR COBRAR =====
+
+function initPorCobrar() {
+  if (!document.getElementById("pcList")) return;
+
+  // Mismo cálculo que renderReportsDashboard
+  const paidForRep = id => movimientos
+    .filter(m => Number(m.reparacionId) === Number(id) && m.tipo === "ingreso")
+    .reduce((s, m) => s + m.monto, 0);
+
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+
+  // Campo incobrable no existe en DB — se persiste en localStorage
+  // TODO: agregar columna `incobrable boolean default false` en la tabla reparaciones
+  const isIncobrable = id => localStorage.getItem(`fixtrack_incobrable_${id}`) === "1";
+  const setIncobrable = id => localStorage.setItem(`fixtrack_incobrable_${id}`, "1");
+
+  function buildDeudas() {
+    const result = [];
+    for (const r of repairs) {
+      if (r.estado === "Cancelado") continue;
+      if (isIncobrable(r.id)) continue;
+      const precio = r.cierre?.costoFinal || r.costoAproximado || 0;
+      if (!precio) continue;
+      const pagado = paidForRep(r.id);
+      const saldo = precio - pagado;
+      if (saldo <= 0) continue;
+
+      // Fecha cobrable: finalización → entregaReal → ingreso (fallback)
+      const fechaStr = r.cierre?.fechaFinalizacion || r.fechaEntregaReal || r.fechaIngreso || "";
+      const fechaCobrableUsada = r.cierre?.fechaFinalizacion ? "finalizacion"
+        : r.fechaEntregaReal ? "entregaReal" : "ingreso";
+      const fechaCobrable = fechaStr ? new Date(`${fechaStr}T00:00:00`) : todayDate;
+      const dias = Math.floor((todayDate - fechaCobrable) / 86400000);
+
+      const bucket = dias >= 60 ? "60+" : dias >= 31 ? "31-60" : "0-30";
+      const esListo = r.estado === "Finalizado";
+
+      result.push({ r, precio, pagado, saldo, dias, bucket, esListo, fechaCobrableUsada });
+    }
+    result.sort((a, b) => b.dias - a.dias);
+    return result;
+  }
+
+  function initials(name) {
+    return (name || "?").split(" ").slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("");
+  }
+
+  function renderSummary(deudas) {
+    const total    = deudas.reduce((s, d) => s + d.saldo, 0);
+    const vencido  = deudas.filter(d => d.bucket !== "0-30").reduce((s, d) => s + d.saldo, 0);
+    const red      = deudas.filter(d => d.bucket === "60+").reduce((s, d) => s + d.saldo, 0);
+    const amber    = deudas.filter(d => d.bucket === "31-60").reduce((s, d) => s + d.saldo, 0);
+    const green    = deudas.filter(d => d.bucket === "0-30").reduce((s, d) => s + d.saldo, 0);
+
+    const el = id => document.getElementById(id);
+    if (el("pcTotal"))    el("pcTotal").textContent    = formatMoney(total);
+    if (el("pcTotalSub")) el("pcTotalSub").textContent = `${deudas.length} deuda${deudas.length !== 1 ? "s" : ""} abierta${deudas.length !== 1 ? "s" : ""}`;
+    if (el("pcCount"))    el("pcCount").textContent    = deudas.length;
+    if (el("pcCountSub")) el("pcCountSub").textContent = `equipo${deudas.length !== 1 ? "s" : ""} pendiente${deudas.length !== 1 ? "s" : ""}`;
+    if (el("pcOld"))      el("pcOld").textContent      = formatMoney(vencido);
+    if (el("pcOldSub"))   el("pcOldSub").textContent   = `${deudas.filter(d => d.bucket !== "0-30").length} caso${deudas.filter(d => d.bucket !== "0-30").length !== 1 ? "s" : ""}`;
+
+    // Barra
+    const pct = v => total > 0 ? ((v / total) * 100).toFixed(1) + "%" : "0%";
+    if (el("pcSegRed"))   el("pcSegRed").style.width   = pct(red);
+    if (el("pcSegAmber")) el("pcSegAmber").style.width  = pct(amber);
+    if (el("pcSegGreen")) el("pcSegGreen").style.width  = pct(green);
+    if (el("pcLegRed"))   el("pcLegRed").textContent   = `+60 días — ${formatMoney(red)}`;
+    if (el("pcLegAmber")) el("pcLegAmber").textContent  = `31–60 días — ${formatMoney(amber)}`;
+    if (el("pcLegGreen")) el("pcLegGreen").textContent  = `Hasta 30 días — ${formatMoney(green)}`;
+  }
+
+  function renderRow(d) {
+    const { r, precio, pagado, saldo, dias, bucket, esListo } = d;
+    const daysCls  = bucket === "60+" ? "pc-days-red" : bucket === "31-60" ? "pc-days-amber" : "pc-days-green";
+    const daysLbl  = `${dias} día${dias !== 1 ? "s" : ""}`;
+    const estadoPill = esListo
+      ? `<span class="pill done" style="font-size:10px">Listo · sin retirar</span>`
+      : `<span class="pill active" style="font-size:10px">En curso</span>`;
+    const senaChip = pagado > 0
+      ? `<span class="pc-sena-chip">señó ${formatMoney(pagado)}</span>`
+      : "";
+    const equipo = [r.marca, r.modelo].filter(Boolean).join(" ") || r.dispositivo || "Equipo";
+    const tel = (r.telefono || "").replace(/\D/g, "");
+    const waBtn = tel
+      ? `<button class="pc-btn-wa" data-wa-tel="${tel}" data-wa-rep="${r.id}" title="Recordar por WhatsApp">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        </button>`
+      : "";
+
+    return `<div class="pc-row" data-rep-id="${r.id}">
+      <div class="pc-avatar">${escapeHtml(initials(r.cliente))}</div>
+      <div class="pc-row-body">
+        <div class="pc-row-name">${escapeHtml(r.cliente)}</div>
+        <div class="pc-row-meta">
+          ${estadoPill}
+          <span class="pc-row-equipo">${escapeHtml(equipo)}</span>
+          <a class="mov-rep-chip" href="editar-reparacion.html?id=${r.id}">#${r.id}</a>
+          <span class="pc-days-chip ${daysCls}">${daysLbl}</span>
+          ${senaChip}
+        </div>
+      </div>
+      <div class="pc-row-right">
+        <div class="pc-saldo">
+          <span class="pc-saldo-val">${formatMoney(saldo)}</span>
+          <span class="pc-saldo-total">de ${formatMoney(precio)}</span>
+        </div>
+        <div class="pc-actions">
+          ${waBtn}
+          <button class="pc-btn-cobrar" data-cobrar="${r.id}" data-saldo="${saldo}" data-cliente="${escapeHtml(r.cliente)}" data-equipo="${escapeHtml(equipo)}">Cobrar</button>
+          <div class="pc-kebab">
+            <button class="pc-kebab-btn" data-pc-kebab="${r.id}" type="button">⋯</button>
+            <div class="pc-menu" id="pcMenu_${r.id}">
+              <a class="pc-menu-item" href="editar-reparacion.html?id=${r.id}">Ver reparación</a>
+              <button class="pc-menu-item danger" data-incobrable="${r.id}" type="button">Marcar incobrable</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const BUCKETS = [
+    { key: "60+",   label: "+60 días",     dotCls: "pc-seg-red",   subCls: "pc-amber" },
+    { key: "31-60", label: "31–60 días",   dotCls: "pc-seg-amber", subCls: "pc-amber" },
+    { key: "0-30",  label: "Hasta 30 días",dotCls: "pc-seg-green", subCls: "mov-pos"  },
+  ];
+
+  function renderList(deudas) {
+    const container = document.getElementById("pcList");
+    if (!container) return;
+    if (!deudas.length) {
+      container.innerHTML = `<div class="pc-empty">¡Todo al día! No hay saldos pendientes.</div>`;
+      return;
+    }
+
+    const html = BUCKETS.map(({ key, label, dotCls, subCls }) => {
+      const grupo = deudas.filter(d => d.bucket === key);
+      if (!grupo.length) return "";
+      const subtotal = grupo.reduce((s, d) => s + d.saldo, 0);
+      return `<div class="pc-bucket">
+        <div class="pc-bucket-head">
+          <span class="pc-leg-dot pc-bucket-dot ${dotCls}"></span>
+          <span class="pc-bucket-title">${label}</span>
+          <span class="pc-bucket-count">${grupo.length} caso${grupo.length !== 1 ? "s" : ""}</span>
+          <span class="pc-bucket-sub ${subCls}">${formatMoney(subtotal)}</span>
+        </div>
+        ${grupo.map(renderRow).join("")}
+      </div>`;
+    }).join("");
+
+    container.innerHTML = html;
+  }
+
+  function getFiltered(deudas) {
+    const q      = (document.getElementById("pcSearch")?.value || "").toLowerCase().trim();
+    const bucket = document.querySelector(".mov-seg-btn.active[data-bucket]")?.dataset.bucket || "";
+    return deudas.filter(d => {
+      if (bucket === "31-60" && d.bucket === "0-30") return false;
+      if (bucket === "60+"   && d.bucket !== "60+")  return false;
+      if (q && ![d.r.cliente, d.r.marca, d.r.modelo, String(d.r.id)].join(" ").toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  let _deudas = buildDeudas();
+
+  function render() {
+    const filtered = getFiltered(_deudas);
+    renderSummary(filtered);
+    renderList(filtered);
+  }
+
+  render();
+
+  // Buscador
+  let _pcSearchTimer;
+  document.getElementById("pcSearch")?.addEventListener("input", () => {
+    clearTimeout(_pcSearchTimer);
+    _pcSearchTimer = setTimeout(render, 180);
+  });
+
+  // Segmentado
+  document.querySelectorAll(".mov-seg-btn[data-bucket]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".mov-seg-btn[data-bucket]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      render();
+    });
+  });
+
+  // Kebab
+  function closeAllPcMenus() {
+    document.querySelectorAll(".pc-menu.open").forEach(m => m.classList.remove("open"));
+  }
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".pc-kebab")) closeAllPcMenus();
+  });
+
+  // Modal cobrar
+  let _cobrarRepId = null;
+
+  function showPcToast(msg) {
+    const t = document.getElementById("pcToast");
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  document.getElementById("pcList")?.addEventListener("click", async e => {
+    // Kebab toggle
+    const kbtn = e.target.closest("[data-pc-kebab]");
+    if (kbtn) {
+      e.stopPropagation();
+      const id   = kbtn.dataset.pcKebab;
+      const menu = document.getElementById(`pcMenu_${id}`);
+      const isOpen = menu?.classList.contains("open");
+      closeAllPcMenus();
+      if (!isOpen && menu) menu.classList.add("open");
+      return;
+    }
+
+    // Marcar incobrable
+    const incobrableBtn = e.target.closest("[data-incobrable]");
+    if (incobrableBtn) {
+      closeAllPcMenus();
+      const id = incobrableBtn.dataset.incobrable;
+      if (!confirm("¿Marcar esta deuda como incobrable? Se quitará de la lista (solo en este dispositivo).")) return;
+      setIncobrable(id);
+      _deudas = buildDeudas();
+      render();
+      showPcToast("Marcada como incobrable");
+      return;
+    }
+
+    // WhatsApp
+    const waBtn = e.target.closest("[data-wa-tel]");
+    if (waBtn) {
+      const tel   = waBtn.dataset.waTel;
+      const repId = waBtn.dataset.waRep;
+      const rep   = repairs.find(r => Number(r.id) === Number(repId));
+      const equipo = rep ? `${rep.marca} ${rep.modelo}`.trim() : "tu equipo";
+      const saldo  = _deudas.find(d => Number(d.r.id) === Number(repId))?.saldo || 0;
+      const msg    = encodeURIComponent(`Hola! Te recuerdo que tenés un saldo pendiente de ${formatMoney(saldo)} por la reparación de tu ${equipo} en nuestro taller. ¿Cuándo podés pasar a buscarlo? Saludos, 1Fixtrack`);
+      window.open(`https://wa.me/${tel}?text=${msg}`, "_blank");
+      return;
+    }
+
+    // Cobrar
+    const cobrarBtn = e.target.closest("[data-cobrar]");
+    if (cobrarBtn) {
+      _cobrarRepId = Number(cobrarBtn.dataset.cobrar);
+      const saldo  = Number(cobrarBtn.dataset.saldo);
+      const cliente = cobrarBtn.dataset.cliente;
+      const equipo  = cobrarBtn.dataset.equipo;
+      document.getElementById("pcModalTitle").textContent = "Registrar cobro";
+      document.getElementById("pcModalBody").innerHTML =
+        `<strong>${escapeHtml(cliente)}</strong> — ${escapeHtml(equipo)} · Saldo: <strong>${formatMoney(saldo)}</strong>`;
+      document.getElementById("pcMonto").value = saldo;
+      document.getElementById("pcMedio").value = "Efectivo";
+      document.getElementById("pcModal").style.display = "flex";
+      return;
+    }
+  });
+
+  document.getElementById("pcModalClose")?.addEventListener("click", () => {
+    document.getElementById("pcModal").style.display = "none";
+  });
+  document.getElementById("pcModal")?.addEventListener("click", e => {
+    if (e.target === document.getElementById("pcModal")) document.getElementById("pcModal").style.display = "none";
+  });
+
+  document.getElementById("pcForm")?.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!_cobrarRepId) return;
+    const monto  = Number(document.getElementById("pcMonto")?.value || 0);
+    const medio  = document.getElementById("pcMedio")?.value || "Efectivo";
+    if (!monto || monto <= 0) return;
+
+    const rep = repairs.find(r => Number(r.id) === _cobrarRepId);
+    if (!rep) return;
+
+    const equipo = [rep.marca, rep.modelo].filter(Boolean).join(" ") || rep.dispositivo || "";
+    // Reutiliza dbInsertMovimiento — mismo flujo que el cobro al entregar una reparación
+    const saved = await dbInsertMovimiento({
+      fecha: today,
+      descripcion: `Cobro #${rep.id} · ${rep.cliente} — ${equipo} (${medio})`.trim(),
+      categoria: "Reparación",
+      tipo: "ingreso",
+      monto,
+      reparacionId: rep.id,
+    });
+
+    if (saved) {
+      movimientos = [saved, ...movimientos];
+      _deudas = buildDeudas();
+      render();
+      showPcToast(`Cobro de ${formatMoney(monto)} registrado`);
+    }
+
+    document.getElementById("pcModal").style.display = "none";
+    _cobrarRepId = null;
   });
 }

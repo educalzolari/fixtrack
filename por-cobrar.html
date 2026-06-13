@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movimientos | 1Fixtrack!</title>
+    <title>Por cobrar | 1Fixtrack!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -32,8 +32,8 @@
           <a class="nav-item" href="clientes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Clientes</a>
           <a class="nav-item" href="reportes.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Reportes</a>
           <div class="nav-label">Negocio</div>
-          <a class="nav-item active" href="movimientos.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Movimientos</a>
-          <a class="nav-item" href="por-cobrar.html">
+          <a class="nav-item" href="movimientos.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Movimientos</a>
+          <a class="nav-item active" href="por-cobrar.html">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             Por cobrar
           </a>
@@ -52,140 +52,97 @@
           <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <span class="crumb">1Fixtrack / <b>Movimientos</b></span>
+          <span class="crumb">1Fixtrack / <b>Por cobrar</b></span>
           <div class="topbar-spacer"></div>
           <div class="clock"><span class="live-dot"></span><span id="topbarClock"></span></div>
           <button class="theme-btn" id="themeToggleBtn" title="Cambiar tema"></button>
         </header>
 
         <div class="page">
-          <div class="page-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-            <div>
-              <div class="page-kicker">Finanzas / Historial</div>
-              <h1 class="page-title">Movimientos</h1>
-            </div>
-            <button class="btn btn-accent" id="newMovBtn" type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Nuevo
-            </button>
-          </div>
-
-          <!-- Filtros -->
-          <div class="mov-toolbar stagger">
-            <div class="mov-filters-row">
-              <select class="sel" id="movMesSelect" style="max-width:140px"></select>
-              <select class="sel" id="movAnioSelect" style="max-width:90px"></select>
-              <select class="sel" id="movCatFilter" style="max-width:190px">
-                <option value="">Todas las categorías</option>
-                <optgroup label="Ingresos">
-                  <option value="Anticipo">Anticipo</option>
-                  <option value="Reparación">Reparación</option>
-                  <option value="Venta">Venta</option>
-                  <option value="Otro ingreso">Otro ingreso</option>
-                </optgroup>
-                <optgroup label="Egresos">
-                  <option value="Gasto de reparación">Gasto de reparación</option>
-                  <option value="Compra de stock">Compra de stock</option>
-                  <option value="Gasto operativo">Gasto operativo</option>
-                  <option value="Retiro">Retiro</option>
-                </optgroup>
-              </select>
-              <div class="mov-search-wrap">
-                <svg class="mov-search-ico" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input class="inp mov-search-inp" id="movSearch" type="text" placeholder="Buscar descripción…" />
-              </div>
-            </div>
-            <div class="mov-seg" role="group">
-              <button class="mov-seg-btn active" data-tipo="" type="button">Todos</button>
-              <button class="mov-seg-btn" data-tipo="ingreso" type="button">Ingresos</button>
-              <button class="mov-seg-btn" data-tipo="egreso" type="button">Egresos</button>
-            </div>
+          <div class="page-head">
+            <div class="page-kicker">Finanzas / Cobranzas</div>
+            <h1 class="page-title">Por cobrar</h1>
           </div>
 
           <!-- Resumen -->
-          <div class="mov-summary stagger">
-            <div class="mov-card">
-              <div class="mov-card-ico mov-ico-in">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-              </div>
-              <div>
-                <span class="mov-card-label">Ingresos</span>
-                <div id="movTotalIngresos" class="mov-card-val mov-pos">$ 0</div>
-                <div id="movCountIngresos" class="mov-count-sub">0 movimientos</div>
-              </div>
+          <div class="pc-summary stagger">
+            <div class="pc-summary-main">
+              <div class="pc-summary-label">Saldo pendiente total</div>
+              <div id="pcTotal" class="pc-total-val">$ 0</div>
+              <div id="pcTotalSub" class="pc-total-sub">0 deudas abiertas</div>
             </div>
-            <div class="mov-card">
-              <div class="mov-card-ico mov-ico-out">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-              </div>
-              <div>
-                <span class="mov-card-label">Egresos</span>
-                <div id="movTotalEgresos" class="mov-card-val mov-neg">$ 0</div>
-                <div id="movCountEgresos" class="mov-count-sub">0 movimientos</div>
-              </div>
+            <div class="pc-summary-cell">
+              <div class="pc-summary-label">Deudas abiertas</div>
+              <div id="pcCount" class="pc-cell-val">0</div>
+              <div id="pcCountSub" class="pc-cell-sub">equipos pendientes</div>
             </div>
-            <div class="mov-card mov-card-resultado">
-              <div class="mov-card-ico mov-ico-res">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
-              </div>
-              <div>
-                <span class="mov-card-label">Resultado</span>
-                <div id="movResultado" class="mov-result-val mov-pos">$ 0</div>
-                <div id="movCountTotal" class="mov-count-sub">0 movimientos</div>
-              </div>
+            <div class="pc-summary-cell pc-summary-cell-warn">
+              <div class="pc-summary-label">Vencido +30 días</div>
+              <div id="pcOld" class="pc-cell-val pc-amber">$ 0</div>
+              <div id="pcOldSub" class="pc-cell-sub">prioridad de cobro</div>
             </div>
           </div>
 
-          <!-- Lista libro de caja -->
-          <div id="movTableBody" class="mov-list stagger"></div>
+          <!-- Barra de antigüedad -->
+          <div class="pc-age-bar-wrap stagger">
+            <div class="pc-age-bar" id="pcAgeBar">
+              <div class="pc-age-seg pc-seg-red" id="pcSegRed" style="width:0%"></div>
+              <div class="pc-age-seg pc-seg-amber" id="pcSegAmber" style="width:0%"></div>
+              <div class="pc-age-seg pc-seg-green" id="pcSegGreen" style="width:0%"></div>
+            </div>
+            <div class="pc-age-legend">
+              <span class="pc-leg-item"><span class="pc-leg-dot pc-seg-red"></span><span id="pcLegRed">+60 días — $ 0</span></span>
+              <span class="pc-leg-item"><span class="pc-leg-dot pc-seg-amber"></span><span id="pcLegAmber">31–60 días — $ 0</span></span>
+              <span class="pc-leg-item"><span class="pc-leg-dot pc-seg-green"></span><span id="pcLegGreen">Hasta 30 días — $ 0</span></span>
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="pc-toolbar stagger">
+            <div class="mov-search-wrap" style="flex:1;min-width:200px">
+              <svg class="mov-search-ico" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="inp mov-search-inp" id="pcSearch" type="text" placeholder="Buscar por cliente, equipo o #nro…" />
+            </div>
+            <div class="mov-seg" role="group">
+              <button class="mov-seg-btn active" data-bucket="" type="button">Todas</button>
+              <button class="mov-seg-btn" data-bucket="31-60" type="button">+30 días</button>
+              <button class="mov-seg-btn" data-bucket="60+" type="button">+60 días</button>
+            </div>
+          </div>
+
+          <!-- Lista por cobrar -->
+          <div id="pcList" class="pc-list stagger"></div>
         </div>
       </div>
     </div>
 
-    <!-- Modal nuevo / editar movimiento -->
-    <div class="modal-backdrop" id="movModal" style="display:none;align-items:center;justify-content:center">
-      <div class="modal-card" style="max-width:480px;width:100%">
+    <!-- Modal Cobrar -->
+    <div class="modal-backdrop" id="pcModal" style="display:none;align-items:center;justify-content:center">
+      <div class="modal-card" style="max-width:440px;width:100%;box-sizing:border-box">
         <div class="modal-heading">
-          <h3 class="modal-title" id="movModalTitle">Nuevo movimiento</h3>
-          <button class="icon-button" id="closeMovModal" type="button" aria-label="Cerrar">
+          <h3 class="modal-title" id="pcModalTitle">Registrar cobro</h3>
+          <button class="icon-button" id="pcModalClose" type="button" aria-label="Cerrar">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-        <form id="movForm" style="margin-top:20px">
-          <!-- Toggle Ingreso / Egreso -->
-          <div style="margin-bottom:18px">
-            <label class="field-label">Tipo</label>
-            <div class="mov-tipo-toggle" id="movTipoToggle">
-              <button class="mov-tipo-btn active" data-tipo="ingreso" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-                Ingreso
-              </button>
-              <button class="mov-tipo-btn" data-tipo="egreso" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                Egreso
-              </button>
-            </div>
-          </div>
+        <div id="pcModalBody" style="margin-top:8px;margin-bottom:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--text-2)"></div>
+        <form id="pcForm" style="margin-top:4px">
           <div class="field-grid">
             <div class="field field-wide">
-              <label class="field-label" for="movDescripcion">Descripción</label>
-              <input class="inp" id="movDescripcion" type="text" placeholder="Ej: Venta celular Samsung A54" required />
-            </div>
-            <div class="field">
-              <label class="field-label" for="movCategoria">Categoría</label>
-              <select class="sel" id="movCategoria" required></select>
-            </div>
-            <div class="field">
-              <label class="field-label" for="movMonto">Monto</label>
-              <input class="inp" id="movMonto" type="number" min="0" step="100" placeholder="0" required />
+              <label class="field-label" for="pcMonto">Monto a cobrar</label>
+              <input class="inp" id="pcMonto" type="number" min="1" step="100" required style="box-sizing:border-box;width:100%" />
             </div>
             <div class="field field-wide">
-              <label class="field-label" for="movFecha">Fecha</label>
-              <input class="inp" id="movFecha" type="date" required />
+              <label class="field-label" for="pcMedio">Medio de pago</label>
+              <select class="sel" id="pcMedio" style="box-sizing:border-box;width:100%">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Tarjeta">Tarjeta</option>
+              </select>
             </div>
             <div class="field field-wide" style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
-              <button class="btn btn-ghost" type="button" id="cancelMovModal">Cancelar</button>
-              <button class="btn btn-accent" type="submit" id="movSubmitBtn">Guardar</button>
+              <button class="btn btn-ghost" type="button" id="pcModalCancel">Cancelar</button>
+              <button class="btn btn-accent" type="submit">Confirmar cobro</button>
             </div>
           </div>
         </form>
@@ -193,14 +150,14 @@
     </div>
 
     <!-- Toast -->
-    <div id="movToast" class="mov-toast" aria-live="polite"></div>
+    <div id="pcToast" class="mov-toast" aria-live="polite"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
     <script>
-      document.getElementById("cancelMovModal")?.addEventListener("click", () => {
-        document.getElementById("movModal").style.display = "none";
+      document.getElementById("pcModalCancel")?.addEventListener("click", () => {
+        document.getElementById("pcModal").style.display = "none";
       });
     </script>
   </body>
