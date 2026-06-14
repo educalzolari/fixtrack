@@ -1887,6 +1887,7 @@ async function initApp() {
   await migrateGastosMovimientos();
   renderReportsDashboard();
   initPorCobrar();
+  renderInvTable();
 }
 
 async function migrateGastosMovimientos() {
@@ -2334,54 +2335,143 @@ function renderCategoriesChart(monthRepairs) {
 let inventario = [];
 let invDeleteTargetId = null;
 
-function invStockBadge(item) {
-  if (item.stock === 0) return `<span class="pill sc-cancelado">Sin stock</span>`;
-  if (item.stockMinimo > 0 && item.stock <= item.stockMinimo)
-    return `<span class="pill sc-espera">${item.stock} <small style="opacity:.7">▼mín</small></span>`;
-  return `<span class="pill sc-entregado">${item.stock}</span>`;
+const INV_CAT_ORDER = ["Repuesto", "Accesorio", "Celular usado", "Otro"];
+const INV_CAT_LABEL = { "Repuesto": "Repuestos", "Accesorio": "Accesorios", "Celular usado": "Celulares usados", "Otro": "Otros" };
+
+const INV_CAT_ICO = {
+  "Repuesto": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+  "Accesorio": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
+  "Celular usado": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+  "Otro": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
+};
+
+function invStockState(item) {
+  if (item.categoria === "Celular usado") return item.stock > 0 ? "used-ok" : "used-sold";
+  if (item.stock === 0) return "none";
+  if (item.stockMinimo > 0 && item.stock <= item.stockMinimo) return "low";
+  return "ok";
+}
+
+function invUpdateKpis() {
+  const nonUsed = inventario.filter(i => i.categoria !== "Celular usado");
+  const el = id => document.getElementById(id);
+  if (el("invKpiItems"))     el("invKpiItems").textContent     = inventario.length;
+  if (el("invKpiCapital"))   el("invKpiCapital").textContent   = formatMoney(inventario.reduce((s, i) => s + i.stock * i.precioCosto, 0));
+  if (el("invKpiSinStock"))  el("invKpiSinStock").textContent  = nonUsed.filter(i => i.stock === 0).length;
+  if (el("invKpiStockBajo")) el("invKpiStockBajo").textContent = nonUsed.filter(i => i.stockMinimo > 0 && i.stock > 0 && i.stock <= i.stockMinimo).length;
+}
+
+function invCardHtml(item) {
+  const state = invStockState(item);
+  const esUsado = item.categoria === "Celular usado";
+
+  const cardClass = { "ok": "stock-ok", "low": "stock-low", "none": "stock-none", "used-ok": "stock-used-ok", "used-sold": "stock-used-sold" }[state];
+
+  const chipClass = { "ok": "chip-ok", "low": "chip-low", "none": "chip-none", "used-ok": "chip-avail", "used-sold": "chip-sold" }[state];
+  const chipLabel = { "ok": `${item.stock} en stock`, "low": `${item.stock} bajo mínimo`, "none": "Sin stock", "used-ok": "Disponible", "used-sold": "Vendido" }[state];
+
+  const barPct = (!esUsado && item.stockMinimo > 0)
+    ? Math.min(100, Math.round(item.stock / (item.stockMinimo * 2) * 100))
+    : 0;
+  const barClass = { "ok": "bar-ok", "low": "bar-low", "none": "bar-none" }[state] || "";
+
+  const subParts = [
+    item.sku ? `<span>${escapeHtml(item.sku)}</span>` : "",
+    item.proveedor ? `<span>${escapeHtml(item.proveedor)}</span>` : "",
+    (esUsado && item.descripcion) ? `<span>${escapeHtml(item.descripcion)}</span>` : "",
+  ].filter(Boolean).join(" · ");
+
+  const stepper = !esUsado
+    ? `<div class="inv-stepper">
+        <button class="inv-stepper-btn" data-step="-1" data-item-id="${item.id}" type="button" ${item.stock <= 0 ? "disabled" : ""}>−</button>
+        <span class="inv-stepper-val" id="invStepVal_${item.id}">${item.stock}</span>
+        <button class="inv-stepper-btn" data-step="1" data-item-id="${item.id}" type="button">+</button>
+      </div>`
+    : "";
+
+  return `<div class="inv-card ${cardClass}" data-inv-id="${item.id}">
+    <div class="inv-card-ico">${INV_CAT_ICO[item.categoria] || INV_CAT_ICO["Otro"]}</div>
+    <div class="inv-card-body">
+      <div class="inv-card-name">
+        ${escapeHtml(item.nombre)}
+        ${esUsado ? `<span class="inv-chip-unica">Pieza única</span>` : ""}
+      </div>
+      ${subParts ? `<div class="inv-card-sub">${subParts}</div>` : ""}
+      <div class="inv-card-stock">
+        <span class="inv-stock-chip ${chipClass}">${chipLabel}</span>
+        ${!esUsado && item.stockMinimo > 0 ? `<div class="inv-bar-wrap"><div class="inv-bar ${barClass}" style="width:${barPct}%"></div></div><span class="inv-stock-min">mín ${item.stockMinimo}</span>` : ""}
+      </div>
+    </div>
+    <div class="inv-card-right">
+      <div>
+        <div class="inv-price-val">${formatMoney(item.precioVenta)}</div>
+        <div class="inv-price-sub">precio venta</div>
+      </div>
+      <div class="inv-card-actions">
+        ${stepper}
+        <div class="inv-kebab">
+          <button class="inv-kebab-btn" data-inv-kebab="${item.id}" type="button">⋯</button>
+          <div class="inv-menu" id="invMenu_${item.id}">
+            <button class="inv-menu-item" data-inv-edit="${item.id}" type="button">Editar ítem</button>
+            <button class="inv-menu-item danger" data-inv-del="${item.id}" data-inv-nombre="${escapeHtml(item.nombre)}" type="button">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderInvTable() {
-  const tbody = document.getElementById("invTableBody");
-  if (!tbody) return;
+  const container = document.getElementById("invTableBody");
+  if (!container) return;
 
-  const search = (document.getElementById("invSearch")?.value || "").toLowerCase().trim();
-  const catFilter = document.getElementById("invCatFilter")?.value || "";
+  invUpdateKpis();
+
+  const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const q   = norm(document.getElementById("invSearch")?.value || "").trim();
+  const cat = document.querySelector(".inv-seg-btn.active")?.dataset.cat || "";
 
   let items = inventario;
-  if (search) {
-    items = items.filter((i) =>
-      i.nombre.toLowerCase().includes(search) ||
-      i.sku.toLowerCase().includes(search) ||
-      i.proveedor.toLowerCase().includes(search)
-    );
-  }
-  if (catFilter) items = items.filter((i) => i.categoria === catFilter);
+  if (q) items = items.filter(i =>
+    norm(i.nombre).includes(q) ||
+    norm(i.sku).includes(q) ||
+    norm(i.proveedor).includes(q)
+  );
+  if (cat) items = items.filter(i => i.categoria === cat);
 
   if (!items.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--fg-3)">${inventario.length ? "Sin resultados." : "No hay ítems cargados."}</td></tr>`;
+    container.innerHTML = `<div class="inv-empty">${inventario.length ? "Sin resultados." : "No hay ítems cargados."}</div>`;
     return;
   }
 
-  tbody.innerHTML = items.map((item) => `
-    <tr>
-      <td>
-        <strong>${escapeHtml(item.nombre)}</strong>
-        ${item.descripcion ? `<br><small style="color:var(--fg-3)">${escapeHtml(item.descripcion)}</small>` : ""}
-        ${item.sku ? `<br><code style="font-size:11px;color:var(--fg-3)">${escapeHtml(item.sku)}</code>` : ""}
-      </td>
-      <td>${escapeHtml(item.categoria)}</td>
-      <td style="color:var(--fg-3)">${escapeHtml(item.proveedor) || "—"}</td>
-      <td>${invStockBadge(item)}</td>
-      <td><strong>${formatMoney(item.precioVenta)}</strong></td>
-      <td>
-        <div class="row-actions-inner">
-          <button class="btn btn-ghost btn-sm inv-edit-btn" data-id="${item.id}" type="button">Editar</button>
-          <button class="btn btn-ghost btn-sm inv-delete-btn" data-id="${item.id}" data-nombre="${escapeHtml(item.nombre)}" type="button" style="color:var(--danger,#e53e3e)">Eliminar</button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
+  const cats = cat ? [cat] : INV_CAT_ORDER.filter(c => items.some(i => i.categoria === c));
+
+  container.innerHTML = cats.map(catName => {
+    const group = items.filter(i => i.categoria === catName);
+    if (!group.length) return "";
+
+    const nonUsed = catName !== "Celular usado" ? group : [];
+    const sinStock  = nonUsed.filter(i => i.stock === 0).length;
+    const stockBajo = nonUsed.filter(i => i.stockMinimo > 0 && i.stock > 0 && i.stock <= i.stockMinimo).length;
+
+    const flags = [
+      sinStock  ? `<span class="inv-flag-red">${sinStock} sin stock</span>` : "",
+      stockBajo ? `<span class="inv-flag-amber">${stockBajo} bajo mínimo</span>` : "",
+    ].filter(Boolean).join("");
+
+    return `<div class="inv-group">
+      <div class="inv-group-head">
+        <span class="inv-group-ico">${INV_CAT_ICO[catName] || INV_CAT_ICO["Otro"]}</span>
+        <span class="inv-group-name">${INV_CAT_LABEL[catName] || catName}</span>
+        <span class="inv-group-count">${group.length}</span>
+        <div class="inv-group-flags">${flags}</div>
+      </div>
+      ${group.map(invCardHtml).join("")}
+    </div>`;
+  }).join("")
+    + (items.some(i => !INV_CAT_ORDER.includes(i.categoria))
+      ? `<div class="inv-group">${items.filter(i => !INV_CAT_ORDER.includes(i.categoria)).map(invCardHtml).join("")}</div>`
+      : "");
 }
 
 function openInvModal(item = null) {
@@ -2432,11 +2522,23 @@ function closeInvDeleteModal() {
   if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
 }
 
+function closeAllInvMenus() {
+  document.querySelectorAll(".inv-menu.open").forEach(m => m.classList.remove("open"));
+}
+
 function setupInventario() {
   if (!document.getElementById("invTableBody")) return;
 
   document.getElementById("invSearch")?.addEventListener("input", renderInvTable);
-  document.getElementById("invCatFilter")?.addEventListener("change", renderInvTable);
+
+  // Segmented category tabs
+  document.getElementById("invCatSeg")?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".inv-seg-btn");
+    if (!btn) return;
+    document.querySelectorAll(".inv-seg-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderInvTable();
+  });
 
   document.getElementById("newItemBtn")?.addEventListener("click", () => openInvModal());
   document.getElementById("closeInvModal")?.addEventListener("click", closeInvModal);
@@ -2450,15 +2552,63 @@ function setupInventario() {
     if (e.target === document.getElementById("invDeleteModal")) closeInvDeleteModal();
   });
 
-  document.getElementById("invTableBody")?.addEventListener("click", (e) => {
-    const editBtn = e.target.closest(".inv-edit-btn");
+  // Close kebab menus on outside click
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".inv-kebab")) closeAllInvMenus();
+  });
+
+  // Card interactions: stepper, kebab, edit, delete
+  document.getElementById("invTableBody")?.addEventListener("click", async (e) => {
+    // Stepper
+    const stepBtn = e.target.closest("[data-step]");
+    if (stepBtn) {
+      const id  = Number(stepBtn.dataset.itemId);
+      const dir = Number(stepBtn.dataset.step);
+      const item = inventario.find(i => i.id === id);
+      if (!item) return;
+      const newStock = Math.max(0, item.stock + dir);
+      if (newStock === item.stock) return;
+      item.stock = newStock;
+      const valEl = document.getElementById(`invStepVal_${id}`);
+      if (valEl) valEl.textContent = newStock;
+      const card = stepBtn.closest(".inv-card");
+      if (card) {
+        const state = invStockState(item);
+        card.className = `inv-card ${{ "ok":"stock-ok","low":"stock-low","none":"stock-none","used-ok":"stock-used-ok","used-sold":"stock-used-sold" }[state]}`;
+      }
+      stepBtn.closest(".inv-stepper")?.querySelector("[data-step='-1']")?.toggleAttribute("disabled", newStock <= 0);
+      await dbUpsertItem(item);
+      invUpdateKpis();
+      return;
+    }
+
+    // Kebab toggle
+    const kebabBtn = e.target.closest("[data-inv-kebab]");
+    if (kebabBtn) {
+      e.stopPropagation();
+      const id = kebabBtn.dataset.invKebab;
+      const menu = document.getElementById(`invMenu_${id}`);
+      const wasOpen = menu?.classList.contains("open");
+      closeAllInvMenus();
+      if (menu && !wasOpen) menu.classList.add("open");
+      return;
+    }
+
+    // Edit
+    const editBtn = e.target.closest("[data-inv-edit]");
     if (editBtn) {
-      const item = inventario.find((i) => i.id === Number(editBtn.dataset.id));
+      closeAllInvMenus();
+      const item = inventario.find(i => i.id === Number(editBtn.dataset.invEdit));
       if (item) openInvModal(item);
       return;
     }
-    const delBtn = e.target.closest(".inv-delete-btn");
-    if (delBtn) openInvDeleteModal(Number(delBtn.dataset.id), delBtn.dataset.nombre);
+
+    // Delete
+    const delBtn = e.target.closest("[data-inv-del]");
+    if (delBtn) {
+      closeAllInvMenus();
+      openInvDeleteModal(Number(delBtn.dataset.invDel), delBtn.dataset.invNombre);
+    }
   });
 
   document.getElementById("confirmInvDelete")?.addEventListener("click", async () => {
