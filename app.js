@@ -838,6 +838,18 @@ async function setupEditForm() {
       if (antMov) movimientos = [antMov, ...movimientos];
     }
 
+    if (updatedRepair.estado !== "Cancelado" && updatedRepair.estado !== "En espera") {
+      const savedGastos = await dbSyncGastosMovimientos(updatedRepair);
+      movimientos = movimientos.filter(m => !(m.reparacionId === updatedRepair.id && m.categoria === "Gasto de reparación"));
+      movimientos = [...savedGastos, ...movimientos];
+    } else if (updatedRepair.estado === "En espera") {
+      const toDelete = movimientos.filter(m => m.reparacionId === updatedRepair.id && m.categoria === "Gasto de reparación");
+      for (const m of toDelete) {
+        await dbDeleteMovimiento(m.id);
+        movimientos = movimientos.filter(x => x.id !== m.id);
+      }
+    }
+
     repairs = repairs.map((item) => (Number(item.id) === Number(updatedRepair.id) ? updatedRepair : item));
     window.location.href = "reparaciones.html";
   });
@@ -882,6 +894,7 @@ async function restoreStockForExpenses(expenses) {
 
 async function syncGastosMovimientoLocal(repair) {
   if (!repair?.id) return;
+  if (repair.estado === "En espera") return;
   const repairWithExpenses = { ...repair, gastos: editingExpenses };
   const saved = await dbSyncGastosMovimientos(repairWithExpenses);
   movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
@@ -1463,6 +1476,11 @@ if (tableBody) {
       if (!confirm(`¿Pasar #${repair.id} — ${repair.cliente} a Activo?`)) return;
       repair.estado = "Activo";
       await dbUpsert(repair);
+      if ((repair.gastos || []).length) {
+        const saved = await dbSyncGastosMovimientos(repair);
+        movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
+        movimientos = [...saved, ...movimientos];
+      }
       renderAll();
       return;
     }
@@ -1883,13 +1901,24 @@ async function migrateGastosMovimientos() {
     }
   }
 
+  // Siempre limpiar gastos de reparaciones "En espera" (no deben tener movimientos)
+  for (const repair of repairs) {
+    if (repair.estado === "En espera") {
+      const viejosMov = movimientos.filter(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
+      for (const m of viejosMov) {
+        await dbDeleteMovimiento(m.id);
+        movimientos = movimientos.filter(x => x.id !== m.id);
+      }
+    }
+  }
+
   // Paso 2: crear movimientos faltantes (solo corre una vez)
   const migKey = "fixtrack_mov_v4";
   if (localStorage.getItem(migKey)) return;
 
   for (const repair of repairs) {
-    // Gastos individuales
-    if ((repair.gastos || []).length) {
+    // Gastos individuales — solo si ya está en curso (no En espera)
+    if ((repair.gastos || []).length && repair.estado !== "En espera") {
       const yaExiste = movimientos.some(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
       if (!yaExiste) {
         const newMov = await dbSyncGastosMovimientos(repair);
@@ -2128,7 +2157,7 @@ function renderReportsDashboard() {
     saldoFinMonto += Math.max(0, (r.cierre?.costoFinal || r.costoAproximado || 0) - _paidForRep(r.id));
   });
   const enCursoGlobal = repairs.filter(r =>
-    (r.estado === "Activo" || r.estado === "En espera") && (r.cierre?.costoFinal || r.costoAproximado)
+    r.estado === "Activo" && (r.cierre?.costoFinal || r.costoAproximado)
   );
   let saldoActMonto = 0;
   enCursoGlobal.forEach(r => {
@@ -2243,6 +2272,7 @@ function renderTop5Table(monthRepairs) {
   if (!tbody) return;
 
   const sorted = [...monthRepairs]
+    .filter(r => r.estado !== "En espera")
     .sort((a, b) => (b.cierre?.costoFinal || b.costoAproximado || 0) - (a.cierre?.costoFinal || a.costoAproximado || 0))
     .slice(0, 5);
 
@@ -2871,7 +2901,7 @@ function initPorCobrar() {
   function buildDeudas() {
     const result = [];
     for (const r of repairs) {
-      if (r.estado === "Cancelado") continue;
+      if (r.estado === "Cancelado" || r.estado === "En espera") continue;
       if (isIncobrable(r.id)) continue;
       const precio = r.cierre?.costoFinal || r.costoAproximado || 0;
       if (!precio) continue;
