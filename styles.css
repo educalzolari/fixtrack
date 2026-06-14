@@ -21,6 +21,7 @@
   --st-activo:oklch(0.72 0.15 240);
   --st-finalizado:oklch(0.76 0.16 150);
   --st-entregado:oklch(0.70 0.035 265);
+  --st-garantia:oklch(0.75 0.16 30);
 
   /* dark base (default) */
   --bg:oklch(0.165 0.014 265);
@@ -236,6 +237,7 @@ button,input,select,textarea{font:inherit}
 .sc-activo{--sc:var(--st-activo)}
 .sc-finalizado{--sc:var(--st-finalizado)}
 .sc-entregado{--sc:var(--st-entregado)}
+.sc-garantia{--sc:var(--st-garantia)}
 .sc-cancelado{--sc:oklch(0.65 0.2 18)}
 
 /* ── Table ─────────────────────────────────────────────────────────────── */
@@ -577,6 +579,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .sc-espera-dot{background:var(--st-espera)}
 .sc-finalizado-dot{background:var(--st-finalizado)}
 .sc-entregado-dot{background:var(--st-entregado)}
+.sc-garantia-dot{background:var(--st-garantia)}
 .sc-cancelado-dot{background:var(--text-3)}
 .rw-grp-name{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2)}
 .rw-grp-n{font-size:11px;font-weight:600;color:var(--text-3);font-family:var(--font-mono)}

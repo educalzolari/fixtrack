@@ -156,7 +156,7 @@ function updateDate() {
 function updateDashboardStatus() {
   const el = $("#dashboardStatus");
   if (!el) return;
-  const activos    = repairs.filter(r => r.estado === "Activo").length;
+  const activos    = repairs.filter(r => r.estado === "Activo" || r.estado === "Garantía").length;
   const pendientes = repairs.filter(r => r.estado === "En espera").length;
   const listos     = repairs.filter(r => r.estado === "Finalizado").length;
 
@@ -171,6 +171,7 @@ function getStatusClass(status) {
   if (status === "Activo")     return "sc-activo";
   if (status === "Finalizado") return "sc-finalizado";
   if (status === "Entregado")  return "sc-entregado";
+  if (status === "Garantía")   return "sc-garantia";
   if (status === "Cancelado")  return "sc-cancelado";
   return "sc-espera";
 }
@@ -222,7 +223,7 @@ function renderStats() {
   });
 
   waitingCount.textContent = repairs.filter((repair) => repair.estado === "En espera").length;
-  collectCount.textContent = repairs.filter((repair) => repair.estado === "Activo").length;
+  collectCount.textContent = repairs.filter((repair) => repair.estado === "Activo" || repair.estado === "Garantía").length;
   monthCount.textContent = thisMonth.length;
   salesTotal.textContent = formatMoney(
     repairs
@@ -301,9 +302,10 @@ function renderDashboardTable() {
     .join("");
 }
 
-const GROUP_ORDER = ["Activo", "En espera", "Finalizado", "Entregado", "Cancelado"];
+const GROUP_ORDER = ["Activo", "Garantía", "En espera", "Finalizado", "Entregado", "Cancelado"];
 const GROUP_LABELS = {
   "Activo":     "En reparacion",
+  "Garantía":   "En garantía",
   "En espera":  "Pendientes de inicio",
   "Finalizado": "Terminados — pendiente de retiro",
   "Entregado":  "Entregados al cliente",
@@ -322,7 +324,7 @@ function repairRow(repair) {
   let stepBtn = "";
   if (repair.estado === "En espera") {
     stepBtn = `<button class="btn-step activar-icon" type="button" data-id="${id}">Iniciar</button>`;
-  } else if (repair.estado === "Activo") {
+  } else if (repair.estado === "Activo" || repair.estado === "Garantía") {
     stepBtn = `<button class="btn-step finalizar-icon" type="button" data-id="${id}">Finalizar</button>`;
   } else if (repair.estado === "Finalizado") {
     stepBtn = `<button class="btn-step deliver-icon" type="button" data-id="${id}">Entregar</button>`;
@@ -357,6 +359,7 @@ function repairRow(repair) {
             <button class="rw-more-btn" type="button" aria-label="Más opciones">···</button>
             <div class="rw-more-menu">
               <a class="rw-more-item" href="editar-reparacion.html?id=${id}">Editar</a>
+              ${repair.estado === "Entregado" ? `<button class="rw-more-item garantia-icon" type="button" data-id="${id}">Recibir en garantía</button>` : ""}
               <button class="rw-more-item rw-del delete-icon" type="button" data-id="${id}">Eliminar</button>
             </div>
           </div>
@@ -507,7 +510,7 @@ function formToRepair(formData, existing = {}) {
     anticipo: Number(formData.get("anticipo") || 0),
     fechaEntrega: formData.get("fechaEntrega"),
     estado: formData.get("estado"),
-    cierre: ["Finalizado", "Entregado"].includes(formData.get("estado")) ? (existing.cierre || null) : null,
+    cierre: ["Finalizado", "Entregado", "Garantía"].includes(formData.get("estado")) ? (existing.cierre || null) : null,
     problema: formData.get("problema").trim(),
     observaciones: formData.get("observaciones").trim(),
     fechaIngreso: formData.get("fechaIngreso") || existing.fechaIngreso || today,
@@ -1485,6 +1488,25 @@ if (tableBody) {
       return;
     }
 
+    const garantiaBtn = event.target.closest(".garantia-icon");
+    if (garantiaBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const id = Number(garantiaBtn.dataset.id);
+      const repair = repairs.find((r) => Number(r.id) === id);
+      if (!repair) return;
+      if (!confirm(`¿Recibir en garantía #${repair.id} — ${repair.cliente}?`)) return;
+      repair.estado = "Garantía";
+      repair.garantiaFecha = today;
+      repair.gastos = [];
+      await dbUpsert(repair);
+      const toDelete = movimientos.filter(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
+      for (const m of toDelete) await dbDeleteMovimiento(m.id);
+      movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
+      renderAll();
+      return;
+    }
+
     const finalizarBtn = event.target.closest(".finalizar-icon");
     if (finalizarBtn) {
       event.preventDefault();
@@ -1874,7 +1896,7 @@ async function initApp() {
   updateDate();
   [repairs, inventario, movimientos] = await Promise.all([dbLoad(), dbLoadInventario(), dbLoadMovimientos()]);
   window.repairs = repairs;
-  const openCount = repairs.filter(r => r.estado === "En espera" || r.estado === "Activo").length;
+  const openCount = repairs.filter(r => ["En espera", "Activo", "Garantía"].includes(r.estado)).length;
   if (window.shellSetRepairCount) window.shellSetRepairCount(openCount);
   document.dispatchEvent(new Event("repairsLoaded"));
   await setupEditForm();
@@ -2158,7 +2180,7 @@ function renderReportsDashboard() {
     saldoFinMonto += Math.max(0, (r.cierre?.costoFinal || r.costoAproximado || 0) - _paidForRep(r.id));
   });
   const enCursoGlobal = repairs.filter(r =>
-    r.estado === "Activo" && (r.cierre?.costoFinal || r.costoAproximado)
+    (r.estado === "Activo" || r.estado === "Garantía") && (r.cierre?.costoFinal || r.costoAproximado)
   );
   let saldoActMonto = 0;
   enCursoGlobal.forEach(r => {
