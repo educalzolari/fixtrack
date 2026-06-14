@@ -2434,6 +2434,7 @@ function invCardHtml(item) {
         <div class="inv-kebab">
           <button class="inv-kebab-btn" data-inv-kebab="${item.id}" type="button">⋯</button>
           <div class="inv-menu" id="invMenu_${item.id}">
+            ${item.stock > 0 ? `<button class="inv-menu-item" data-inv-sell="${item.id}" type="button">Vender</button>` : ""}
             <button class="inv-menu-item" data-inv-edit="${item.id}" type="button">Editar ítem</button>
             <button class="inv-menu-item danger" data-inv-del="${item.id}" data-inv-nombre="${escapeHtml(item.nombre)}" type="button">Eliminar</button>
           </div>
@@ -2544,6 +2545,26 @@ function closeInvDeleteModal() {
   if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
 }
 
+function openInvSellModal(item) {
+  const modal = document.getElementById("invSellModal");
+  if (!modal) return;
+  const esUsado = item.categoria === "Celular usado";
+  document.getElementById("invSellItemId").value = item.id;
+  document.getElementById("invSellSubtitle").textContent = item.nombre;
+  document.getElementById("invSellPrecio").value = item.precioVenta || "";
+  document.getElementById("invSellCantidad").value = 1;
+  document.getElementById("invSellNota").value = "";
+  const cantWrap = document.getElementById("invSellCantidadWrap");
+  if (cantWrap) cantWrap.style.display = esUsado ? "none" : "";
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeInvSellModal() {
+  const modal = document.getElementById("invSellModal");
+  if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
+}
+
 function closeAllInvMenus() {
   document.querySelectorAll(".inv-menu.open").forEach(m => m.classList.remove("open"));
 }
@@ -2569,6 +2590,29 @@ function setupInventario() {
 
   document.getElementById("invModal")?.addEventListener("click", (e) => {
     if (e.target === document.getElementById("invModal")) closeInvModal();
+  });
+  document.getElementById("closeInvSellModal")?.addEventListener("click", closeInvSellModal);
+  document.getElementById("cancelInvSell")?.addEventListener("click", closeInvSellModal);
+  document.getElementById("invSellModal")?.addEventListener("click", (e) => {
+    if (e.target === document.getElementById("invSellModal")) closeInvSellModal();
+  });
+  document.getElementById("invSellForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = Number(document.getElementById("invSellItemId").value);
+    const item = inventario.find(i => i.id === id);
+    if (!item) return;
+    const esUsado = item.categoria === "Celular usado";
+    const precio = Number(document.getElementById("invSellPrecio").value || 0);
+    const cantidad = esUsado ? 1 : Math.max(1, Number(document.getElementById("invSellCantidad").value || 1));
+    const nota = document.getElementById("invSellNota").value.trim();
+    const descripcion = nota || `Venta${cantidad > 1 ? " ×" + cantidad : ""} — ${item.nombre}`;
+    const mov = await dbInsertMovimiento({ tipo: "ingreso", categoria: "Venta", descripcion, monto: precio * cantidad, fecha: today, reparacionId: null });
+    if (mov) movimientos = [mov, ...movimientos];
+    item.stock = Math.max(0, item.stock - cantidad);
+    await dbUpsertItem(item);
+    closeInvSellModal();
+    renderInvTable();
+    if (window.showToast) window.showToast("Venta registrada", formatMoney(precio * cantidad), "green");
   });
   document.getElementById("invDeleteModal")?.addEventListener("click", (e) => {
     if (e.target === document.getElementById("invDeleteModal")) closeInvDeleteModal();
@@ -2613,6 +2657,15 @@ function setupInventario() {
       const wasOpen = menu?.classList.contains("open");
       closeAllInvMenus();
       if (menu && !wasOpen) menu.classList.add("open");
+      return;
+    }
+
+    // Sell
+    const sellBtn = e.target.closest("[data-inv-sell]");
+    if (sellBtn) {
+      closeAllInvMenus();
+      const item = inventario.find(i => i.id === Number(sellBtn.dataset.invSell));
+      if (item) openInvSellModal(item);
       return;
     }
 
