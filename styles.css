@@ -1386,7 +1386,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .inv-kpi-label{font-size:11px;font-family:var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
 .inv-kpi-val{font-size:26px;font-weight:700;font-family:var(--font-display);line-height:1;color:var(--text)}
 .inv-kpi-sub{font-size:11px;color:var(--text-3);margin-top:3px}
-.inv-kpi.kpi-accent .inv-kpi-val{color:var(--accent)}
+.inv-kpi.inv-kpi-accent .inv-kpi-val{color:var(--accent)}
 .inv-kpi.kpi-red .inv-kpi-val{color:oklch(0.65 0.2 18)}
 .inv-kpi.kpi-amber .inv-kpi-val{color:var(--st-espera)}
 
