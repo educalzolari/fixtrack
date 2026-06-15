@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1FixTrack — El sistema operativo de tu taller</title>
+<meta name="description" content="Cargá equipos en segundos, seguí cada reparación en un tablero claro y controlá el dinero de tu taller.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site/site.css">
+</head>
+<body>
+<div class="bg-fx"><div class="grid"></div><div class="glow1"></div><div class="glow2"></div></div>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="landing.html">
+      <span class="brand-mark">1F</span>
+      <span class="brand-name">1Fix<b>Track</b></span>
+    </a>
+    <nav class="nav-links" role="navigation" aria-label="Menú principal">
+      <a href="#producto">Producto</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#funciones">Funciones</a>
+      <a href="#precios">Precios</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="login.html">Ingresar</a>
+      <a class="btn btn-accent btn-sm" href="registro.html">Empezar gratis</a>
+      <button class="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero wrap" id="producto">
+  <div class="reveal in">
+    <span class="badge"><span class="tag">Workshop OS</span> Gestión de taller, de punta a punta</span>
+    <h1>El <span class="hl">sistema operativo</span> de tu taller de reparación</h1>
+    <p class="lede">Cargá equipos en segundos, seguí cada reparación en un tablero claro y controlá el dinero de tu taller. Pensado para talleres chicos y medianos — con local o sin local.</p>
+    <div class="hero-cta">
+      <a class="btn btn-accent btn-lg" href="registro.html">Empezar gratis<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn-line btn-lg" href="#como">Ver cómo funciona</a>
+    </div>
+    <p class="hero-trust">SIN INSTALACIÓN · FUNCIONA EN CUALQUIER NAVEGADOR · TUS DATOS, ORDENADOS</p>
+  </div>
+
+  <div class="hero-stage reveal d1">
+    <div class="stage">
+      <div class="scaler" data-w="900" data-h="600" data-demo="intake">
+        <div class="aw">
+          <aside class="aw-side">
+            <div class="aw-brand"><span class="m">1F</span><span class="n">1FixTrack</span></div>
+            <div class="aw-nlabel">Operación</div>
+            <nav class="aw-nav">
+              <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Inicio</span>
+              <span class="aw-ni active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Nueva Reparación</span>
+              <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Ver Reparaciones</span>
+              <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Clientes</span>
+            </nav>
+            <div class="aw-nlabel">Negocio</div>
+            <nav class="aw-nav">
+              <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8l-9-5-9 5v8l9 5 9-5zM3.3 7L12 12l8.7-5M12 22V12"/></svg>Inventario</span>
+              <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>Reportes</span>
+            </nav>
+          </aside>
+          <div class="aw-main">
+            <div class="aw-top">
+              <span class="aw-crumb">1FixTrack / <b>Nueva Reparación</b></span>
+              <span class="sp"></span>
+              <span class="aw-clock"><span class="aw-dot"></span>Taller abierto · <span data-clock>09:24</span></span>
+            </div>
+            <div class="aw-body aw-form">
+              <div class="aw-kicker">Operación / Carga</div>
+              <div class="aw-h1" style="margin-bottom:16px">Formulario de carga</div>
+              <div class="fsec">
+                <div class="fsec-head"><span class="fsec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg></span><span class="fsec-t">Cliente</span><span class="fsec-n">01 / 03</span></div>
+                <div class="frow"><div class="fld c12"><span class="l">Cliente</span><div class="inp" id="f-cli" data-ph="Seleccionar cliente…">Seleccionar cliente…</div></div></div>
+              </div>
+              <div class="fsec">
+                <div class="fsec-head"><span class="fsec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></span><span class="fsec-t">Datos del equipo</span><span class="fsec-n">02 / 03</span></div>
+                <div class="chips" style="margin-bottom:12px">
+                  <span class="chip chip-cel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>Celular</span>
+                  <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/></svg>Tablet</span>
+                  <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>Notebook</span>
+                </div>
+                <div class="frow">
+                  <div class="fld c6"><span class="l">Marca</span><div class="inp" id="f-marca" data-ph="Seleccionar…">Seleccionar…</div></div>
+                  <div class="fld c6"><span class="l">Modelo</span><div class="inp" id="f-modelo" data-ph="Ej. E15">Ej. E15</div></div>
+                </div>
+              </div>
+              <div class="fsec" style="margin-bottom:0">
+                <div class="fsec-head"><span class="fsec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1-5.6 5.6L4 17v3h3l5.1-5.1a4 4 0 0 0 5.6-5.6z"/></svg></span><span class="fsec-t">Trabajo</span><span class="fsec-n">03 / 03</span></div>
+                <div class="frow"><div class="fld c12"><span class="l">Problema reportado</span><div class="inp tall" id="f-prob" data-ph="Describí la falla…">Describí la falla…</div></div></div>
+              </div>
+              <div style="height:78px"></div>
+            </div>
+            <div class="aw-actionbar">
+              <span class="note">4 / 4 campos</span>
+              <span class="ab-btn ab-ghost">Limpiar</span>
+              <span class="ab-btn ab-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Guardar reparación</span>
+            </div>
+          </div>
+        </div>
+        <div class="toast-host">
+          <div class="aw-toast"><span class="td"></span><div><b>Reparación #1008 creada</b><span>Ángel Tenasio · Moto E15</span></div></div>
+        </div>
+        <div class="cursor"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 2l5.5 16 2.6-6.4L18.5 9 4 2z" fill="#fff" stroke="oklch(0.2 0.02 295)" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="sec wrap" id="como">
+  <div class="sec-head reveal">
+    <span class="eyebrow">Cómo funciona</span>
+    <h2>De la recepción a la entrega, <span class="hl">en tres pasos</span></h2>
+    <p>Un flujo simple que cualquier persona del taller puede seguir sin capacitación.</p>
+  </div>
+  <div class="steps">
+    <div class="step reveal" data-n="1">
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg></div>
+      <div class="sn">Paso 01</div>
+      <h3>Cargá el equipo</h3>
+      <p>Cliente, tipo de dispositivo, marca, modelo y la falla. La orden queda registrada con su número y fecha al instante.</p>
+      <div class="step-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="step reveal d1" data-n="2">
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
+      <div class="sn">Paso 02</div>
+      <h3>Seguí el trabajo</h3>
+      <p>En espera, activo, finalizado, entregado. Movés cada reparación por el tablero y todos ven en qué estado está.</p>
+      <div class="step-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="step reveal d2" data-n="3">
+      <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v12H3zM3 11h18M7 15h4"/></svg></div>
+      <div class="sn">Paso 03</div>
+      <h3>Entregá y cobrá</h3>
+      <p>Marcás la entrega y registrás el cobro. El movimiento de dinero queda anotado y se refleja en tus reportes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONES -->
+<section class="sec wrap" id="funciones">
+  <div class="sec-head reveal">
+    <span class="eyebrow">Funciones</span>
+    <h2>Todo lo que tu taller necesita, <span class="hl">nada que no use</span></h2>
+    <p>Sin multi-sucursal, sin IVA, sin caja diaria forzada. Solo lo esencial para ordenar el día a día.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat reveal"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg></div><h3>Dashboard en vivo</h3><p>Trabajos en espera, activos, reparaciones del mes y ventas — todo de un vistazo al abrir.</p></div>
+    <div class="feat reveal d1"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><h3>Carga en segundos</h3><p>Un formulario claro con tipo de equipo, marca, modelo, falla y presupuesto. Sin pasos de más.</p></div>
+    <div class="feat reveal d2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div><h3>Tablero de estados</h3><p>Pipeline visual: en espera → activo → finalizado → entregado. Avanzás trabajos con un clic.</p></div>
+    <div class="feat reveal"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg></div><h3>Clientes</h3><p>Ficha de cada cliente con su teléfono e historial de equipos y reparaciones.</p></div>
+    <div class="feat reveal d1"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7h20v12H2zM2 11h20M6 15h4"/></svg></div><h3>Movimiento de dinero</h3><p>Registrá cobros y gastos del taller. Sin caja diaria forzada: el control de plata que sí usás.</p></div>
+    <div class="feat reveal d2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Buscar al instante</h3><p>Encontrá cualquier trabajo por cliente, equipo o número. Filtrá por estado en un toque.</p></div>
+  </div>
+</section>
+
+<!-- DEMOS -->
+<section class="sec wrap">
+  <div class="sec-head reveal">
+    <span class="eyebrow">El sistema en acción</span>
+    <h2>Mirá cómo se <span class="hl">controla el taller</span></h2>
+    <p>Animaciones reales de las pantallas. Así se ve trabajar con 1FixTrack todos los días.</p>
+  </div>
+
+  <!-- pipeline -->
+  <div class="demo-row reveal">
+    <div class="demo-copy">
+      <span class="tag"><span style="width:7px;height:7px;border-radius:99px;background:var(--st-activo);display:inline-block"></span>Tablero de trabajos</span>
+      <h3>Avanzá cada reparación por su estado</h3>
+      <p>Cada trabajo viaja por el tablero: en espera, activo, finalizado y entregado. Un clic lo mueve y todo el taller ve el cambio.</p>
+      <ul class="demo-points">
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Cuatro estados claros, sin ambigüedad</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Avanzás con un clic, sin formularios</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Nadie pierde de vista un equipo</li>
+      </ul>
+    </div>
+    <div class="demo-visual">
+      <div class="stage">
+        <div class="scaler" data-w="760" data-h="490" data-demo="pipeline">
+          <div class="aw">
+            <aside class="aw-side">
+              <div class="aw-brand"><span class="m">1F</span><span class="n">1FixTrack</span></div>
+              <div class="aw-nlabel">Operación</div>
+              <nav class="aw-nav">
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Inicio</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Nueva Reparación</span>
+                <span class="aw-ni active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Ver Reparaciones</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Clientes</span>
+              </nav>
+            </aside>
+            <div class="aw-main">
+              <div class="aw-top"><span class="aw-crumb">1FixTrack / <b>Ver Reparaciones</b></span><span class="sp"></span><span class="aw-clock"><span class="aw-dot"></span><span data-clock>09:24</span></span></div>
+              <div class="aw-body">
+                <div class="kan">
+                  <div class="kan-col">
+                    <div class="kan-h"><span class="pill sc-espera"><span class="pd"></span><span class="pt">En espera</span></span></div>
+                    <div data-slot="espera" style="display:flex;flex-direction:column;gap:9px">
+                      <div class="kan-card kc-trav"><div class="kc-top"><span class="kc-nro">#1008</span><span class="pill sc-espera"><span class="pd"></span><span class="pt">En espera</span></span></div><div class="kc-name">Ángel Tenasio</div><div class="kc-dev">Moto E15 · No carga</div></div>
+                      <div class="kan-card"><div class="kc-top"><span class="kc-nro">#1006</span></div><div class="kc-name">Lucía Pérez</div><div class="kc-dev">iPhone 11 · Pantalla</div></div>
+                    </div>
+                  </div>
+                  <div class="kan-col">
+                    <div class="kan-h"><span class="pill sc-activo"><span class="pd"></span>Activo</span></div>
+                    <div data-slot="activo" style="display:flex;flex-direction:column;gap:9px">
+                      <div class="kan-card"><div class="kc-top"><span class="kc-nro">#1004</span></div><div class="kc-name">Diego Ruiz</div><div class="kc-dev">Samsung A14 · Batería</div></div>
+                    </div>
+                  </div>
+                  <div class="kan-col">
+                    <div class="kan-h"><span class="pill sc-finalizado"><span class="pd"></span>Finalizado</span></div>
+                    <div data-slot="finalizado" style="display:flex;flex-direction:column;gap:9px">
+                      <div class="kan-card"><div class="kc-top"><span class="kc-nro">#1001</span></div><div class="kc-name">Marta Gómez</div><div class="kc-dev">Redmi 12 · Software</div></div>
+                    </div>
+                  </div>
+                  <div class="kan-col">
+                    <div class="kan-h"><span class="pill sc-entregado"><span class="pd"></span>Entregado</span></div>
+                    <div data-slot="entregado" style="display:flex;flex-direction:column;gap:9px">
+                      <div class="kan-card"><div class="kc-top"><span class="kc-nro">#0999</span></div><div class="kc-name">José Díaz</div><div class="kc-dev">Moto G54 · Cambio pin</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cursor"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 2l5.5 16 2.6-6.4L18.5 9 4 2z" fill="#fff" stroke="oklch(0.2 0.02 295)" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- dashboard -->
+  <div class="demo-row flip reveal">
+    <div class="demo-copy">
+      <span class="tag"><span style="width:7px;height:7px;border-radius:99px;background:var(--accent);display:inline-block"></span>Inicio</span>
+      <h3>Tu taller entero, de un vistazo</h3>
+      <p>Al abrir 1FixTrack ves lo que importa: cuántos equipos esperan, cuántos están en proceso, cuántas reparaciones hiciste y cuánto facturaste este mes.</p>
+      <ul class="demo-points">
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Indicadores siempre actualizados</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Ventas del mes a la vista</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Tendencia con mini-gráficos</li>
+      </ul>
+    </div>
+    <div class="demo-visual">
+      <div class="stage">
+        <div class="scaler" data-w="760" data-h="490" data-demo="dash">
+          <div class="aw">
+            <aside class="aw-side">
+              <div class="aw-brand"><span class="m">1F</span><span class="n">1FixTrack</span></div>
+              <div class="aw-nlabel">Operación</div>
+              <nav class="aw-nav">
+                <span class="aw-ni active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Inicio</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Nueva Reparación</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Ver Reparaciones</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Clientes</span>
+              </nav>
+            </aside>
+            <div class="aw-main">
+              <div class="aw-top"><span class="aw-crumb">1FixTrack / <b>Inicio</b></span><span class="sp"></span><span class="aw-clock"><span class="aw-dot"></span>Taller abierto · <span data-clock>09:24</span></span></div>
+              <div class="aw-body">
+                <div class="aw-kicker">Lunes 15 de junio</div>
+                <div class="aw-h1" style="margin-bottom:18px">Hola, Eduardo 👋</div>
+                <div class="kpi-grid">
+                  <div class="kpi"><span class="kpi-accent" style="--clr:var(--st-espera)"></span><div class="kpi-top"><span class="kpi-tag">En espera</span><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div class="kpi-num" id="k1" data-to="6">0</div><div class="spark"><i style="height:40%"></i><i style="height:65%"></i><i style="height:45%"></i><i style="height:80%"></i><i style="height:60%"></i><i class="hot" style="height:95%"></i></div></div>
+                  <div class="kpi"><span class="kpi-accent" style="--clr:var(--st-activo)"></span><div class="kpi-top"><span class="kpi-tag">Activos</span><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1-5.6 5.6L4 17v3h3l5.1-5.1a4 4 0 0 0 5.6-5.6z"/></svg></span></div><div class="kpi-num" id="k2" data-to="11">0</div><div class="spark"><i style="height:50%"></i><i style="height:40%"></i><i style="height:70%"></i><i style="height:55%"></i><i style="height:75%"></i><i class="hot" style="height:90%"></i></div></div>
+                  <div class="kpi"><span class="kpi-accent" style="--clr:var(--st-finalizado)"></span><div class="kpi-top"><span class="kpi-tag">Reparaciones (mes)</span><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></span></div><div class="kpi-num" id="k3" data-to="38">0</div><div class="kpi-foot"><span class="delta up">▲ 12%</span> vs. mes anterior</div></div>
+                  <div class="kpi is-accent"><span class="kpi-accent"></span><div class="kpi-top"><span class="kpi-tag">Ventas del mes</span><span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7h20v12H2zM2 11h20M6 15h4"/></svg></span></div><div class="kpi-num" id="k4" data-money data-to="184500">$0</div><div class="spark"><i style="height:35%"></i><i style="height:55%"></i><i style="height:50%"></i><i style="height:72%"></i><i style="height:68%"></i><i class="hot" style="height:96%"></i></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- filter -->
+  <div class="demo-row reveal">
+    <div class="demo-copy">
+      <span class="tag"><span style="width:7px;height:7px;border-radius:99px;background:var(--accent);display:inline-block"></span>Búsqueda</span>
+      <h3>Encontrá cualquier trabajo al instante</h3>
+      <p>Escribís el cliente, el equipo o el número y el listado se filtra solo. Sin scrollear listas eternas buscando una orden.</p>
+      <ul class="demo-points">
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Busca por cliente, equipo o número</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Resultados a medida que escribís</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Filtros por estado en un toque</li>
+      </ul>
+    </div>
+    <div class="demo-visual">
+      <div class="stage">
+        <div class="scaler" data-w="760" data-h="490" data-demo="filter">
+          <div class="aw">
+            <aside class="aw-side">
+              <div class="aw-brand"><span class="m">1F</span><span class="n">1FixTrack</span></div>
+              <div class="aw-nlabel">Operación</div>
+              <nav class="aw-nav">
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Inicio</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>Nueva Reparación</span>
+                <span class="aw-ni active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Ver Reparaciones</span>
+                <span class="aw-ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Clientes</span>
+              </nav>
+            </aside>
+            <div class="aw-main">
+              <div class="aw-top"><span class="aw-crumb">1FixTrack / <b>Ver Reparaciones</b></span><span class="sp"></span><span class="aw-clock"><span class="aw-dot"></span><span data-clock>09:24</span></span></div>
+              <div class="aw-body">
+                <div class="aw-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><div class="aw-searchbox"><span class="q"></span><span class="cap"></span></div></div>
+                <table class="aw-tbl">
+                  <thead><tr><th>Nro</th><th>Cliente</th><th>Equipo</th><th>Estado</th></tr></thead>
+                  <tbody>
+                    <tr data-name="motorola moto e15 angel"><td class="cell-nro">#1008</td><td class="cell-name">Ángel Tenasio</td><td>Moto E15</td><td><span class="pill sc-espera"><span class="pd"></span>Espera</span></td></tr>
+                    <tr data-name="apple iphone 11 lucia"><td class="cell-nro">#1006</td><td class="cell-name">Lucía Pérez</td><td>iPhone 11</td><td><span class="pill sc-activo"><span class="pd"></span>Activo</span></td></tr>
+                    <tr data-name="samsung a14 diego"><td class="cell-nro">#1004</td><td class="cell-name">Diego Ruiz</td><td>Samsung A14</td><td><span class="pill sc-activo"><span class="pd"></span>Activo</span></td></tr>
+                    <tr data-name="motorola moto g54 jose"><td class="cell-nro">#0999</td><td class="cell-name">José Díaz</td><td>Moto G54</td><td><span class="pill sc-finalizado"><span class="pd"></span>Final.</span></td></tr>
+                    <tr data-name="xiaomi redmi 12 marta"><td class="cell-nro">#1001</td><td class="cell-name">Marta Gómez</td><td>Redmi 12</td><td><span class="pill sc-entregado"><span class="pd"></span>Entreg.</span></td></tr>
+                    <tr data-name="motorola moto g23 sofia"><td class="cell-nro">#0996</td><td class="cell-name">Sofía Luna</td><td>Moto G23</td><td><span class="pill sc-entregado"><span class="pd"></span>Entreg.</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="cursor"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 2l5.5 16 2.6-6.4L18.5 9 4 2z" fill="#fff" stroke="oklch(0.2 0.02 295)" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRECIOS -->
+<section class="sec wrap" id="precios">
+  <div class="sec-head reveal">
+    <span class="eyebrow">Precios</span>
+    <h2>Planes simples para <span class="hl">talleres reales</span></h2>
+    <p>Elegí según el tamaño de tu taller. Sin sorpresas, sin funciones que no vas a usar.</p>
+  </div>
+  <div class="price-note reveal">
+    <span class="chip"><span class="d"></span>Precios próximamente — unite a la lista de espera</span>
+  </div>
+  <div class="price-grid">
+    <div class="plan reveal">
+      <div><div class="plan-name">Solo</div><div class="plan-desc">Para quien arranca o trabaja solo</div></div>
+      <div><div class="plan-price"><span class="amt tbd" data-price="solo">$ —</span><span class="per">/ mes</span></div></div>
+      <ul>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Reparaciones ilimitadas</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Clientes y tablero de estados</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Dashboard e indicadores</li>
+        <li class="off"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg></span>Reportes avanzados</li>
+      </ul>
+      <a class="btn btn-line btn-block" href="registro.html">Empezar</a>
+    </div>
+    <div class="plan feature reveal d1">
+      <span class="pop">Más elegido</span>
+      <div><div class="plan-name">Taller</div><div class="plan-desc">Para el taller chico o mediano</div></div>
+      <div><div class="plan-price"><span class="amt tbd" data-price="taller">$ —</span><span class="per">/ mes</span></div></div>
+      <ul>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Todo lo de Solo</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Movimiento de dinero</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Inventario de repuestos</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Reportes del mes</li>
+      </ul>
+      <a class="btn btn-accent btn-block" href="registro.html">Empezar gratis</a>
+    </div>
+    <div class="plan reveal d2">
+      <div><div class="plan-name">Pro</div><div class="plan-desc">Para el taller con más volumen</div></div>
+      <div><div class="plan-price"><span class="amt tbd" data-price="pro">$ —</span><span class="per">/ mes</span></div></div>
+      <ul>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Todo lo de Taller</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Proveedores y compras</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Reportes históricos</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Soporte prioritario</li>
+      </ul>
+      <a class="btn btn-line btn-block" href="registro.html">Empezar</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="wrap">
+  <div class="cta reveal">
+    <div class="cta-glow"></div>
+    <h2>Empezá a ordenar tu taller hoy</h2>
+    <p>Creá tu cuenta gratis y cargá tu primera reparación en menos de un minuto.</p>
+    <div class="hero-cta">
+      <a class="btn btn-accent btn-lg" href="registro.html">Crear cuenta gratis<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn-line btn-lg" href="login.html">Ya tengo cuenta</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="landing.html"><span class="brand-mark">1F</span><span class="brand-name">1Fix<b>Track</b></span></a>
+      <p>El sistema operativo para talleres de reparación. Cargá, seguí y entregá — sin planillas.</p>
+    </div>
+    <div class="foot-col"><h4>Producto</h4><a href="#producto">Funciones</a><a href="#como">Cómo funciona</a><a href="#precios">Precios</a><a href="login.html">Ingresar</a></div>
+    <div class="foot-col"><h4>Recursos</h4><a href="#">Ayuda</a><a href="#">Guía de inicio</a><a href="#">Novedades</a></div>
+    <div class="foot-col"><h4>Contacto</h4><a href="#">WhatsApp</a><a href="#">Email</a><a href="#">Instagram</a></div>
+  </div>
+  <div class="foot-bottom">
+    <span class="mono">© 2026 1FIXTRACK · WORKSHOP OS</span>
+    <span class="mono">HECHO PARA TALLERES CHICOS Y MEDIANOS</span>
+  </div>
+</footer>
+
+<script src="site/demos.js"></script>
+</body>
+</html>
