@@ -1,48 +1,54 @@
-const AUTH_KEY = "fixtrack_auth";
-const VALID_USER = "1Fixtrack.admin";
-const VALID_PASS = "Clara.Vera.26";
+const SUPABASE_URL = "https://axgqawopidzljidnaodd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NKLsMIAtibXaIyoIbjIl4Q_H4sPnLx2";
 
-function isLoggedIn() {
-  return localStorage.getItem(AUTH_KEY) === "true";
+const _authClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function isLoggedIn() {
+  const { data: { session } } = await _authClient.auth.getSession();
+  return session !== null;
 }
 
-function logout() {
-  localStorage.removeItem(AUTH_KEY);
+async function logout() {
+  await _authClient.auth.signOut();
   window.location.href = "login.html";
 }
 
 const isLoginPage = window.location.pathname.endsWith("login.html");
 
 if (isLoginPage) {
-  if (isLoggedIn()) {
-    window.location.href = "index.html";
-  }
+  _authClient.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.href = "index.html";
+  });
 
   document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const loginError = document.getElementById("loginError");
 
-    loginForm?.addEventListener("submit", (e) => {
+    loginForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const user = document.getElementById("loginUser").value.trim();
+      const email = document.getElementById("loginEmail").value.trim();
       const pass = document.getElementById("loginPass").value;
 
-      if (user === VALID_USER && pass === VALID_PASS) {
-        localStorage.setItem(AUTH_KEY, "true");
-        window.location.href = "index.html";
-      } else {
+      const { error } = await _authClient.auth.signInWithPassword({ email, password: pass });
+
+      if (error) {
         if (loginError) loginError.classList.add("visible");
         document.getElementById("loginPass").value = "";
         document.getElementById("loginPass").focus();
+      } else {
+        window.location.href = "index.html";
       }
     });
   });
 } else {
-  if (!isLoggedIn()) {
-    window.location.href = "login.html";
-  }
+  _authClient.auth.getSession().then(({ data: { session } }) => {
+    if (!session) window.location.href = "login.html";
+  });
 
   document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector(".logout")?.addEventListener("click", logout);
+    document.querySelector(".logout")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      logout();
+    });
   });
 }
