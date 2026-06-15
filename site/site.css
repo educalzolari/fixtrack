@@ -235,12 +235,16 @@ h3 {
 
 /* ─── Hero ─── */
 .hero {
-  padding: 96px 24px 80px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+  padding: 80px 24px 80px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
   min-height: calc(100dvh - var(--nav-h));
+  justify-content: center;
 }
-.hero > div:first-child { max-width: 560px; }
-.hero-cta { display: flex; align-items: center; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+.hero > div:first-child { max-width: 760px; }
+.hero .badge { margin-left: auto; margin-right: auto; }
+.hero .lede { margin: 0 auto; }
+.hero-stage { display: none; }
+.hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
 .hero-trust {
   margin-top: 24px; font-family: var(--font-mono);
   font-size: 11px; letter-spacing: 0.08em; color: var(--text-3);
