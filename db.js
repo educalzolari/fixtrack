@@ -17,6 +17,11 @@ function normalizeFotos(raw) {
 
 const _db = _authClient;
 
+async function getUid() {
+  const { data: { user } } = await _db.auth.getUser();
+  return user?.id || null;
+}
+
 function repairToRow(r) {
   return {
     id: r.id,
@@ -138,7 +143,8 @@ async function dbLoadOne(id) {
 }
 
 async function dbInsert(repair) {
-  const { data, error } = await _db.from("reparaciones").insert(repairToRow(repair)).select().single();
+  const uid = await getUid();
+  const { data, error } = await _db.from("reparaciones").insert({ ...repairToRow(repair), user_id: uid }).select().single();
   if (error) { console.error("Error insertando reparacion:", error); return null; }
   return rowToRepair(data);
 }
@@ -213,9 +219,10 @@ async function dbLoadClientes() {
 }
 
 async function dbInsertCliente(cliente) {
+  const uid = await getUid();
   const { data, error } = await _db
     .from("clientes")
-    .insert({ nombre: cliente.nombre, telefono: cliente.telefono || "", correo: cliente.correo || "", direccion: cliente.direccion || "" })
+    .insert({ nombre: cliente.nombre, telefono: cliente.telefono || "", correo: cliente.correo || "", direccion: cliente.direccion || "", user_id: uid })
     .select()
     .single();
   if (error) {
@@ -288,9 +295,10 @@ async function dbLoadInventario() {
 }
 
 async function dbInsertItem(item) {
+  const uid = await getUid();
   const row = itemToRow(item);
   delete row.id;
-  const { data, error } = await _db.from("inventario").insert(row).select().single();
+  const { data, error } = await _db.from("inventario").insert({ ...row, user_id: uid }).select().single();
   if (error) { console.error("Error insertando item:", error); return null; }
   return rowToItem(data);
 }
@@ -350,7 +358,8 @@ async function dbLoadMovimientos() {
 }
 
 async function dbInsertMovimiento(m) {
-  const { data, error } = await _db.from("movimientos").insert(movimientoToRow(m)).select().single();
+  const uid = await getUid();
+  const { data, error } = await _db.from("movimientos").insert({ ...movimientoToRow(m), user_id: uid }).select().single();
   if (error) { console.error("Error insertando movimiento:", error); return null; }
   return rowToMovimiento(data);
 }
