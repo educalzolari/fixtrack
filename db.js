@@ -15,10 +15,7 @@ function normalizeFotos(raw) {
   return { recepcion: Array.isArray(raw) ? raw : [], reparacion: [], entrega: [] };
 }
 
-const SUPABASE_URL = "https://axgqawopidzljidnaodd.supabase.co";
-const SUPABASE_KEY = "sb_publishable_NKLsMIAtibXaIyoIbjIl4Q_H4sPnLx2";
-
-const _db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _db = _authClient;
 
 function repairToRow(r) {
   return {
