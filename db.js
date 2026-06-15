@@ -299,13 +299,17 @@ async function dbInsertItem(item) {
 }
 
 async function dbUpsertItem(item) {
+  const row = itemToRow(item);
+  const id = row.id;
+  delete row.id;
   const { data, error } = await _db
     .from("inventario")
-    .upsert(itemToRow(item), { onConflict: "id" })
+    .update(row)
+    .eq("id", id)
     .select()
     .single();
-  if (error) { console.error("Error actualizando item:", error); return null; }
-  return rowToItem(data);
+  if (error) { console.error("Error actualizando item:", error.message, error.details, error.hint); return null; }
+  return rowToItem({ ...data, id });
 }
 
 async function dbDeleteItem(id) {
