@@ -2701,8 +2701,15 @@ function setupInventario() {
     const descripcion = nota || `Venta${cantidad > 1 ? " ×" + cantidad : ""} — ${item.nombre}`;
     const mov = await dbInsertMovimiento({ tipo: "ingreso", categoria: "Venta", descripcion, monto: precio * cantidad, fecha: today, reparacionId: null });
     if (mov) movimientos = [mov, ...movimientos];
+    const stockAnterior = item.stock;
     item.stock = Math.max(0, item.stock - cantidad);
-    await dbUpsertItem(item);
+    const saved = await dbUpsertItem(item);
+    if (!saved) {
+      item.stock = stockAnterior;
+      alert("Error al actualizar el stock. Verificá los permisos de la tabla inventario en Supabase.");
+      return;
+    }
+    inventario = inventario.map(i => i.id === saved.id ? saved : i);
     closeInvSellModal();
     renderInvTable();
     if (window.showToast) window.showToast("Venta registrada", formatMoney(precio * cantidad), "green");
