@@ -656,7 +656,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .mov-row-monto{font-family:var(--num-font);font-size:15px;font-weight:700;white-space:nowrap}
 /* kebab menú */
 .mov-kebab{position:relative;display:inline-flex}
-.mov-kebab:has(.mov-menu.open){z-index:40}
+.mov-day-group:has(.mov-menu.open){position:relative;z-index:40}
 .mov-kebab-btn{width:30px;height:30px;border-radius:6px;border:none;background:transparent;color:var(--text-3);font-size:17px;cursor:pointer;display:grid;place-items:center;line-height:1;letter-spacing:1px;transition:background .12s,color .12s}
 .mov-kebab-btn:hover:not(:disabled){background:var(--bg-inset);color:var(--text)}
 .mov-kebab-btn:disabled{opacity:.35;cursor:not-allowed}
