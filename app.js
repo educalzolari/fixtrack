@@ -1909,6 +1909,12 @@ async function initApp() {
   await migrateGastosMovimientos();
   renderReportsDashboard();
   initPorCobrar();
+  // Migrar ítems con categoría vieja "Celular usado" → "Celular"
+  const toMigrate = inventario.filter(i => i.categoria === "Celular usado");
+  for (const item of toMigrate) {
+    item.categoria = "Celular";
+    await dbUpsertItem(item);
+  }
   renderInvTable();
 }
 
@@ -2357,25 +2363,33 @@ function renderCategoriesChart(monthRepairs) {
 let inventario = [];
 let invDeleteTargetId = null;
 
-const INV_CAT_ORDER = ["Repuesto", "Accesorio", "Celular usado", "Otro"];
-const INV_CAT_LABEL = { "Repuesto": "Repuestos", "Accesorio": "Accesorios", "Celular usado": "Celulares usados", "Otro": "Otros" };
+const INV_CAT_LABEL_DEFAULT = { "Repuesto": "Repuestos", "Accesorio": "Accesorios", "Celular": "Celulares", "Otro": "Otros" };
+const INV_CAT_LABEL = new Proxy(INV_CAT_LABEL_DEFAULT, { get: (t, k) => t[k] || k });
+
+function loadInvCategorias() {
+  try { return JSON.parse(localStorage.getItem("invCategorias_v1")) || null; } catch { return null; }
+}
+function saveInvCategorias() {
+  localStorage.setItem("invCategorias_v1", JSON.stringify(invCategorias));
+}
+let invCategorias = loadInvCategorias() || ["Repuesto", "Accesorio", "Celular", "Otro"];
 
 const INV_CAT_ICO = {
   "Repuesto": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
   "Accesorio": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
-  "Celular usado": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+  "Celular": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
   "Otro": `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
 };
 
 function invStockState(item) {
-  if (item.categoria === "Celular usado") return item.stock > 0 ? "used-ok" : "used-sold";
+  if (item.categoria === "Celular") return item.stock > 0 ? "used-ok" : "used-sold";
   if (item.stock === 0) return "none";
   if (item.stockMinimo > 0 && item.stock <= item.stockMinimo) return "low";
   return "ok";
 }
 
 function invUpdateKpis() {
-  const nonUsed = inventario.filter(i => i.categoria !== "Celular usado");
+  const nonUsed = inventario.filter(i => i.categoria !== "Celular");
   const el = id => document.getElementById(id);
   if (el("invKpiItems"))     el("invKpiItems").textContent     = inventario.length;
   if (el("invKpiCapital"))   el("invKpiCapital").textContent   = formatMoney(inventario.reduce((s, i) => s + i.stock * i.precioCosto, 0));
@@ -2385,7 +2399,7 @@ function invUpdateKpis() {
 
 function invCardHtml(item) {
   const state = invStockState(item);
-  const esUsado = item.categoria === "Celular usado";
+  const esUsado = item.categoria === "Celular";
 
   const cardClass = { "ok": "stock-ok", "low": "stock-low", "none": "stock-none", "used-ok": "stock-used-ok", "used-sold": "stock-used-sold" }[state];
 
@@ -2444,10 +2458,27 @@ function invCardHtml(item) {
   </div>`;
 }
 
+function renderInvSegTabs() {
+  const seg = document.getElementById("invCatSeg");
+  if (!seg) return;
+  const current = seg.querySelector(".inv-seg-btn.active")?.dataset.cat ?? "";
+  seg.innerHTML = [{ cat: "", label: "Todas" }, ...invCategorias.map(c => ({ cat: c, label: INV_CAT_LABEL[c] }))]
+    .map(({ cat, label }) => `<button class="inv-seg-btn${cat === current ? " active" : ""}" data-cat="${escapeHtml(cat)}" type="button">${escapeHtml(label)}</button>`)
+    .join("");
+}
+
+function fillInvCatSelect(currentVal = "") {
+  const sel = document.getElementById("invCategoria");
+  if (!sel) return;
+  sel.innerHTML = `<option value="">Seleccionar…</option>` +
+    invCategorias.map(c => `<option${c === currentVal ? " selected" : ""}>${escapeHtml(c)}</option>`).join("");
+}
+
 function renderInvTable() {
   const container = document.getElementById("invTableBody");
   if (!container) return;
 
+  renderInvSegTabs();
   invUpdateKpis();
 
   const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -2467,13 +2498,15 @@ function renderInvTable() {
     return;
   }
 
-  const cats = cat ? [cat] : INV_CAT_ORDER.filter(c => items.some(i => i.categoria === c));
+  const knownCats = cat ? [cat] : invCategorias.filter(c => items.some(i => i.categoria === c));
+  const extraItems = items.filter(i => !invCategorias.includes(i.categoria));
+  const cats = knownCats;
 
   container.innerHTML = cats.map(catName => {
     const group = items.filter(i => i.categoria === catName);
     if (!group.length) return "";
 
-    const nonUsed = catName !== "Celular usado" ? group : [];
+    const nonUsed = catName !== "Celular" ? group : [];
     const sinStock  = nonUsed.filter(i => i.stock === 0).length;
     const stockBajo = nonUsed.filter(i => i.stockMinimo > 0 && i.stock > 0 && i.stock <= i.stockMinimo).length;
 
@@ -2485,16 +2518,14 @@ function renderInvTable() {
     return `<div class="inv-group">
       <div class="inv-group-head">
         <span class="inv-group-ico">${INV_CAT_ICO[catName] || INV_CAT_ICO["Otro"]}</span>
-        <span class="inv-group-name">${INV_CAT_LABEL[catName] || catName}</span>
+        <span class="inv-group-name">${INV_CAT_LABEL[catName]}</span>
         <span class="inv-group-count">${group.length}</span>
         <div class="inv-group-flags">${flags}</div>
       </div>
       ${group.map(invCardHtml).join("")}
     </div>`;
   }).join("")
-    + (items.some(i => !INV_CAT_ORDER.includes(i.categoria))
-      ? `<div class="inv-group">${items.filter(i => !INV_CAT_ORDER.includes(i.categoria)).map(invCardHtml).join("")}</div>`
-      : "");
+    + (extraItems.length ? `<div class="inv-group">${extraItems.map(invCardHtml).join("")}</div>` : "");
 }
 
 function openInvModal(item = null) {
@@ -2503,9 +2534,9 @@ function openInvModal(item = null) {
   const sub   = document.getElementById("invModalSub");
   if (!modal) return;
 
+  fillInvCatSelect(item?.categoria || "");
   document.getElementById("invItemId").value      = item?.id || "";
   document.getElementById("invNombre").value       = item?.nombre || "";
-  document.getElementById("invCategoria").value    = item?.categoria || "";
   document.getElementById("invEsChipImei").value   = item ? String(item.esChipImei) : "false";
   document.getElementById("invDescripcion").value  = item?.descripcion || "";
   document.getElementById("invProveedor").value    = item?.proveedor || "";
@@ -2545,10 +2576,40 @@ function closeInvDeleteModal() {
   if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
 }
 
+function openInvCatModal() {
+  const modal = document.getElementById("invCatModal");
+  if (!modal) return;
+  renderCatList();
+  document.getElementById("invCatNewInput").value = "";
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeInvCatModal() {
+  const modal = document.getElementById("invCatModal");
+  if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
+}
+
+function renderCatList() {
+  const list = document.getElementById("invCatList");
+  if (!list) return;
+  const xIco = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+  list.innerHTML = invCategorias.map(cat => {
+    const inUse = inventario.some(i => i.categoria === cat);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)">
+      <span style="font-size:14px">${escapeHtml(cat)}</span>
+      <button class="btn-icon" data-cat-del="${escapeHtml(cat)}" type="button"
+        ${inUse ? `disabled title="Hay ítems con esta categoría" style="opacity:0.25;cursor:not-allowed"` : `title="Eliminar categoría"`}>
+        ${xIco}
+      </button>
+    </div>`;
+  }).join("") || `<p style="color:var(--text-3);font-size:13px">No hay categorías.</p>`;
+}
+
 function openInvSellModal(item) {
   const modal = document.getElementById("invSellModal");
   if (!modal) return;
-  const esUsado = item.categoria === "Celular usado";
+  const esUsado = item.categoria === "Celular";
   document.getElementById("invSellItemId").value = item.id;
   document.getElementById("invSellSubtitle").textContent = item.nombre;
   document.getElementById("invSellPrecio").value = item.precioVenta || "";
@@ -2591,6 +2652,38 @@ function setupInventario() {
   document.getElementById("invModal")?.addEventListener("click", (e) => {
     if (e.target === document.getElementById("invModal")) closeInvModal();
   });
+  // Categorías modal
+  document.getElementById("invManageCatsBtn")?.addEventListener("click", openInvCatModal);
+  document.getElementById("closeInvCatModal")?.addEventListener("click", closeInvCatModal);
+  document.getElementById("cancelInvCat")?.addEventListener("click", closeInvCatModal);
+  document.getElementById("invCatModal")?.addEventListener("click", e => { if (e.target === document.getElementById("invCatModal")) closeInvCatModal(); });
+
+  document.getElementById("invCatList")?.addEventListener("click", e => {
+    const btn = e.target.closest("[data-cat-del]");
+    if (!btn || btn.disabled) return;
+    const cat = btn.dataset.catDel;
+    if (!cat || inventario.some(i => i.categoria === cat)) return;
+    invCategorias = invCategorias.filter(c => c !== cat);
+    saveInvCategorias();
+    renderCatList();
+    renderInvSegTabs();
+  });
+
+  document.getElementById("invCatAddBtn")?.addEventListener("click", () => {
+    const input = document.getElementById("invCatNewInput");
+    const val = input?.value.trim();
+    if (!val) return;
+    if (invCategorias.some(c => c.toLowerCase() === val.toLowerCase())) {
+      if (window.showToast) window.showToast("Ya existe esa categoría", "", "red");
+      return;
+    }
+    invCategorias = [...invCategorias, val];
+    saveInvCategorias();
+    renderCatList();
+    renderInvSegTabs();
+    if (input) input.value = "";
+  });
+
   document.getElementById("closeInvSellModal")?.addEventListener("click", closeInvSellModal);
   document.getElementById("cancelInvSell")?.addEventListener("click", closeInvSellModal);
   document.getElementById("invSellModal")?.addEventListener("click", (e) => {
@@ -2601,7 +2694,7 @@ function setupInventario() {
     const id = Number(document.getElementById("invSellItemId").value);
     const item = inventario.find(i => i.id === id);
     if (!item) return;
-    const esUsado = item.categoria === "Celular usado";
+    const esUsado = item.categoria === "Celular";
     const precio = Number(document.getElementById("invSellPrecio").value || 0);
     const cantidad = esUsado ? 1 : Math.max(1, Number(document.getElementById("invSellCantidad").value || 1));
     const nota = document.getElementById("invSellNota").value.trim();
