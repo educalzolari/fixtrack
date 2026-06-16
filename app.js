@@ -1115,6 +1115,21 @@ function setupFinishFlow() {
 function setupPatternCanvas() {
   if (!patternCanvas || !patternImageInput || !patternSequenceInput) return;
 
+  // Lock si no es Pro
+  if (window._plan && !window._plan.isPro) {
+    const wrap = patternCanvas.closest('.pattern-section') || patternCanvas.parentElement;
+    if (wrap) {
+      wrap.classList.add('pro-lock-wrap');
+      patternCanvas.classList.add('pro-lock-blur');
+      const overlay = document.createElement('div');
+      overlay.className = 'pro-lock-overlay';
+      overlay.innerHTML = `<span class="pro-lock-pill">🔒 Función Pro</span><span class="pro-lock-text">Guardá el patrón de desbloqueo<br>con el plan Pro</span><button class="btn btn-accent btn-sm" type="button" id="_unlockPatternBtn">Upgradear a Pro</button>`;
+      wrap.appendChild(overlay);
+      overlay.querySelector('#_unlockPatternBtn').addEventListener('click', () => window._plan.showUpgrade('Patrón de desbloqueo — disponible en el plan Pro'));
+    }
+    return;
+  }
+
   const context = patternCanvas.getContext("2d");
   const size = patternCanvas.width;
   const gap = size / 4;
@@ -1775,9 +1790,28 @@ function createFotoSection(gridId, inputId, metaId, existingUrls = [], onDeleteE
   updateMeta();
 
   function onInputChange(el) {
-    Array.from(el.files).forEach((f) => pendingFiles.push(f));
+    const plan = window._plan;
+    const limit = (!plan || plan.isPro) ? Infinity : plan.FREE_PHOTOS_LIMIT;
+    const current = savedUrls.length + pendingFiles.length;
+    const files = Array.from(el.files);
+    const canAdd = Math.max(0, limit - current);
+    if (files.length > 0 && canAdd === 0) {
+      el.value = "";
+      if (plan) plan.showUpgrade('Fotos ilimitadas — disponible en el plan Pro');
+      return;
+    }
+    files.slice(0, canAdd).forEach((f) => pendingFiles.push(f));
     el.value = "";
     rebuildPending();
+    updateAddButton();
+  }
+
+  function updateAddButton() {
+    const plan = window._plan;
+    const limit = (!plan || plan.isPro) ? Infinity : plan.FREE_PHOTOS_LIMIT;
+    const total = savedUrls.length + pendingFiles.length;
+    const addBtn = grid.querySelector('.foto-add');
+    if (addBtn) addBtn.classList.toggle('locked', total >= limit);
   }
 
   input.addEventListener("change", () => onInputChange(input));

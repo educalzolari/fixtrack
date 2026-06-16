@@ -71,6 +71,7 @@
               <select id="reportYear" class="sel report-select"></select>
             </div>
           </div>
+          <div id="reportTrialBanner" style="display:none"></div>
 
           <!-- ── 1. Resultado del mes ─────────────────────────────────────── -->
           <div class="rc-section-head stagger">
@@ -300,6 +301,44 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
+    <script src="plan.js"></script>
     <script src="app.js"></script>
+    <script>
+      window._planReady && window._planReady.then(() => {
+        const plan = window._plan;
+        const banner = document.getElementById('reportTrialBanner');
+        if (!banner) return;
+
+        if (plan.isPro) return;
+
+        if (plan.trialDaysLeft > 0) {
+          const pct = Math.round(((60 - plan.trialDaysLeft) / 60) * 100);
+          banner.style.display = 'block';
+          banner.innerHTML = `
+            <div class="trial-banner">
+              <span class="trial-banner-icon">📊</span>
+              <div class="trial-banner-text">
+                <strong>Estás probando Reportes gratis</strong>
+                <span>Te quedan <b>${plan.trialDaysLeft} días</b> de prueba gratuita</span>
+                <div class="trial-bar"><div class="trial-bar-fill" style="width:${pct}%"></div></div>
+              </div>
+              <button class="btn btn-accent btn-sm" onclick="window._plan.showUpgrade('Reportes Pro — acceso permanente')">Activar Pro</button>
+            </div>`;
+        } else {
+          // Trial vencido — bloquear reportes
+          document.querySelector('.page')?.querySelectorAll('.rc-section-head, .report-grid, .kpi-row, canvas').forEach(el => el.style.display = 'none');
+          banner.style.display = 'block';
+          banner.innerHTML = `
+            <div class="trial-banner" style="border-color:var(--accent);background:var(--accent-bg)">
+              <span class="trial-banner-icon">🔒</span>
+              <div class="trial-banner-text">
+                <strong>Tu período de prueba de Reportes terminó</strong>
+                <span>Activá el plan Pro para seguir viendo tus reportes y estadísticas</span>
+              </div>
+              <button class="btn btn-accent btn-sm" onclick="window._plan.showUpgrade('Reportes Pro — acceso permanente')">Activar Pro</button>
+            </div>`;
+        }
+      });
+    </script>
   </body>
 </html>
