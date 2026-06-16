@@ -132,7 +132,11 @@
     SCENES.forEach((o) => o.reset && o.reset());     // reset all, clean slate
     setScene(s.id);
     setCap(s.cap[0], s.cap[1], i);
-    if (reduce) { if (s.still) s.still(); return; }
+    if (reduce) {
+      if (s.still) s.still();
+      timers.push(setTimeout(() => { if (alive) play(i + 1); }, s.dur));
+      return;
+    }
     s.steps.forEach((st) => timers.push(setTimeout(() => { if (alive) st.fn(); }, st.at)));
     timers.push(setTimeout(() => { if (alive) play(i + 1); }, s.dur));
   }
