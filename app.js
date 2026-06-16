@@ -227,7 +227,7 @@ function renderStats() {
   monthCount.textContent = thisMonth.length;
   salesTotal.textContent = formatMoney(
     repairs
-      .filter((r) => r.estado === "Entregado" && r.fechaEntregaReal && (() => {
+      .filter((r) => (r.estado === "Entregado" || r.estado === "Garantía") && r.fechaEntregaReal && (() => {
         const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
       })())
