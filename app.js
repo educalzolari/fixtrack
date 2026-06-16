@@ -1334,8 +1334,6 @@ function sendWhatsAppFinished(repair) {
     ...(anticipo > 0 ? [`Anticipo: ${formatMoney(anticipo)}`, `Saldo a pagar: ${formatMoney(saldo)}`] : []),
   ];
   const lines = [
-    `*${window._plan?.tallerNombre || '1Fixtrack!'}*`,
-    ``,
     `Hola ${repair.cliente}`,
     ``,
     `Tu equipo esta listo para retirar.`,
@@ -1366,8 +1364,6 @@ function sendWhatsAppStatus(repair) {
   if (!phone) return;
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
   const lines = [
-    `*${window._plan?.tallerNombre || '1Fixtrack!'}*`,
-    ``,
     `Hola ${repair.cliente}`,
     ``,
     `Actualizacion de tu equipo:`,
