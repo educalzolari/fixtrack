@@ -1733,7 +1733,6 @@ if (deliverForm) {
     const esGarantia = !!(repair.garantiaFecha);
     if (esGarantia) {
       const extra = Number($("#garantiaCobroExtra")?.value || 0);
-      movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
       if (extra > 0) {
         const mov = await dbInsertMovimiento({
           fecha: fechaEntregaReal,
