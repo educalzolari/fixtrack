@@ -1899,6 +1899,24 @@ function setupFotosEdit(repair) {
   const reparacion = createFotoSection("fotoGridReparacion", "fotoInputReparacionCam", "fotoMetaReparacion", fotos.reparacion, (url) => deleteAndSave("reparacion", url), "fotoInputReparacionGal");
   const entrega    = createFotoSection("fotoGridEntrega",    "fotoInputEntregaCam",    "fotoMetaEntrega",    fotos.entrega,    (url) => deleteAndSave("entrega",    url), "fotoInputEntregaGal");
 
+  Promise.resolve(window._planReady).then(() => {
+    if (window._plan?.isPro) return;
+    [
+      document.getElementById("fotoGridReparacion"),
+      document.getElementById("fotoGridEntrega"),
+    ].forEach((grid) => {
+      const sub = grid?.closest(".foto-subseccion");
+      if (!sub) return;
+      sub.querySelectorAll("input").forEach((i) => { i.disabled = true; });
+      const ov = document.createElement("div");
+      ov.className = "foto-sub-lock";
+      ov.innerHTML = `<span class="pro-lock-pill">🔒 Pro</span><span class="pro-lock-text">Disponible en el plan Pro</span>`;
+      ov.addEventListener("click", () => window._plan?.showUpgrade("Fotos de reparación y entrega — plan Pro"));
+      sub.appendChild(ov);
+      sub.classList.add("foto-sub-locked");
+    });
+  });
+
   return { recepcion, reparacion, entrega };
 }
 
