@@ -706,3 +706,22 @@ h3 {
   .foot-grid .foot-brand { grid-column: auto; }
   .foot-bottom { flex-direction: column; gap: 10px; text-align: center; }
 }
+
+/* ── App móvil (sección con iframe del video) ── */
+.movil-row{display:grid;grid-template-columns:1fr 0.9fr;gap:56px;align-items:center}
+.movil-copy .movil-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:22px}
+.movil-list li{display:flex;gap:15px;align-items:flex-start}
+.movil-list .mi{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
+  background:color-mix(in oklch,var(--accent) 14%,var(--bg-2));color:var(--accent);border:1px solid color-mix(in oklch,var(--accent) 24%,transparent)}
+.movil-list .mi svg{width:21px;height:21px}
+.movil-list li b{font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:-.01em;display:block;margin-bottom:4px}
+.movil-list li span{color:var(--text-2);font-size:14.5px;line-height:1.5;display:block;max-width:42ch}
+.movil-frame{position:relative;display:flex;justify-content:center}
+.movil-glow{position:absolute;top:6%;left:50%;transform:translateX(-50%);width:108%;height:90%;
+  background:radial-gradient(50% 50% at 50% 40%,color-mix(in oklch,var(--accent) 40%,transparent),transparent 70%);filter:blur(26px);pointer-events:none;z-index:0}
+.movil-frame iframe{position:relative;z-index:1;width:100%;max-width:560px;height:720px;border:0;background:transparent;border-radius:18px;overflow:hidden}
+@media (max-width:1000px){
+  .movil-row{grid-template-columns:1fr;gap:40px;max-width:560px;margin:0 auto}
+  .movil-frame{order:-1}
+}
+@media (max-width:760px){ .movil-frame iframe{height:640px} }
