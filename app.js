@@ -1325,7 +1325,14 @@ function sendWhatsAppFinished(repair) {
     ``,
     `Te esperamos!`,
   ].join("\n");
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.rel = 'noopener';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function sendWhatsAppStatus(repair) {
@@ -1349,7 +1356,14 @@ function sendWhatsAppStatus(repair) {
     ``,
     `Cualquier consulta, escribinos.`,
   ].join("\n");
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.rel = 'noopener';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function sendWhatsAppPattern(repair) {
@@ -1369,7 +1383,14 @@ function sendWhatsAppPattern(repair) {
     ``,
     `¡Muchas gracias!`,
   ].join("\n");
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.rel = 'noopener';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function sendWhatsAppOrder(repair) {
@@ -1392,7 +1413,14 @@ function sendWhatsAppOrder(repair) {
     ``,
     `Te avisamos cuando tengamos novedades.`,
   ].join("\n");
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines)}`, "_blank");
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.rel = 'noopener';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 if (form) {
