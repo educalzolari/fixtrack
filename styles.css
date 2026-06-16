@@ -1464,3 +1464,9 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 
 @media(max-width:900px){.inv-kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.inv-kpis{grid-template-columns:1fr 1fr};.inv-bar-wrap{display:none}}
+
+/* ── Configuración — campos de perfil ── */
+.cfg-field-wrap{flex-shrink:0;width:260px}
+.cfg-input{width:100%;background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--radius);padding:8px 12px;color:var(--text);font-size:14px;font-family:var(--font-body);transition:border-color .15s}
+.cfg-input:focus{outline:none;border-color:var(--accent)}
+.cfg-input:disabled{opacity:.45;cursor:not-allowed}

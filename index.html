@@ -110,7 +110,7 @@
           <!-- Page header -->
           <div class="page-head" style="flex-direction:column;align-items:flex-start;gap:6px">
             <div class="page-kicker" id="currentDate"></div>
-            <h1 class="page-title">Hola, Eduardo 👋</h1>
+            <h1 class="page-title" id="welcomeMsg">Hola 👋</h1>
             <p id="dashboardStatus" style="font-size:14px;color:var(--text-2);margin:0"></p>
           </div>
 
@@ -221,5 +221,11 @@
     <script src="db.js"></script>
     <script src="app.js"></script>
     <script src="search.js"></script>
+    <script>
+      _authClient.auth.getUser().then(({ data: { user } }) => {
+        const nombre = user?.user_metadata?.nombre || user?.email?.split('@')[0] || '';
+        if (nombre) document.getElementById('welcomeMsg').textContent = `Hola, ${nombre} 👋`;
+      });
+    </script>
   </body>
 </html>
