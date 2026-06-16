@@ -1600,6 +1600,14 @@ if (tableBody) {
       if (!modal || !dateInput) return;
       dateInput.value = today;
       modal.dataset.repairId = id;
+      const repair = repairs.find((r) => Number(r.id) === id);
+      const garantiaSection = $("#garantiaCobroSection");
+      const garantiaInput = $("#garantiaCobroExtra");
+      if (garantiaSection) {
+        const esGarantia = !!(repair?.garantiaFecha);
+        garantiaSection.style.display = esGarantia ? "" : "none";
+        if (garantiaInput) garantiaInput.value = "";
+      }
       modal.style.display = "flex";
       return;
     }
@@ -1722,9 +1730,26 @@ if (deliverForm) {
     repair.fechaEntregaReal = fechaEntregaReal;
     await dbUpsert(repair);
 
-    const entregaMov = await dbSyncEntregaMovimiento(repair);
-    movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
-    if (entregaMov) movimientos = [entregaMov, ...movimientos];
+    const esGarantia = !!(repair.garantiaFecha);
+    if (esGarantia) {
+      const extra = Number($("#garantiaCobroExtra")?.value || 0);
+      movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
+      if (extra > 0) {
+        const mov = await dbInsertMovimiento({
+          fecha: fechaEntregaReal,
+          descripcion: `Garantía #${repair.id} · ${repair.cliente} — ${repair.marca} ${repair.modelo} (cargo adicional)`,
+          categoria: "Reparación",
+          tipo: "ingreso",
+          monto: extra,
+          reparacionId: repair.id,
+        });
+        if (mov) movimientos = [mov, ...movimientos];
+      }
+    } else {
+      const entregaMov = await dbSyncEntregaMovimiento(repair);
+      movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
+      if (entregaMov) movimientos = [entregaMov, ...movimientos];
+    }
 
     closeDeliver();
     renderAll();

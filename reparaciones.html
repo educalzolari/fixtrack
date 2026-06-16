@@ -162,6 +162,13 @@
             <label class="lbl" for="deliverDateInput">Fecha de entrega real</label>
             <input class="inp" id="deliverDateInput" type="date" required />
           </div>
+          <div id="garantiaCobroSection" style="display:none">
+            <div class="garantia-cobro-notice">🔁 Esta reparación vuelve de garantía — ya fue cobrada anteriormente.</div>
+            <div class="field" style="margin-top:12px">
+              <label class="lbl" for="garantiaCobroExtra">¿Cobrás algo adicional?</label>
+              <input class="inp" id="garantiaCobroExtra" type="number" min="0" placeholder="$0 — dejá vacío si no cobrás nada" />
+            </div>
+          </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
             <button type="button" id="cancelDeliverModal" class="btn btn-ghost">Cancelar</button>
             <button type="submit" class="btn btn-accent">Confirmar entrega</button>

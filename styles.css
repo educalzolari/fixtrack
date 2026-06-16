@@ -1592,6 +1592,9 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .gm-textarea:focus{outline:none;border-color:var(--accent)}
 .gm-actions{display:flex;gap:10px;justify-content:flex-end}
 
+/* ── Cobro extra garantía (modal entrega) ── */
+.garantia-cobro-notice{font-size:13px;color:var(--text-2);background:oklch(0.82 0.13 75/.12);border:1px solid oklch(0.82 0.13 75/.35);border-radius:var(--radius);padding:10px 12px}
+
 /* ── Historial garantía (editar-reparacion) ── */
 .garantia-historial{display:flex;gap:12px;align-items:flex-start;background:oklch(0.82 0.13 75/.12);border:1px solid oklch(0.82 0.13 75/.35);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px}
 .gh-icon{font-size:20px;line-height:1;flex-shrink:0}
