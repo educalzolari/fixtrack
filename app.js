@@ -865,7 +865,7 @@ async function setupEditForm() {
         alert("Esta reparacion no tiene numero de WhatsApp cargado.");
         return;
       }
-      sendWhatsAppPattern(current);
+      tryWhatsApp(() => sendWhatsAppPattern(current));
     });
   }
 
@@ -877,7 +877,7 @@ async function setupEditForm() {
         alert("Esta reparacion no tiene numero de WhatsApp cargado.");
         return;
       }
-      sendWhatsAppStatus(current);
+      tryWhatsApp(() => sendWhatsAppStatus(current));
     });
   }
 }
@@ -1100,7 +1100,7 @@ function setupFinishFlow() {
           notifyModal.classList.add("open");
           notifyModal.setAttribute("aria-hidden", "false");
           const redirect = () => { window.location.href = "reparaciones.html"; };
-          $("#notifyYes").onclick = () => { sendWhatsAppFinished(finalizedRepair); redirect(); };
+          $("#notifyYes").onclick = () => { tryWhatsApp(() => sendWhatsAppFinished(finalizedRepair)); redirect(); };
           $("#notifyNo").onclick = redirect;
         } else {
           window.location.href = "reparaciones.html";
@@ -1288,6 +1288,16 @@ function setupPatternCanvas() {
   drawPattern();
 }
 
+function tryWhatsApp(fn) {
+  const plan = window._plan;
+  if (plan && !plan.isPro) {
+    plan.showUpgrade('Vinculación a WhatsApp (vía web) — disponible en el plan Pro');
+    return false;
+  }
+  fn();
+  return true;
+}
+
 function formatPhoneForWhatsApp(phone) {
   const digits = phone.replace(/\D/g, "");
   if (!digits) return "";
@@ -1453,11 +1463,7 @@ if (form) {
       }
     }
 
-    // Preguntar WhatsApp ANTES de los awaits — los navegadores bloquean window.open() después de async
     let repair = createRepair(new FormData(form));
-    const doWhatsApp = repair.telefono
-      ? confirm(`¿Enviar WhatsApp a ${repair.cliente} con los datos de la orden?`)
-      : false;
 
     const submitBtn = form.querySelector('[type="submit"]');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Guardando..."; }
@@ -1487,8 +1493,24 @@ if (form) {
     form.reset();
     if (sel) { sel.value = ""; $("#nuevoClienteFields").style.display = "none"; }
     renderAll();
-    if (doWhatsApp) sendWhatsAppOrder(repair);
-    window.location.href = "reparaciones.html";
+
+    const redirect = () => { window.location.href = "reparaciones.html"; };
+    const waModal = document.getElementById('waOrderModal');
+    if (waModal && repair.telefono) {
+      waModal.classList.add('open');
+      waModal.setAttribute('aria-hidden', 'false');
+      document.getElementById('waOrderYes').onclick = () => {
+        waModal.classList.remove('open');
+        tryWhatsApp(() => sendWhatsAppOrder(repair));
+        redirect();
+      };
+      document.getElementById('waOrderNo').onclick = () => {
+        waModal.classList.remove('open');
+        redirect();
+      };
+    } else {
+      redirect();
+    }
   });
 }
 
@@ -3510,11 +3532,13 @@ function initPorCobrar() {
     if (waBtn) {
       const tel   = waBtn.dataset.waTel;
       const repId = waBtn.dataset.waRep;
-      const rep   = repairs.find(r => Number(r.id) === Number(repId));
-      const equipo = rep ? `${rep.marca} ${rep.modelo}`.trim() : "tu equipo";
-      const saldo  = _deudas.find(d => Number(d.r.id) === Number(repId))?.saldo || 0;
-      const msg    = encodeURIComponent(`Hola! Te recuerdo que tenés un saldo pendiente de ${formatMoney(saldo)} por la reparación de tu ${equipo} en nuestro taller. ¿Cuándo podés pasar a buscarlo? Saludos, 1Fixtrack`);
-      window.open(`https://wa.me/${tel}?text=${msg}`, "_blank");
+      tryWhatsApp(() => {
+        const rep   = repairs.find(r => Number(r.id) === Number(repId));
+        const equipo = rep ? `${rep.marca} ${rep.modelo}`.trim() : "tu equipo";
+        const saldo  = _deudas.find(d => Number(d.r.id) === Number(repId))?.saldo || 0;
+        const msg    = encodeURIComponent(`Hola! Te recuerdo que tenés un saldo pendiente de ${formatMoney(saldo)} por la reparación de tu ${equipo} en nuestro taller. ¿Cuándo podés pasar a buscarlo? Saludos, 1Fixtrack`);
+        const a = document.createElement('a'); a.href = `https://wa.me/${tel}?text=${msg}`; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      });
       return;
     }
 

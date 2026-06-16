@@ -326,6 +326,22 @@
       </div>
     </div>
 
+    <!-- Modal: Notificar al ingresar equipo -->
+    <div class="modal-backdrop" id="waOrderModal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true">
+        <div class="modal-heading">
+          <div>
+            <h2>Equipo registrado</h2>
+            <p>¿Querés enviar la orden al cliente por WhatsApp?</p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="waOrderNo" type="button">No, gracias</button>
+          <button class="btn btn-accent" id="waOrderYes" type="button">Sí, enviar</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
