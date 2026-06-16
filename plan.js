@@ -3,7 +3,9 @@ window._planReady = (async function () {
 
   const { data: { user } } = await _authClient.auth.getUser();
 
-  const isPro = user?.user_metadata?.plan === 'pro';
+  const rawPro = user?.user_metadata?.plan === 'pro';
+  const expiresAt = user?.user_metadata?.plan_expires_at;
+  const isPro = rawPro && (!expiresAt || new Date(expiresAt) > new Date());
   const createdAt = user ? new Date(user.created_at) : new Date();
   const daysSince = Math.floor((Date.now() - createdAt) / 86400000);
   const trialDaysLeft = Math.max(0, 60 - daysSince);
@@ -45,7 +47,7 @@ window._planReady = (async function () {
             <li class="ok">Reportes siempre</li>
             <li class="ok">Vinculación a WhatsApp <small style="opacity:.7">(vía web)</small></li>
           </ul>
-          <a class="upm-cta" href="#">Upgradear a Pro →</a>
+          <a class="upm-cta" href="configuracion.html#plan">Ver planes →</a>
         </div>
       </div>
     </div>`;

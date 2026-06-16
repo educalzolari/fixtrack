@@ -106,6 +106,13 @@
             </div>
           </section>
 
+          <section class="cfg-sec" id="plan">
+            <h2 class="cfg-title">Mi plan</h2>
+            <div id="planSection" class="cfg-opts">
+              <div class="cfg-row"><span class="cfg-lbl"><span class="cfg-lbl-main">Cargando…</span></span></div>
+            </div>
+          </section>
+
           <section class="cfg-sec">
             <h2 class="cfg-title">Contraseña</h2>
             <div class="cfg-opts">
@@ -158,6 +165,127 @@
           setTimeout(() => { msg.style.display = 'none'; }, 3000);
           window.showToast('Perfil actualizado', nombre || 'Cambios guardados', 'var(--st-activo)');
         }
+      });
+
+      // Sección Mi Plan
+      async function renderPlanSection(user) {
+        const meta = user?.user_metadata || {};
+        const rawPro = meta.plan === 'pro';
+        const expiresAt = meta.plan_expires_at ? new Date(meta.plan_expires_at) : null;
+        const isPro = rawPro && (!expiresAt || expiresAt > new Date());
+        const planType = meta.plan_type || 'mensual';
+        const sec = document.getElementById('planSection');
+
+        if (isPro) {
+          const fmtDate = d => d ? d.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+          sec.innerHTML = `
+            <div class="cfg-row">
+              <span class="cfg-lbl">
+                <span class="cfg-lbl-main">Plan activo</span>
+                <span class="cfg-lbl-sub">Tu suscripción actual</span>
+              </span>
+              <span class="plan-badge pro">⚡ Pro ${planType === 'anual' ? 'Anual' : 'Mensual'}</span>
+            </div>
+            ${expiresAt ? `<div class="cfg-row">
+              <span class="cfg-lbl">
+                <span class="cfg-lbl-main">Vence el</span>
+                <span class="cfg-lbl-sub">Renovar antes de esta fecha para no perder el acceso</span>
+              </span>
+              <span style="font-family:var(--font-mono);font-size:13px;color:var(--text-2)">${fmtDate(expiresAt)}</span>
+            </div>` : ''}
+            <div class="cfg-row">
+              <span class="cfg-lbl">
+                <span class="cfg-lbl-main">Renovar plan</span>
+                <span class="cfg-lbl-sub">Extendé tu suscripción</span>
+              </span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-ghost pay-btn" data-plan="mensual" type="button">$18.000 / mes</button>
+                <button class="btn btn-accent pay-btn" data-plan="anual" type="button">$198.000 / año</button>
+              </div>
+            </div>`;
+        } else {
+          sec.innerHTML = `
+            <div class="cfg-row">
+              <span class="cfg-lbl">
+                <span class="cfg-lbl-main">Plan activo</span>
+                <span class="cfg-lbl-sub">Podés upgradear en cualquier momento</span>
+              </span>
+              <span class="plan-badge free">Gratis</span>
+            </div>
+            <div class="plan-upgrade-cards">
+              <div class="puc">
+                <div class="puc-name">Pro mensual</div>
+                <div class="puc-price">$18.000<span>/mes</span></div>
+                <ul class="puc-list">
+                  <li>Reparaciones ilimitadas</li>
+                  <li>Fotos ilimitadas</li>
+                  <li>Reportes siempre</li>
+                  <li>Vinculación a WhatsApp</li>
+                </ul>
+                <button class="btn btn-ghost btn-block pay-btn" data-plan="mensual" type="button">Elegir mensual</button>
+              </div>
+              <div class="puc featured">
+                <div class="puc-badge">Recomendado</div>
+                <div class="puc-name">Pro anual</div>
+                <div class="puc-price">$198.000<span>/año</span></div>
+                <div class="puc-sub">≈ $16.500/mes · ahorrás un mes</div>
+                <ul class="puc-list">
+                  <li>Todo lo del plan Pro</li>
+                  <li>Soporte prioritario</li>
+                </ul>
+                <button class="btn btn-accent btn-block pay-btn" data-plan="anual" type="button">Elegir anual</button>
+              </div>
+            </div>`;
+        }
+
+        // Bind pay buttons
+        sec.querySelectorAll('.pay-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const plan = btn.dataset.plan;
+            btn.disabled = true;
+            btn.textContent = 'Procesando…';
+            try {
+              const { data: { user: u } } = await _authClient.auth.getUser();
+              const r = await fetch('/api/create-preference', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan, userId: u.id, email: u.email })
+              });
+              const d = await r.json();
+              if (d.url) {
+                window.location.href = d.url;
+              } else {
+                window.showToast('Error', d.error || 'No se pudo iniciar el pago', 'var(--st-espera)');
+                btn.disabled = false;
+                btn.textContent = plan === 'anual' ? 'Elegir anual' : 'Elegir mensual';
+              }
+            } catch (e) {
+              window.showToast('Error', e.message, 'var(--st-espera)');
+              btn.disabled = false;
+            }
+          });
+        });
+      }
+
+      // Handle return from MP
+      (function () {
+        const p = new URLSearchParams(location.search);
+        if (p.get('paid') === 'ok') {
+          const plan = p.get('plan') || 'pro';
+          window.showToast('¡Pago exitoso! 🎉', `Plan Pro ${plan} activado. Recargá para ver los cambios.`, 'var(--st-activo)');
+          history.replaceState({}, '', 'configuracion.html#plan');
+        } else if (p.get('paid') === 'fail') {
+          window.showToast('Pago no completado', 'Podés intentarlo de nuevo cuando quieras', 'var(--st-espera)');
+          history.replaceState({}, '', 'configuracion.html#plan');
+        } else if (p.get('paid') === 'pending') {
+          window.showToast('Pago pendiente', 'Te avisamos cuando se acredite', 'var(--text-2)');
+          history.replaceState({}, '', 'configuracion.html#plan');
+        }
+      })();
+
+      // Render plan section after user loads
+      _authClient.auth.getUser().then(({ data: { user } }) => {
+        if (user) renderPlanSection(user);
       });
 
       // Cambiar contraseña

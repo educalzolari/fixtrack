@@ -1530,3 +1530,20 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .pwa-tip-box{background:var(--bg-1);border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center}
 .pwa-tip-box p{font-size:15px;line-height:1.6;margin-bottom:16px}
 .pwa-tip-box button{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer}
+
+/* ── Mi Plan (configuración) ── */
+.plan-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em}
+.plan-badge.pro{background:color-mix(in oklch,var(--accent) 18%,transparent);color:var(--accent);border:1px solid color-mix(in oklch,var(--accent) 30%,transparent)}
+.plan-badge.free{background:var(--bg-2);color:var(--text-2);border:1px solid var(--border)}
+.plan-upgrade-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px 0}
+.puc{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;position:relative}
+.puc.featured{border-color:var(--accent);background:color-mix(in oklch,var(--accent) 6%,var(--bg-2))}
+.puc-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;padding:2px 12px;border-radius:99px;white-space:nowrap}
+.puc-name{font-weight:700;font-size:15px}
+.puc-price{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--accent)}
+.puc-price span{font-size:13px;color:var(--text-2);font-weight:400}
+.puc-sub{font-size:12px;color:var(--text-2);margin-top:-6px}
+.puc-list{display:flex;flex-direction:column;gap:6px;list-style:none;padding:0;flex:1}
+.puc-list li{font-size:13px;color:var(--text-2);padding-left:16px;position:relative}
+.puc-list li::before{content:"✓";position:absolute;left:0;color:var(--st-activo);font-weight:700}
+@media(max-width:600px){.plan-upgrade-cards{grid-template-columns:1fr}}
