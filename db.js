@@ -153,7 +153,7 @@ async function dbUpsert(repair) {
   const { error } = await _db
     .from("reparaciones")
     .upsert(repairToRow(repair), { onConflict: "id" });
-  if (error) console.error("Error actualizando reparacion:", error);
+  if (error) { console.error("Error actualizando reparacion:", error); alert("ERROR AL GUARDAR: " + (error.message || JSON.stringify(error))); }
 }
 
 async function dbUpsertAndReturn(repair) {
