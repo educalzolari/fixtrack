@@ -5,7 +5,7 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = false;
   const root = document.querySelector('.mv-root');
   if (!root) return;
   const $ = (s) => root.querySelector(s);
