@@ -1313,6 +1313,11 @@ function tryWhatsApp(fn) {
   return true;
 }
 
+async function getTallerNombre() {
+  const { data: { user } } = await _authClient.auth.getUser();
+  return user?.user_metadata?.taller || '';
+}
+
 function formatPhoneForWhatsApp(phone) {
   const digits = phone.replace(/\D/g, "");
   if (!digits) return "";
@@ -1321,10 +1326,18 @@ function formatPhoneForWhatsApp(phone) {
   return digits;
 }
 
-function sendWhatsAppFinished(repair) {
+function _openWaLink(phone, lines) {
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines.join("\n"))}`;
+  const a = document.createElement('a');
+  a.href = url; a.rel = 'noopener'; a.target = '_blank';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+async function sendWhatsAppFinished(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const taller = await getTallerNombre();
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
   const costoFinal = repair.cierre?.costoFinal || repair.costoAproximado || 0;
   const anticipo = repair.anticipo || 0;
@@ -1333,7 +1346,7 @@ function sendWhatsAppFinished(repair) {
     `Costo total: ${formatMoney(costoFinal)}`,
     ...(anticipo > 0 ? [`Anticipo: ${formatMoney(anticipo)}`, `Saldo a pagar: ${formatMoney(saldo)}`] : []),
   ];
-  const lines = [
+  _openWaLink(phone, [
     `Hola ${repair.cliente}`,
     ``,
     `Tu equipo esta listo para retirar.`,
@@ -1346,24 +1359,16 @@ function sendWhatsAppFinished(repair) {
     `Podes ver el detalle aca:`,
     orderUrl,
     ``,
-    `Te esperamos!`,
-  ].join("\n");
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.rel = 'noopener';
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+    `Te esperamos en ${taller}!`,
+  ]);
 }
 
-function sendWhatsAppStatus(repair) {
+async function sendWhatsAppStatus(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
-  const lines = [
+  _openWaLink(phone, [
     `Hola ${repair.cliente}`,
     ``,
     `Actualizacion de tu equipo:`,
@@ -1376,55 +1381,37 @@ function sendWhatsAppStatus(repair) {
     orderUrl,
     ``,
     `Cualquier consulta, escribinos.`,
-  ].join("\n");
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.rel = 'noopener';
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  ]);
 }
 
-function sendWhatsAppPattern(repair) {
+async function sendWhatsAppPattern(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const taller = await getTallerNombre();
   const patronUrl = `${window.location.origin}/patron.html?id=${repair.id}`;
-  const lines = [
-    `*1Fixtrack!*`,
-    ``,
+  _openWaLink(phone, [
     `Hola ${repair.cliente}`,
     ``,
-    `Para avanzar con la reparación de tu ${repair.marca} ${repair.modelo}, necesitamos el código de desbloqueo del equipo.`,
+    `Para avanzar con la reparación de tu ${repair.marca} ${repair.modelo} en ${taller}, necesitamos el código de desbloqueo del equipo.`,
     ``,
     `Podés completarlo desde este enlace (solo tarda un momento):`,
     patronUrl,
     ``,
     `¡Muchas gracias!`,
-  ].join("\n");
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.rel = 'noopener';
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  ]);
 }
 
-function sendWhatsAppOrder(repair) {
+async function sendWhatsAppOrder(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const taller = await getTallerNombre();
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
-  const lines = [
-    `*1Fixtrack!*`,
-    ``,
+  _openWaLink(phone, [
     `Hola ${repair.cliente}`,
     ``,
-    `Tu equipo fue recibido en 1Fixtrack!.`,
+    `Tu equipo fue recibido en ${taller}.`,
     ``,
     `Orden: #${repair.id}`,
     `Equipo: ${repair.marca} ${repair.modelo}`,
@@ -1433,15 +1420,7 @@ function sendWhatsAppOrder(repair) {
     orderUrl,
     ``,
     `Te avisamos cuando tengamos novedades.`,
-  ].join("\n");
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.rel = 'noopener';
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  ]);
 }
 
 if (form) {
