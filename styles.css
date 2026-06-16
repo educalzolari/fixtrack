@@ -1515,3 +1515,18 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 
 /* ── Foto slot bloqueada ── */
 .foto-add.locked{opacity:.4;cursor:not-allowed;pointer-events:none;position:relative}
+
+/* ── PWA Install Banner ── */
+#_pwaBanner{position:fixed;bottom:0;left:0;right:0;z-index:9998;display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg-1);border-top:1px solid var(--line-2);transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -4px 24px oklch(0 0 0/.4)}
+#_pwaBanner.show{transform:translateY(0)}
+.pwa-icon{width:40px;height:40px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-family:var(--font-display);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pwa-text{flex:1;min-width:0}
+.pwa-text strong{display:block;font-size:14px;font-weight:600}
+.pwa-text span{display:block;font-size:12px;color:var(--text-2);margin-top:1px}
+.pwa-install{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.pwa-close{background:none;border:none;color:var(--text-3);font-size:16px;padding:4px 6px;cursor:pointer;flex-shrink:0}
+.pwa-close:hover{color:var(--text)}
+#_pwaTip{position:fixed;inset:0;z-index:10000;background:oklch(0 0 0/.6);display:flex;align-items:flex-end;justify-content:center;padding:24px}
+.pwa-tip-box{background:var(--bg-1);border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center}
+.pwa-tip-box p{font-size:15px;line-height:1.6;margin-bottom:16px}
+.pwa-tip-box button{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer}

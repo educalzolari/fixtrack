@@ -229,6 +229,75 @@ function syncConfigPage() {
   if (typeof window._syncConfig === 'function') window._syncConfig();
 }
 
+/* ── PWA Install Banner ─────────────────────────────────────────────────── */
+(function () {
+  let _deferredPrompt = null;
+  const DISMISSED_KEY = '1fix:pwa:dismissed';
+
+  function isMobile() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  function isStandalone() {
+    return window.navigator.standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches;
+  }
+
+  function showBanner() {
+    if (localStorage.getItem(DISMISSED_KEY)) return;
+    if (isStandalone()) return;
+    if (!isMobile()) return;
+
+    const banner = document.createElement('div');
+    banner.id = '_pwaBanner';
+    banner.innerHTML = `
+      <div class="pwa-icon">1F</div>
+      <div class="pwa-text">
+        <strong>Instalá 1FixTrack</strong>
+        <span>Abrila como una app, sin el navegador</span>
+      </div>
+      <button class="pwa-install" id="_pwaInstall" type="button">Instalar</button>
+      <button class="pwa-close" id="_pwaDismiss" type="button" aria-label="Cerrar">✕</button>`;
+    document.body.appendChild(banner);
+
+    requestAnimationFrame(() => banner.classList.add('show'));
+
+    document.getElementById('_pwaDismiss').addEventListener('click', () => {
+      banner.classList.remove('show');
+      setTimeout(() => banner.remove(), 300);
+      localStorage.setItem(DISMISSED_KEY, '1');
+    });
+
+    document.getElementById('_pwaInstall').addEventListener('click', async () => {
+      if (_deferredPrompt) {
+        _deferredPrompt.prompt();
+        const { outcome } = await _deferredPrompt.userChoice;
+        _deferredPrompt = null;
+        if (outcome === 'accepted') localStorage.setItem(DISMISSED_KEY, '1');
+      } else {
+        // iOS Safari — no beforeinstallprompt, instrucciones manuales
+        const tip = document.createElement('div');
+        tip.id = '_pwaTip';
+        tip.innerHTML = `<div class="pwa-tip-box"><p>En Safari tocá <strong>Compartir</strong> <span style="font-size:18px">⬆</span> y luego <strong>"Añadir a pantalla de inicio"</strong>.</p><button type="button" onclick="this.parentElement.parentElement.remove()">Entendido</button></div>`;
+        document.body.appendChild(tip);
+      }
+      banner.classList.remove('show');
+      setTimeout(() => banner.remove(), 300);
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    _deferredPrompt = e;
+    setTimeout(showBanner, 3000);
+  });
+
+  // iOS no dispara beforeinstallprompt — mostrar igual
+  document.addEventListener('DOMContentLoaded', () => {
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) setTimeout(showBanner, 3000);
+  });
+})();
+
 /* ── Init ───────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   _setupDrawer();
