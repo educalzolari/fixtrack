@@ -1602,12 +1602,7 @@ if (tableBody) {
       modal.dataset.repairId = id;
       const repair = repairs.find((r) => Number(r.id) === id);
       const garantiaSection = $("#garantiaCobroSection");
-      const garantiaInput = $("#garantiaCobroExtra");
-      if (garantiaSection) {
-        const esGarantia = !!(repair?.garantiaFecha);
-        garantiaSection.style.display = esGarantia ? "" : "none";
-        if (garantiaInput) garantiaInput.value = "";
-      }
+      if (garantiaSection) garantiaSection.style.display = "none";
       modal.style.display = "flex";
       return;
     }
@@ -1633,7 +1628,54 @@ function closeQuickFinish() {
   if (quickFinishModal) quickFinishModal.style.display = "none";
 }
 
+function openGarantiaFinishModal(repair) {
+  let modal = document.getElementById("garantiaFinishModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "garantiaFinishModal";
+    modal.className = "gm-backdrop";
+    modal.innerHTML = `
+      <div class="gm-box" role="dialog" aria-modal="true">
+        <h3 class="gm-title">Finalizar reparación en garantía</h3>
+        <p class="gm-sub">El equipo ya fue cobrado. ¿Vas a cobrar algo adicional por esta reparación?</p>
+        <input class="inp" id="garantiaFinishExtra" type="number" min="0" placeholder="$0 — dejá vacío si no cobrás nada" />
+        <div class="gm-actions">
+          <button class="btn btn-ghost" id="garantiaFinishCancel" type="button">Cancelar</button>
+          <button class="btn btn-accent" id="garantiaFinishConfirm" type="button">Confirmar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    document.getElementById("garantiaFinishCancel").addEventListener("click", () => modal.classList.remove("open"));
+    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
+  }
+
+  document.getElementById("garantiaFinishExtra").value = "";
+  modal.dataset.repairId = repair.id;
+  modal.classList.add("open");
+
+  document.getElementById("garantiaFinishConfirm").onclick = async () => {
+    modal.classList.remove("open");
+    const extra = Number(document.getElementById("garantiaFinishExtra").value || 0);
+    repair.estado = "Finalizado";
+    await dbUpsert(repair);
+    repairs = repairs.map(r => Number(r.id) === Number(repair.id) ? repair : r);
+    if (extra > 0) {
+      const mov = await dbInsertMovimiento({
+        fecha: today,
+        descripcion: `Garantía #${repair.id} · ${repair.cliente} — ${repair.marca} ${repair.modelo} (cargo adicional)`,
+        categoria: "Reparación",
+        tipo: "ingreso",
+        monto: extra,
+        reparacionId: repair.id,
+      });
+      if (mov) movimientos = [mov, ...movimientos];
+    }
+    renderAll();
+  };
+}
+
 function openQuickFinishModal(repair) {
+  if (repair.estado === "Garantía") { openGarantiaFinishModal(repair); return; }
   if (!quickFinishModal) return;
 
   quickFinishModal.dataset.repairId = repair.id;
@@ -1731,20 +1773,7 @@ if (deliverForm) {
     await dbUpsert(repair);
 
     const esGarantia = !!(repair.garantiaFecha);
-    if (esGarantia) {
-      const extra = Number($("#garantiaCobroExtra")?.value || 0);
-      if (extra > 0) {
-        const mov = await dbInsertMovimiento({
-          fecha: fechaEntregaReal,
-          descripcion: `Garantía #${repair.id} · ${repair.cliente} — ${repair.marca} ${repair.modelo} (cargo adicional)`,
-          categoria: "Reparación",
-          tipo: "ingreso",
-          monto: extra,
-          reparacionId: repair.id,
-        });
-        if (mov) movimientos = [mov, ...movimientos];
-      }
-    } else {
+    if (!esGarantia) {
       const entregaMov = await dbSyncEntregaMovimiento(repair);
       movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
       if (entregaMov) movimientos = [entregaMov, ...movimientos];
