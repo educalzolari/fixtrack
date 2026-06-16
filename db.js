@@ -46,6 +46,8 @@ function repairToRow(r) {
     telefono: r.telefono || null,
     fotos: r.fotos || { recepcion: [], reparacion: [], entrega: [] },
     fecha_entrega_real: r.fechaEntregaReal || "",
+    garantia_fecha: r.garantiaFecha || "",
+    garantia_motivo: r.garantiaMotivo || "",
   };
 }
 
@@ -73,6 +75,8 @@ function rowToRepair(row) {
     telefono: row.telefono || "",
     fotos: normalizeFotos(row.fotos),
     fechaEntregaReal: row.fecha_entrega_real || "",
+    garantiaFecha: row.garantia_fecha || "",
+    garantiaMotivo: row.garantia_motivo || "",
   };
 }
 

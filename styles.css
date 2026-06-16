@@ -1581,3 +1581,20 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .puc-list li{font-size:13px;color:var(--text-2);padding-left:16px;position:relative}
 .puc-list li::before{content:"✓";position:absolute;left:0;color:var(--st-activo);font-weight:700}
 @media(max-width:600px){.plan-upgrade-cards{grid-template-columns:1fr}}
+
+/* ── Modal garantía ── */
+.gm-backdrop{position:fixed;inset:0;background:oklch(0.08 0.02 295/.6);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .18s}
+.gm-backdrop.open{opacity:1;pointer-events:all}
+.gm-box{background:var(--bg-0);border:1px solid var(--line);border-radius:calc(var(--radius)*2);padding:28px;width:min(480px,92vw);display:grid;gap:14px}
+.gm-title{margin:0;font-size:17px;font-weight:700;color:var(--text)}
+.gm-sub{margin:0;font-size:13px;color:var(--text-2)}
+.gm-textarea{width:100%;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-1);color:var(--text);padding:10px 12px;font-family:var(--font-body);font-size:13px;resize:vertical;box-sizing:border-box;transition:border-color .15s}
+.gm-textarea:focus{outline:none;border-color:var(--accent)}
+.gm-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* ── Historial garantía (editar-reparacion) ── */
+.garantia-historial{display:flex;gap:12px;align-items:flex-start;background:oklch(0.82 0.13 75/.12);border:1px solid oklch(0.82 0.13 75/.35);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px}
+.gh-icon{font-size:20px;line-height:1;flex-shrink:0}
+.gh-body{display:grid;gap:3px}
+.gh-title{margin:0;font-size:12px;font-weight:700;color:oklch(0.65 0.13 75);text-transform:uppercase;letter-spacing:.03em}
+.gh-motivo{margin:0;font-size:13px;color:var(--text-2)}

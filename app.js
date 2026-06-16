@@ -745,6 +745,21 @@ async function setupEditForm() {
   editingExpenses = [...(repair.gastos || [])];
   if (editTitle) editTitle.innerHTML = `<strong>#${repair.id}</strong> &mdash; ${escapeHtml(repair.marca)} ${escapeHtml(repair.modelo)}`;
 
+  const existingBanner = document.getElementById("garantiaHistorialBanner");
+  if (existingBanner) existingBanner.remove();
+  if (repair.garantiaFecha && repair.garantiaMotivo) {
+    const banner = document.createElement("div");
+    banner.id = "garantiaHistorialBanner";
+    banner.className = "garantia-historial";
+    banner.innerHTML = `
+      <div class="gh-icon">🔁</div>
+      <div class="gh-body">
+        <p class="gh-title">Devuelta en garantía · ${formatDate(repair.garantiaFecha)}</p>
+        <p class="gh-motivo">${escapeHtml(repair.garantiaMotivo)}</p>
+      </div>`;
+    editForm.insertAdjacentElement("beforebegin", banner);
+  }
+
   const enableEditButton = $("#enableEditButton");
   const saveEditButton   = $("#saveEditButton");
 
@@ -1560,15 +1575,7 @@ if (tableBody) {
       const id = Number(garantiaBtn.dataset.id);
       const repair = repairs.find((r) => Number(r.id) === id);
       if (!repair) return;
-      if (!confirm(`¿Recibir en garantía #${repair.id} — ${repair.cliente}?`)) return;
-      repair.estado = "Garantía";
-      repair.garantiaFecha = today;
-      repair.gastos = [];
-      await dbUpsert(repair);
-      const toDelete = movimientos.filter(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
-      for (const m of toDelete) await dbDeleteMovimiento(m.id);
-      movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
-      renderAll();
+      openGarantiaModal(repair);
       return;
     }
 
@@ -1722,6 +1729,52 @@ if (deliverForm) {
     closeDeliver();
     renderAll();
   });
+}
+
+// ── Modal garantía ────────────────────────────────────────
+function openGarantiaModal(repair) {
+  let modal = document.getElementById("garantiaModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "garantiaModal";
+    modal.className = "gm-backdrop";
+    modal.innerHTML = `
+      <div class="gm-box" role="dialog" aria-modal="true">
+        <h3 class="gm-title">Recibir en garantía</h3>
+        <p class="gm-sub">Describí el motivo de la devolución del cliente.</p>
+        <textarea class="gm-textarea" id="garantiaMotivoInput" rows="4" placeholder="Ej: El cliente dice que la pantalla parpadea al cabo de una semana..."></textarea>
+        <div class="gm-actions">
+          <button class="btn btn-ghost" id="garantiaCancelBtn" type="button">Cancelar</button>
+          <button class="btn btn-accent" id="garantiaConfirmBtn" type="button">Confirmar garantía</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    document.getElementById("garantiaCancelBtn").addEventListener("click", () => { modal.classList.remove("open"); });
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") modal.classList.remove("open"); });
+  }
+
+  const textarea = document.getElementById("garantiaMotivoInput");
+  textarea.value = "";
+  modal.dataset.repairId = repair.id;
+  modal.classList.add("open");
+
+  document.getElementById("garantiaConfirmBtn").onclick = async () => {
+    const motivo = textarea.value.trim();
+    if (!motivo) { textarea.focus(); textarea.style.borderColor = "var(--accent)"; return; }
+    textarea.style.borderColor = "";
+    modal.classList.remove("open");
+
+    repair.estado = "Garantía";
+    repair.garantiaFecha = today;
+    repair.garantiaMotivo = motivo;
+    repair.gastos = [];
+    await dbUpsert(repair);
+    const toDelete = movimientos.filter(m => m.reparacionId === repair.id && m.categoria === "Gasto de reparación");
+    for (const m of toDelete) await dbDeleteMovimiento(m.id);
+    movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
+    renderAll();
+  };
 }
 
 // drawer handled by shell.js via #menuBtn
