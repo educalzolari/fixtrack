@@ -158,4 +158,7 @@
   fit();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   addEventListener('load', fit);
+
+  // Fallback: si el IntersectionObserver no dispara (ej. dentro de iframe), arranca igual
+  setTimeout(() => { if (!alive) { alive = true; play(0); } }, 600);
 })();
