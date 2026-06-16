@@ -160,5 +160,6 @@
   addEventListener('load', fit);
 
   // Fallback: si el IntersectionObserver no dispara (ej. dentro de iframe), arranca igual
-  setTimeout(() => { if (!alive) { alive = true; play(0); } }, 600);
+  setTimeout(() => { if (!alive) { alive = true; play(0); } }, 300);
+  setTimeout(() => { if (!alive) { alive = true; play(0); } }, 1500);
 })();
