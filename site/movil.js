@@ -16,6 +16,7 @@
   function fit() {
     const W = 340, pad = 24;
     const host = root.clientWidth;
+    if (!host) { requestAnimationFrame(fit); return; }
     const availH = (root.dataset.maxh ? +root.dataset.maxh : window.innerHeight) - 150;
     const s = Math.min(1, (host - pad) / W, availH / 710);
     scaler.style.transform = 'scale(' + s + ')';
