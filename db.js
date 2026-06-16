@@ -150,10 +150,12 @@ async function dbInsert(repair) {
 }
 
 async function dbUpsert(repair) {
+  const uid = await getUid();
+  const row = { ...repairToRow(repair), user_id: uid };
   const { error } = await _db
     .from("reparaciones")
-    .upsert(repairToRow(repair), { onConflict: "id" });
-  if (error) { console.error("Error actualizando reparacion:", error); alert("ERROR AL GUARDAR: " + (error.message || JSON.stringify(error))); }
+    .upsert(row, { onConflict: "id" });
+  if (error) console.error("Error actualizando reparacion:", error);
 }
 
 async function dbUpsertAndReturn(repair) {
