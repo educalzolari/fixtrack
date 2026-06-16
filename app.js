@@ -1328,9 +1328,7 @@ function formatPhoneForWhatsApp(phone) {
 
 function _openWaLink(phone, lines) {
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines.join("\n"))}`;
-  const a = document.createElement('a');
-  a.href = url; a.rel = 'noopener'; a.target = '_blank';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  window.open(url, '_blank', 'noopener');
 }
 
 async function sendWhatsAppFinished(repair) {
