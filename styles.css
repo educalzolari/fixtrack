@@ -605,7 +605,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .rw-more-btn{width:36px;height:36px;border-radius:8px;border:none;background:transparent;color:var(--text-3);font-size:18px;cursor:pointer;display:grid;place-items:center;letter-spacing:2px;line-height:1}
 .rw-more-btn:hover{background:var(--bg-inset);color:var(--text)}
 .rw-more-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg-1);border:1px solid var(--line-2);border-radius:var(--radius);box-shadow:var(--shadow);min-width:140px;overflow:hidden;z-index:20}
-.rw-more:hover .rw-more-menu,.rw-more:focus-within .rw-more-menu{display:block}
+.rw-more.open .rw-more-menu{display:block}
 .rw-more-item{display:block;width:100%;padding:10px 14px;border:none;background:transparent;color:var(--text-2);font:500 13.5px var(--font-body);cursor:pointer;text-align:left;text-decoration:none}
 .rw-more-item:hover{background:var(--bg-2);color:var(--text)}
 .rw-del{color:oklch(0.65 0.2 20)!important}

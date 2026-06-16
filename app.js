@@ -1511,8 +1511,28 @@ setupFinishFlow();
 if (searchInput) searchInput.addEventListener("input", renderTable);
 if (statusFilter) statusFilter.addEventListener("change", renderTable);
 
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".rw-more")) {
+    document.querySelectorAll(".rw-more.open").forEach(m => m.classList.remove("open"));
+  }
+});
+
 if (tableBody) {
   tableBody.addEventListener("click", async (event) => {
+    const moreBtn = event.target.closest(".rw-more-btn");
+    if (moreBtn) {
+      event.stopPropagation();
+      const menu = moreBtn.closest(".rw-more");
+      const isOpen = menu.classList.contains("open");
+      document.querySelectorAll(".rw-more.open").forEach(m => m.classList.remove("open"));
+      if (!isOpen) menu.classList.add("open");
+      return;
+    }
+
+    if (event.target.closest(".rw-more-item")) {
+      event.target.closest(".rw-more")?.classList.remove("open");
+    }
+
     const delBtn = event.target.closest(".delete-icon");
     if (delBtn) {
       const id = Number(delBtn.dataset.id);
