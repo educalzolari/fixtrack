@@ -150,7 +150,8 @@ async function dbLoadOne(id) {
 
 async function dbInsert(repair) {
   const uid = await getUid();
-  const { data, error } = await _db.from("reparaciones").insert({ ...repairToRow(repair), user_id: uid }).select().single();
+  const tallerNombre = window._plan?.tallerNombre || repair.tallerNombre || "";
+  const { data, error } = await _db.from("reparaciones").insert({ ...repairToRow(repair), user_id: uid, taller_nombre: tallerNombre }).select().single();
   if (error) { console.error("Error insertando reparacion:", error); return null; }
   return rowToRepair(data);
 }
