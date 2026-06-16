@@ -70,4 +70,47 @@ window._planReady = (async function () {
   }
 
   window._plan = { isPro, trialDaysLeft, reportsUnlocked, FREE_PHOTOS_LIMIT, showUpgrade, hideUpgrade };
+
+  /* ── Aviso de vencimiento ── */
+  if (rawPro && expiresAt) {
+    const exp = new Date(expiresAt);
+    const daysLeft = Math.ceil((exp - Date.now()) / 86400000);
+
+    if (daysLeft > 0 && daysLeft <= 7) {
+      _injectExpiryBar(daysLeft);
+    } else if (daysLeft <= 0) {
+      _showExpiryModal();
+    }
+  }
+
+  function _injectExpiryBar(days) {
+    const urgent = days <= 3;
+    const bar = document.createElement('div');
+    bar.id = '_expiryBar';
+    bar.dataset.urgent = urgent ? '1' : '0';
+    bar.innerHTML = `
+      <span class="eb-text">
+        Tu plan Pro vence en <b>${days} día${days !== 1 ? 's' : ''}</b>
+      </span>
+      <a class="eb-btn" href="configuracion.html#plan">Renovar ahora</a>
+      <button class="eb-close" aria-label="Cerrar">✕</button>`;
+    const main = document.querySelector('.main');
+    if (main) main.prepend(bar); else document.body.prepend(bar);
+    bar.querySelector('.eb-close').addEventListener('click', () => bar.remove());
+  }
+
+  function _showExpiryModal() {
+    const m = document.createElement('div');
+    m.id = '_expiryModal';
+    m.innerHTML = `
+      <div class="exm-box" role="dialog" aria-modal="true">
+        <div class="exm-icon">⏰</div>
+        <h2 class="exm-title">Tu plan Pro venció</h2>
+        <p class="exm-sub">Renovalo para seguir usando fotos ilimitadas, reportes y WhatsApp sin límites.</p>
+        <a class="btn btn-accent" href="configuracion.html#plan">Renovar ahora →</a>
+        <button class="exm-skip">Continuar sin Pro</button>
+      </div>`;
+    document.body.appendChild(m);
+    m.querySelector('.exm-skip').addEventListener('click', () => m.remove());
+  }
 })();
