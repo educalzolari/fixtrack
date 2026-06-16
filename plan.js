@@ -28,10 +28,10 @@ window._planReady = (async function () {
             <li class="ok">Hasta 30 reparaciones/mes</li>
             <li class="ok">Clientes, caja, por cobrar</li>
             <li class="ok">1 foto por reparación</li>
+            <li class="ok">Reportes (60 días de prueba)</li>
             <li class="no">Fotos ilimitadas</li>
-            <li class="no">Patrón de desbloqueo</li>
-            <li class="no">Reportes (60 días de prueba)</li>
-            <li class="no">WhatsApp</li>
+            <li class="no">Reportes siempre</li>
+            <li class="no">Vinculación a WhatsApp</li>
           </ul>
         </div>
         <div class="upm-plan featured">
@@ -42,9 +42,8 @@ window._planReady = (async function () {
             <li class="ok">Reparaciones ilimitadas</li>
             <li class="ok">Clientes, caja, por cobrar</li>
             <li class="ok">Fotos ilimitadas</li>
-            <li class="ok">Patrón de desbloqueo</li>
             <li class="ok">Reportes siempre</li>
-            <li class="ok">WhatsApp</li>
+            <li class="ok">Vinculación a WhatsApp <small style="opacity:.7">(vía web)</small></li>
           </ul>
           <a class="upm-cta" href="#">Upgradear a Pro →</a>
         </div>
