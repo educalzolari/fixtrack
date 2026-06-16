@@ -1326,15 +1326,16 @@ function formatPhoneForWhatsApp(phone) {
   return digits;
 }
 
-function _openWaLink(phone, lines) {
+function _openWaLink(win, phone, lines) {
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines.join("\n"))}`;
-  window.open(url, '_blank', 'noopener');
+  win.location.href = url;
 }
 
 async function sendWhatsAppFinished(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const win = window.open('', '_blank', 'noopener');
   const taller = await getTallerNombre();
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
   const costoFinal = repair.cierre?.costoFinal || repair.costoAproximado || 0;
@@ -1344,7 +1345,7 @@ async function sendWhatsAppFinished(repair) {
     `Costo total: ${formatMoney(costoFinal)}`,
     ...(anticipo > 0 ? [`Anticipo: ${formatMoney(anticipo)}`, `Saldo a pagar: ${formatMoney(saldo)}`] : []),
   ];
-  _openWaLink(phone, [
+  _openWaLink(win, phone, [
     `Hola ${repair.cliente}`,
     ``,
     `Tu equipo esta listo para retirar.`,
@@ -1365,8 +1366,9 @@ async function sendWhatsAppStatus(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const win = window.open('', '_blank', 'noopener');
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
-  _openWaLink(phone, [
+  _openWaLink(win, phone, [
     `Hola ${repair.cliente}`,
     ``,
     `Actualizacion de tu equipo:`,
@@ -1386,9 +1388,10 @@ async function sendWhatsAppPattern(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const win = window.open('', '_blank', 'noopener');
   const taller = await getTallerNombre();
   const patronUrl = `${window.location.origin}/patron.html?id=${repair.id}`;
-  _openWaLink(phone, [
+  _openWaLink(win, phone, [
     `Hola ${repair.cliente}`,
     ``,
     `Para avanzar con la reparación de tu ${repair.marca} ${repair.modelo} en ${taller}, necesitamos el código de desbloqueo del equipo.`,
@@ -1404,9 +1407,10 @@ async function sendWhatsAppOrder(repair) {
   if (!repair.telefono) return;
   const phone = formatPhoneForWhatsApp(repair.telefono);
   if (!phone) return;
+  const win = window.open('', '_blank', 'noopener');
   const taller = await getTallerNombre();
   const orderUrl = `${window.location.origin}/orden.html?id=${repair.id}`;
-  _openWaLink(phone, [
+  _openWaLink(win, phone, [
     `Hola ${repair.cliente}`,
     ``,
     `Tu equipo fue recibido en ${taller}.`,
