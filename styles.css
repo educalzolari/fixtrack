@@ -1174,6 +1174,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
     flex-direction:row!important;align-items:center!important;gap:14px!important;z-index:20}
   .nr-save-btn{width:auto}
   .nr-rail-bar .nr-reset-link{text-align:left;padding:8px 10px}
+  .nr-rail-bar .nr-progress{display:none}
   /* chips scroll horizontal */
   .nr-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:2px 4px}
   .nr-chips::-webkit-scrollbar{display:none}
