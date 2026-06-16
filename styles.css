@@ -1585,7 +1585,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 /* ── Modal garantía ── */
 .gm-backdrop{position:fixed;inset:0;background:oklch(0.04 0.01 295/.82);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .18s}
 .gm-backdrop.open{opacity:1;pointer-events:all}
-.gm-box{background:var(--bg-0);border:1px solid var(--line-2,#444);border-radius:calc(var(--radius)*2);padding:28px;width:min(480px,92vw);display:grid;gap:14px;box-shadow:0 24px 60px oklch(0 0 0/.6)}
+.gm-box{background:var(--bg-1);border:1px solid var(--line-2);border-radius:calc(var(--radius)*2);padding:28px;width:min(480px,92vw);display:grid;gap:14px;box-shadow:var(--shadow)}
 .gm-title{margin:0;font-size:17px;font-weight:700;color:var(--text)}
 .gm-sub{margin:0;font-size:13px;color:var(--text-2)}
 .gm-textarea{width:100%;border:1.5px solid var(--line-2,#444);border-radius:var(--radius);background:var(--bg-1);color:var(--text);padding:10px 12px;font-family:var(--font-body);font-size:13px;resize:vertical;box-sizing:border-box;transition:border-color .15s}
