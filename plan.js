@@ -69,7 +69,8 @@ window._planReady = (async function () {
     document.body.style.overflow = '';
   }
 
-  window._plan = { isPro, trialDaysLeft, reportsUnlocked, FREE_PHOTOS_LIMIT, showUpgrade, hideUpgrade };
+  const tallerNombre = user?.user_metadata?.taller || '1Fixtrack!';
+  window._plan = { isPro, trialDaysLeft, reportsUnlocked, FREE_PHOTOS_LIMIT, showUpgrade, hideUpgrade, tallerNombre };
 
   /* ── Aviso de vencimiento ── */
   if (rawPro && expiresAt) {

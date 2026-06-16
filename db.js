@@ -48,6 +48,7 @@ function repairToRow(r) {
     fecha_entrega_real: r.fechaEntregaReal || "",
     garantia_fecha: r.garantiaFecha || "",
     garantia_motivo: r.garantiaMotivo || "",
+    taller_nombre: r.tallerNombre || "",
   };
 }
 
@@ -77,6 +78,7 @@ function rowToRepair(row) {
     fechaEntregaReal: row.fecha_entrega_real || "",
     garantiaFecha: row.garantia_fecha || "",
     garantiaMotivo: row.garantia_motivo || "",
+    tallerNombre: row.taller_nombre || "",
   };
 }
 
@@ -155,7 +157,8 @@ async function dbInsert(repair) {
 
 async function dbUpsert(repair) {
   const uid = await getUid();
-  const row = { ...repairToRow(repair), user_id: uid };
+  const tallerNombre = window._plan?.tallerNombre || repair.tallerNombre || "";
+  const row = { ...repairToRow(repair), user_id: uid, taller_nombre: tallerNombre };
   const { error } = await _db
     .from("reparaciones")
     .upsert(row, { onConflict: "id" });

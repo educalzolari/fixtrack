@@ -45,7 +45,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  document.title = `Orden #${repair.id} | FixTrack`;
+  document.title = `Orden #${repair.id} | ${repair.tallerNombre || '1Fixtrack!'}`;
+  const tallerEl = document.getElementById("ordenTallerNombre");
+  if (tallerEl) tallerEl.textContent = repair.tallerNombre || '1Fixtrack!';
   document.getElementById("ordenTitle").textContent = `Orden de Reparacion #${repair.id}`;
   document.getElementById("ordenDate").textContent = `Ingreso: ${_date(repair.fechaIngreso)}`;
 
