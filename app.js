@@ -1484,8 +1484,6 @@ if (form) {
   $("#clienteSelect")?.addEventListener("change", nrSaveDraft);
   $("#tipoChips")?.addEventListener("click", nrSaveDraft);
 
-  nrRestoreDraft();
-
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -2169,6 +2167,7 @@ async function initApp() {
   setupPatternCanvas();
   fotosManager = setupFotos();
   await setupClienteSelect();
+  nrRestoreDraft();
   renderAll();
   setupReportsDashboard();
   await initMovimientos();
