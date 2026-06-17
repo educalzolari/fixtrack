@@ -1424,7 +1424,68 @@ async function sendWhatsAppOrder(repair) {
   ]);
 }
 
+const NR_SAVE_KEY = "nr_draft";
+const NR_FIELDS = [
+  "nuevoNombre","nuevoTelefono","nuevoCorreo","nuevoDireccion",
+  "marcaInput","modeloInput","imeiInput","problemaInput",
+  "accesoriosInput","observacionesInput","pinInput",
+  "costoInput","anticipoInput","dispositivoHidden",
+];
+
+function nrSaveDraft() {
+  if (!form) return;
+  const sel = $("#clienteSelect");
+  const draft = {
+    clienteVal: sel?.value || "",
+    dispositivo: $("#dispositivoHidden")?.value || "",
+  };
+  NR_FIELDS.forEach(id => { const el = $(`#${id}`); if (el) draft[id] = el.value; });
+  sessionStorage.setItem(NR_SAVE_KEY, JSON.stringify(draft));
+}
+
+function nrRestoreDraft() {
+  if (!form) return;
+  let draft;
+  try { draft = JSON.parse(sessionStorage.getItem(NR_SAVE_KEY)); } catch { return; }
+  if (!draft) return;
+
+  NR_FIELDS.forEach(id => {
+    const el = $(`#${id}`);
+    if (el && draft[id] != null) el.value = draft[id];
+  });
+
+  const sel = $("#clienteSelect");
+  if (sel && draft.clienteVal) {
+    const opt = sel.querySelector(`option[value="${CSS.escape(draft.clienteVal)}"]`);
+    if (opt || draft.clienteVal === "__nuevo__") {
+      sel.value = draft.clienteVal;
+      sel.dispatchEvent(new Event("change"));
+    }
+  }
+
+  if (draft.dispositivo) {
+    const disp = $(`#dispositivoHidden`);
+    if (disp) disp.value = draft.dispositivo;
+    $(`#tipoChips`)?.querySelectorAll(".chip").forEach(c => {
+      c.classList.toggle("on", c.dataset.val === draft.dispositivo);
+    });
+  }
+}
+
+function nrClearDraft() {
+  sessionStorage.removeItem(NR_SAVE_KEY);
+}
+
 if (form) {
+  NR_FIELDS.forEach(id => {
+    const el = $(`#${id}`);
+    if (el) el.addEventListener("input", nrSaveDraft);
+  });
+  $("#clienteSelect")?.addEventListener("change", nrSaveDraft);
+  $("#tipoChips")?.addEventListener("click", nrSaveDraft);
+
+  nrRestoreDraft();
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -1481,6 +1542,7 @@ if (form) {
     }
 
     repairs = [repair, ...repairs];
+    nrClearDraft();
     form.reset();
     if (sel) { sel.value = ""; $("#nuevoClienteFields").style.display = "none"; }
     renderAll();
