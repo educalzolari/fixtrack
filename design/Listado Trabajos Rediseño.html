@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Listado de trabajos — Rediseño</title>
+<style>
+  :root{
+    --bg:#0e1118;
+    --panel:#171b26;
+    --inset:#10141d;
+    --line:#262c3b;
+    --line-2:#343b4e;
+    --text:#eef0f6;
+    --text-2:#9aa1b4;
+    --text-3:#6b7283;
+    --accent:#c9b6f8;
+    --accent-ink:#161025;
+    --st-activo:#7db8e8;
+    --st-espera:#e8c47d;
+    --st-finalizado:#7fd4a3;
+    --st-entregado:#8b93a8;
+    --radius:10px;
+    --font:'DM Sans',system-ui,sans-serif;
+    --mono:ui-monospace,'SF Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:var(--bg)}
+  body{font-family:var(--font);color:var(--text);padding:48px 40px 72px;-webkit-font-smoothing:antialiased}
+
+  .page-head{max-width:1100px;margin:0 auto 36px}
+  .page-head .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .page-head h1{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .page-head p{color:var(--text-2);font-size:14px;margin-top:6px;max-width:680px;line-height:1.55}
+
+  .frame{max-width:1100px;margin:0 auto}
+
+  /* ── toolbar ─────────────────────────────────────────── */
+  .toolbar{display:flex;gap:12px;margin-bottom:20px}
+  .search{flex:1;display:flex;align-items:center;gap:10px;height:46px;background:var(--inset);
+    border:1px solid var(--line);border-radius:var(--radius);padding:0 14px;color:var(--text-3)}
+  .search input{flex:1;background:none;border:none;outline:none;color:var(--text);font:inherit;font-size:14px}
+  .search input::placeholder{color:var(--text-3)}
+  .sel{height:46px;background:var(--inset);border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--text);font:inherit;font-size:14px;padding:0 38px 0 14px;appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa1b4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 13px center}
+  .btn-new{height:46px;padding:0 20px;border:none;border-radius:var(--radius);background:var(--accent);
+    color:var(--accent-ink);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px}
+
+  /* ── list ────────────────────────────────────────────── */
+  .list{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+
+  .group{display:flex;align-items:center;gap:10px;padding:10px 20px 9px;background:var(--inset);
+    border-top:1px solid var(--line)}
+  .group:first-child{border-top:none}
+  .group .g-dot{width:8px;height:8px;border-radius:99px;background:var(--gc)}
+  .group .g-name{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2)}
+  .group .g-n{font-size:11px;font-weight:600;color:var(--text-3);font-family:var(--mono)}
+
+  .row{display:grid;grid-template-columns:96px 200px 1fr 110px 170px;gap:18px;align-items:center;
+    padding:14px 20px;border-top:1px solid var(--line);cursor:pointer;transition:background .12s}
+  .row:hover{background:color-mix(in srgb,var(--inset) 55%,transparent)}
+
+  .c-nro b{display:block;font-size:13.5px;font-weight:700;font-family:var(--mono);letter-spacing:-.01em}
+  .c-nro span{display:block;font-size:11px;color:var(--text-3);font-family:var(--mono);margin-top:3px}
+
+  .c-cli b{display:block;font-size:14px;font-weight:600;letter-spacing:-.005em}
+  .c-cli span{display:block;font-size:12.5px;color:var(--text-3);margin-top:2px}
+
+  .c-srv{min-width:0}
+  .c-srv .s-main{font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .c-srv .s-sub{font-size:12px;color:var(--text-3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .c-price{text-align:right;font-variant-numeric:tabular-nums}
+  .c-price b{font-size:14.5px;font-weight:700}
+  .c-price .tbd{font-size:12.5px;color:var(--text-3);font-weight:400}
+
+  .c-act{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+  .btn-step{height:36px;padding:0 14px;border-radius:8px;border:none;
+    background:color-mix(in srgb,var(--accent) 14%,transparent);
+    color:var(--accent);font:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .btn-step:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
+  .more{width:36px;height:36px;border-radius:8px;border:none;background:transparent;color:var(--text-3);
+    font-size:17px;cursor:pointer;display:grid;place-items:center;letter-spacing:1px}
+  .more:hover{background:var(--inset);color:var(--text)}
+
+  /* ── handoff notes ───────────────────────────────────── */
+  .notes{max-width:1100px;margin:44px auto 0;background:var(--panel);border:1px solid var(--line);
+    border-radius:16px;padding:28px 32px}
+  .notes h2{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px;color:var(--accent)}
+  .notes ol{margin-left:18px;display:flex;flex-direction:column;gap:12px}
+  .notes li{font-size:13.5px;line-height:1.6;color:var(--text-2)}
+  .notes li b{color:var(--text);font-weight:600}
+  .notes code{font-family:var(--mono);font-size:12px;background:var(--inset);
+    border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="kicker">Rediseño · listado de trabajos</div>
+  <h1>Listado de trabajos</h1>
+  <p>Menos gritos, menos ruido: la falla en tipo oración, el IMEI fuera de la lista, precio con columna propia, y una acción principal con nombre en vez de íconos ambiguos.</p>
+</div>
+
+<div class="frame" data-screen-label="Listado rediseñado">
+
+  <div class="toolbar">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input placeholder="Buscar por cliente, equipo o nro…" />
+    </div>
+    <select class="sel"><option>Todos los estados</option></select>
+    <button class="btn-new">＋ Nueva</button>
+  </div>
+
+  <div class="list">
+
+    <!-- ACTIVO -->
+    <div class="group" style="--gc:var(--st-activo)">
+      <span class="g-dot"></span><span class="g-name">Activo</span><span class="g-n">1</span>
+    </div>
+    <div class="row">
+      <div class="c-nro"><b>#1003</b><span>06/05</span></div>
+      <div class="c-cli"><b>Silvina Pettacci</b><span>iPhone 11</span></div>
+      <div class="c-srv"><div class="s-main">Se apagó y no encendió más</div></div>
+      <div class="c-price"><span class="tbd">A cotizar</span></div>
+      <div class="c-act">
+        <button class="btn-step">Finalizar</button>
+        <button class="more">⋯</button>
+      </div>
+    </div>
+
+    <!-- EN ESPERA -->
+    <div class="group" style="--gc:var(--st-espera)">
+      <span class="g-dot"></span><span class="g-name">En espera</span><span class="g-n">1</span>
+    </div>
+    <div class="row">
+      <div class="c-nro"><b>#1015</b><span>11/06</span></div>
+      <div class="c-cli"><b>Graciela Zapata</b><span>Samsung A04</span></div>
+      <div class="c-srv"><div class="s-main">Se cayó, se mojó. No da imagen</div></div>
+      <div class="c-price"><span class="tbd">A cotizar</span></div>
+      <div class="c-act">
+        <button class="btn-step">Iniciar</button>
+        <button class="more">⋯</button>
+      </div>
+    </div>
+
+    <!-- FINALIZADO -->
+    <div class="group" style="--gc:var(--st-finalizado)">
+      <span class="g-dot"></span><span class="g-name">Finalizado</span><span class="g-n">2</span>
+    </div>
+    <div class="row">
+      <div class="c-nro"><b>#1013</b><span>09/06</span></div>
+      <div class="c-cli"><b>Juliana Canario</b><span>Xiaomi Redmi A5</span></div>
+      <div class="c-srv"><div class="s-main">Quitar cuenta de Google</div><div class="s-sub">Accesorio: funda</div></div>
+      <div class="c-price"><b>$ 45.000</b></div>
+      <div class="c-act">
+        <button class="btn-step">Entregar</button>
+        <button class="more">⋯</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="c-nro"><b>#1012</b><span>09/06</span></div>
+      <div class="c-cli"><b>Juliana Canario</b><span>Motorola E22</span></div>
+      <div class="c-srv"><div class="s-main">Batería inflada</div></div>
+      <div class="c-price"><b>$ 45.000</b></div>
+      <div class="c-act">
+        <button class="btn-step">Entregar</button>
+        <button class="more">⋯</button>
+      </div>
+    </div>
+
+    <!-- ENTREGADO -->
+    <div class="group" style="--gc:var(--st-entregado)">
+      <span class="g-dot"></span><span class="g-name">Entregado</span><span class="g-n">9</span>
+    </div>
+    <div class="row">
+      <div class="c-nro"><b>#1014</b><span>10/06</span></div>
+      <div class="c-cli"><b>Graciela Zapata</b><span>Xiaomi Redmi A3</span></div>
+      <div class="c-srv"><div class="s-main">Falla en la pantalla. El cliente dice que se astilló al caer</div></div>
+      <div class="c-price"><b>$ 65.000</b></div>
+      <div class="c-act">
+        <button class="more">⋯</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="c-nro"><b>#1011</b><span>08/06</span></div>
+      <div class="c-cli"><b>Luis Ruelli</b><span>Samsung A23</span></div>
+      <div class="c-srv"><div class="s-main">Se mojó. No carga</div></div>
+      <div class="c-price"><b>$ 38.000</b></div>
+      <div class="c-act">
+        <button class="more">⋯</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ Notas para Claude Code ════════ -->
+<div class="notes" data-screen-label="Notas de handoff">
+  <h2>Notas de implementación (para Claude Code)</h2>
+  <ol>
+    <li><b>La falla va en tipo oración, peso normal</b> — nunca en mayúsculas ni negrita. Guardá el texto como lo escribe el usuario pero mostralo con <code>text-transform: none</code> y primera letra capitalizada. Una sola línea con <code>text-overflow: ellipsis</code>; el texto completo vive en el detalle.</li>
+    <li><b>Eliminar ruido:</b> no mostrar "Sin detalle adicional" (si no hay dato, no se imprime nada) y <b>sacar el IMEI de la lista</b> — pertenece a la pantalla de detalle. La línea secundaria de Servicio solo aparece si hay algo útil (ej.: "Accesorio: funda").</li>
+    <li><b>Precio con columna propia</b>, alineado a la derecha, <code>font-variant-numeric: tabular-nums</code>, color de texto normal (no violeta, no mono — parecía un link). Si aún no se cotizó, mostrar "A cotizar" en gris en vez de ocultar u ofrecer $ 0.</li>
+    <li><b>Una acción principal con etiqueta según el estado</b>, en vez de íconos ambiguos: En espera → "Iniciar", Activo → "Finalizar", Finalizado → "Entregar", Entregado → sin acción principal. Estilo: sin borde, fondo del acento al 14% (<code>color-mix(in srgb, var(--accent) 14%, transparent)</code>), texto color acento, alto 36px, radio 8px; en hover el fondo sube al 24%.</li>
+    <li><b>El tachito de eliminar desaparece de la fila:</b> va dentro de un menú "⋯" (junto con Editar, Ver detalle). Eliminar es destructivo y no merece estar a un clic permanente en cada fila.</li>
+    <li><b>Encabezados de grupo más finos:</b> fila de fondo hundido con punto de color del estado + nombre en small-caps + contador. Reemplaza a la píldora grande con número suelto.</li>
+    <li><b>Fecha corta</b> (<code>06/05</code>) bajo el número de orden — el año casi nunca importa en la operación diaria; el detalle muestra la fecha completa.</li>
+    <li><b>Toda la fila es clickeable</b> y lleva al detalle de la reparación (cursor pointer + hover sutil); los botones de acción frenan la propagación.</li>
+    <li>Grilla de columnas: <code>96px 200px 1fr 110px 170px</code> (nro · cliente · servicio · precio · acción) con <code>gap: 18px</code>.</li>
+  </ol>
+</div>
+
+</body>
+</html>

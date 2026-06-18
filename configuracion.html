@@ -114,6 +114,173 @@
           </section>
 
           <section class="cfg-sec">
+            <h2 class="cfg-title">Identidad del Ticket</h2>
+            <p class="cfg-desc">Personalizá qué información aparece en el ticket de orden que se comparte con el cliente al momento de recibir o entregar el equipo.</p>
+            <div class="cfg-opts">
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Logo del taller</span>
+                  <span class="cfg-lbl-sub">URL de imagen PNG o JPG (se muestra en el encabezado)</span>
+                </span>
+                <div class="cfg-field-wrap">
+                  <input class="cfg-input" id="cfgTicketLogo" type="url" placeholder="https://...">
+                </div>
+              </div>
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Sucursal</span>
+                  <span class="cfg-lbl-sub">Ej: Principal, Centro, Sucursal Norte</span>
+                </span>
+                <div class="cfg-field-wrap">
+                  <input class="cfg-input" id="cfgTicketSucursal" type="text" placeholder="Principal">
+                </div>
+              </div>
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Domicilio</span>
+                  <span class="cfg-lbl-sub">Dirección del taller que aparece en el ticket</span>
+                </span>
+                <div class="cfg-field-wrap">
+                  <input class="cfg-input" id="cfgTicketDomicilio" type="text" placeholder="Av. Ejemplo 1234">
+                </div>
+              </div>
+
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Línea de firma del cliente</span>
+                  <span class="cfg-lbl-sub">Imprime una línea al pie para que el cliente firme al dejar el equipo</span>
+                </span>
+                <label class="cfg-toggle">
+                  <input type="checkbox" id="cfgTicketFirma">
+                  <span class="cfg-toggle-track"></span>
+                </label>
+              </div>
+
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Mostrar teléfono del taller</span>
+                  <span class="cfg-lbl-sub">Se imprime en el ticket para que el cliente pueda contactarte</span>
+                </span>
+                <label class="cfg-toggle">
+                  <input type="checkbox" id="cfgTicketPhone">
+                  <span class="cfg-toggle-track"></span>
+                </label>
+              </div>
+              <div id="ticketPhoneField" style="display:none">
+                <div class="cfg-row">
+                  <span class="cfg-lbl"><span class="cfg-lbl-main">Número de teléfono</span></span>
+                  <div class="cfg-field-wrap"><input class="cfg-input" id="cfgTicketPhoneVal" type="tel" placeholder="+54 9 11 1234-5678"></div>
+                </div>
+              </div>
+
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Mostrar redes sociales</span>
+                  <span class="cfg-lbl-sub">Agregá tus perfiles al ticket para que el cliente te siga</span>
+                </span>
+                <label class="cfg-toggle">
+                  <input type="checkbox" id="cfgTicketRedes">
+                  <span class="cfg-toggle-track"></span>
+                </label>
+              </div>
+              <div id="ticketRedesFields" style="display:none">
+                <div class="cfg-row">
+                  <span class="cfg-lbl"><span class="cfg-lbl-main">Instagram</span></span>
+                  <div class="cfg-field-wrap"><input class="cfg-input" id="cfgTicketIG" type="text" placeholder="@tucuenta"></div>
+                </div>
+                <div class="cfg-row">
+                  <span class="cfg-lbl"><span class="cfg-lbl-main">Facebook</span></span>
+                  <div class="cfg-field-wrap"><input class="cfg-input" id="cfgTicketFB" type="text" placeholder="facebook.com/tupagina"></div>
+                </div>
+                <div class="cfg-row">
+                  <span class="cfg-lbl"><span class="cfg-lbl-main">TikTok</span></span>
+                  <div class="cfg-field-wrap"><input class="cfg-input" id="cfgTicketTT" type="text" placeholder="@tucuenta"></div>
+                </div>
+              </div>
+
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Términos y condiciones</span>
+                  <span class="cfg-lbl-sub">Se muestran al pie del ticket como texto legal</span>
+                </span>
+                <label class="cfg-toggle">
+                  <input type="checkbox" id="cfgTicketTerminos">
+                  <span class="cfg-toggle-track"></span>
+                </label>
+              </div>
+              <div id="ticketTerminosField" style="display:none">
+                <div class="cfg-row cfg-row--col">
+                  <span class="cfg-lbl"><span class="cfg-lbl-main">Texto de términos</span></span>
+                  <textarea class="cfg-input cfg-textarea" id="cfgTicketTerminosText" rows="4" placeholder="Ej: El taller no se responsabiliza por equipos no retirados después de 30 días..."></textarea>
+                </div>
+              </div>
+
+              <div class="cfg-row cfg-row--col">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Mensaje en pie de ticket</span>
+                  <span class="cfg-lbl-sub">Frase de agradecimiento o información extra al final del ticket</span>
+                </span>
+                <input class="cfg-input" id="cfgTicketPie" type="text" placeholder="Ej: ¡Gracias por elegirnos! Ante cualquier consulta no dudes en contactarnos.">
+              </div>
+
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Tamaño de papel</span>
+                  <span class="cfg-lbl-sub">Formato de impresión del ticket</span>
+                </span>
+                <select class="cfg-input" id="cfgTicketPaper" style="width:auto;min-width:150px">
+                  <option value="80mm">80 mm (ticket estándar)</option>
+                  <option value="58mm">58 mm (ticket compacto)</option>
+                  <option value="A4">A4 / Carta</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+              <button class="btn btn-accent" id="saveTicketBtn" type="button">Guardar</button>
+              <span id="ticketSaveMsg" style="font-size:13px;color:var(--st-activo);display:none">✓ Guardado</span>
+            </div>
+          </section>
+
+          <section class="cfg-sec">
+            <h2 class="cfg-title">Solicitud de reseña</h2>
+            <p class="cfg-desc">Cuando activás esta opción, aparece un botón de WhatsApp en cada equipo entregado. Al hacer click se abre una vista previa del mensaje — podés editarlo antes de enviarlo. Una vez enviado, el botón cambia a un tilde verde para que sepas a quién ya le pediste la reseña.</p>
+            <div class="cfg-opts">
+              <div class="cfg-row">
+                <span class="cfg-lbl">
+                  <span class="cfg-lbl-main">Activar solicitud de reseña</span>
+                  <span class="cfg-lbl-sub">Muestra un botón WhatsApp en los equipos entregados para pedir reseña en Google</span>
+                </span>
+                <label class="cfg-toggle">
+                  <input type="checkbox" id="cfgResenaEnabled">
+                  <span class="cfg-toggle-track"></span>
+                </label>
+              </div>
+              <div id="resenaFields">
+                <div class="cfg-row">
+                  <span class="cfg-lbl">
+                    <span class="cfg-lbl-main">Link de Google</span>
+                    <span class="cfg-lbl-sub">El enlace que le compartís al cliente para dejar la reseña</span>
+                  </span>
+                  <div class="cfg-field-wrap">
+                    <input class="cfg-input" id="cfgResenaLink" type="url" placeholder="https://g.page/r/...">
+                  </div>
+                </div>
+                <div class="cfg-row cfg-row--col">
+                  <span class="cfg-lbl">
+                    <span class="cfg-lbl-main">Mensaje</span>
+                    <span class="cfg-lbl-sub">Variables disponibles: <code>{cliente}</code>, <code>{dispositivo}</code>, <code>{link}</code></span>
+                  </span>
+                  <textarea class="cfg-input cfg-textarea" id="cfgResenaMsg" rows="6" placeholder="Escribí el mensaje..."></textarea>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+              <button class="btn btn-accent" id="saveResenaBtn" type="button">Guardar</button>
+              <span id="resenaSaveMsg" style="font-size:13px;color:var(--st-activo);display:none">✓ Guardado</span>
+            </div>
+          </section>
+
+          <section class="cfg-sec">
             <h2 class="cfg-title">Contraseña</h2>
             <div class="cfg-opts">
               <div class="cfg-row">
@@ -287,6 +454,113 @@
       _authClient.auth.getUser().then(({ data: { user } }) => {
         if (user) renderPlanSection(user);
       });
+
+      // Sección ticket
+      (function initTicketSection() {
+        function loadCfg() { try { return JSON.parse(localStorage.getItem('fixtrack_ticket_config') || '{}'); } catch { return {}; } }
+        const cfg = loadCfg();
+
+        const g = id => document.getElementById(id);
+        const show = (el, v) => { el.style.display = v ? '' : 'none'; };
+
+        const els = {
+          logo:          g('cfgTicketLogo'),
+          sucursal:      g('cfgTicketSucursal'),
+          domicilio:     g('cfgTicketDomicilio'),
+          firmaChk:      g('cfgTicketFirma'),
+          phoneChk:      g('cfgTicketPhone'),
+          phoneField:    g('ticketPhoneField'),
+          phoneVal:      g('cfgTicketPhoneVal'),
+          redesChk:      g('cfgTicketRedes'),
+          redesFields:   g('ticketRedesFields'),
+          ig:            g('cfgTicketIG'),
+          fb:            g('cfgTicketFB'),
+          tt:            g('cfgTicketTT'),
+          terminosChk:   g('cfgTicketTerminos'),
+          terminosField: g('ticketTerminosField'),
+          terminosText:  g('cfgTicketTerminosText'),
+          pie:           g('cfgTicketPie'),
+          paper:         g('cfgTicketPaper'),
+        };
+
+        els.logo.value           = cfg.logoUrl || '';
+        els.sucursal.value       = cfg.sucursal || '';
+        els.domicilio.value      = cfg.domicilio || '';
+        els.firmaChk.checked     = cfg.mostrarFirma !== false;
+        els.phoneChk.checked     = !!cfg.mostrarTelefono;
+        show(els.phoneField,    cfg.mostrarTelefono);
+        els.phoneVal.value       = cfg.telefonoTaller || '';
+        els.redesChk.checked     = !!cfg.mostrarRedes;
+        show(els.redesFields,   cfg.mostrarRedes);
+        els.ig.value             = cfg.instagram || '';
+        els.fb.value             = cfg.facebook || '';
+        els.tt.value             = cfg.tiktok || '';
+        els.terminosChk.checked  = !!cfg.mostrarTerminos;
+        show(els.terminosField, cfg.mostrarTerminos);
+        els.terminosText.value   = cfg.terminos || '';
+        els.pie.value            = cfg.pieMensaje || '';
+        els.paper.value          = cfg.paperSize || '80mm';
+
+        els.phoneChk.addEventListener('change',    () => show(els.phoneField,    els.phoneChk.checked));
+        els.redesChk.addEventListener('change',    () => show(els.redesFields,   els.redesChk.checked));
+        els.terminosChk.addEventListener('change', () => show(els.terminosField, els.terminosChk.checked));
+
+        g('saveTicketBtn').addEventListener('click', () => {
+          localStorage.setItem('fixtrack_ticket_config', JSON.stringify({
+            logoUrl:         els.logo.value.trim(),
+            sucursal:        els.sucursal.value.trim(),
+            domicilio:       els.domicilio.value.trim(),
+            mostrarFirma:    els.firmaChk.checked,
+            mostrarTelefono: els.phoneChk.checked,
+            telefonoTaller:  els.phoneVal.value.trim(),
+            mostrarRedes:    els.redesChk.checked,
+            instagram:       els.ig.value.trim(),
+            facebook:        els.fb.value.trim(),
+            tiktok:          els.tt.value.trim(),
+            mostrarTerminos: els.terminosChk.checked,
+            terminos:        els.terminosText.value.trim(),
+            pieMensaje:      els.pie.value.trim(),
+            paperSize:       els.paper.value,
+          }));
+          const msg = g('ticketSaveMsg');
+          msg.style.display = 'inline';
+          setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        });
+      })();
+
+      // Sección reseña
+      function loadResenaConfig() {
+        try { return JSON.parse(localStorage.getItem('fixtrack_resena_config') || '{}'); } catch { return {}; }
+      }
+
+      (function initResenaSection() {
+        const cfg = loadResenaConfig();
+        const enabledChk = document.getElementById('cfgResenaEnabled');
+        const linkInp    = document.getElementById('cfgResenaLink');
+        const msgArea    = document.getElementById('cfgResenaMsg');
+        const fields     = document.getElementById('resenaFields');
+
+        enabledChk.checked = !!cfg.enabled;
+        linkInp.value = cfg.googleLink || '';
+        msgArea.value = cfg.mensaje || RESENA_DEFAULT_MSG;
+        fields.style.display = cfg.enabled ? '' : 'none';
+
+        enabledChk.addEventListener('change', () => {
+          fields.style.display = enabledChk.checked ? '' : 'none';
+        });
+
+        document.getElementById('saveResenaBtn').addEventListener('click', () => {
+          const newCfg = {
+            enabled:    enabledChk.checked,
+            googleLink: linkInp.value.trim(),
+            mensaje:    msgArea.value.trim() || RESENA_DEFAULT_MSG,
+          };
+          localStorage.setItem('fixtrack_resena_config', JSON.stringify(newCfg));
+          const msg = document.getElementById('resenaSaveMsg');
+          msg.style.display = 'inline';
+          setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        });
+      })();
 
       // Cambiar contraseña
       document.getElementById('resetPassBtn').addEventListener('click', async () => {

@@ -48,6 +48,8 @@ function repairToRow(r) {
     fecha_entrega_real: r.fechaEntregaReal || "",
     garantia_fecha: r.garantiaFecha || "",
     garantia_motivo: r.garantiaMotivo || "",
+    cancelacion_fecha: r.cancelacionFecha || "",
+    cancelacion_motivo: r.cancelacionMotivo || "",
     taller_nombre: r.tallerNombre || "",
   };
 }
@@ -78,6 +80,8 @@ function rowToRepair(row) {
     fechaEntregaReal: row.fecha_entrega_real || "",
     garantiaFecha: row.garantia_fecha || "",
     garantiaMotivo: row.garantia_motivo || "",
+    cancelacionFecha: row.cancelacion_fecha || "",
+    cancelacionMotivo: row.cancelacion_motivo || "",
     tallerNombre: row.taller_nombre || "",
   };
 }

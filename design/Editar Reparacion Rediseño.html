@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Editar Reparación — Rediseño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0e1118;
+    --panel:#171b26;
+    --inset:#10141d;
+    --line:#262c3b;
+    --line-2:#343b4e;
+    --text:#eef0f6;
+    --text-2:#9aa1b4;
+    --text-3:#6b7283;
+    --accent:#c9b6f8;
+    --accent-ink:#161025;
+    --ok:#7fd4a3;
+    --radius:10px;
+    --display:'Space Grotesk',sans-serif;
+    --body:'Hanken Grotesk',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:var(--bg)}
+  body{font-family:var(--body);color:var(--text);padding:48px 40px 72px;-webkit-font-smoothing:antialiased}
+
+  .page-head{max-width:1180px;margin:0 auto 32px}
+  .page-head .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px;font-family:var(--mono)}
+  .page-head h1{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .page-head p{color:var(--text-2);font-size:14px;margin-top:6px;max-width:700px;line-height:1.55}
+
+  /* ── layout: main column + sticky rail ─────────────────── */
+  .wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 330px;gap:24px;align-items:start}
+  .col-main{display:flex;flex-direction:column;gap:18px;min-width:0}
+  .col-rail{position:sticky;top:24px;display:flex;flex-direction:column;gap:18px}
+
+  /* ── sections ──────────────────────────────────────────── */
+  .sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+  .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);
+    border-radius:7px;width:30px;height:30px;display:grid;place-items:center;flex-shrink:0}
+  .sec-t{font-family:var(--display);font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+  .sec-sub{font-size:12.5px;color:var(--text-3);margin-left:auto}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .field.wide{grid-column:1 / -1}
+  .field label{font-size:12.5px;font-weight:600;color:var(--text-2)}
+  .field .opt{font-weight:400;color:var(--text-3)}
+  .inp{height:44px;background:var(--inset);border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--text);font:inherit;font-size:14px;padding:0 13px;width:100%;outline:none}
+  .inp:focus{border-color:var(--accent)}
+  .inp::placeholder{color:var(--text-3)}
+  textarea.inp{height:auto;padding:11px 13px;resize:vertical;line-height:1.5}
+  select.inp{appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa1b4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 13px center;padding-right:38px}
+
+  /* acceso: pattern + pin side by side */
+  .acceso-grid{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start}
+  .pattern-box{display:flex;flex-direction:column;gap:10px}
+  .pattern-canvas{width:170px;height:170px;background:var(--inset);border:1px solid var(--line);border-radius:12px;
+    display:grid;place-items:center}
+  .pattern-canvas svg{opacity:.9}
+  .pattern-actions{display:flex;flex-direction:column;gap:8px}
+  .btn{height:40px;padding:0 16px;border-radius:9px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--line-2)}
+  .btn-soft{background:color-mix(in srgb,var(--accent) 14%,transparent);border:none;color:var(--accent)}
+  .btn-soft:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)}
+  .btn-accent{background:var(--accent);border:none;color:var(--accent-ink)}
+  .btn-accent:hover{filter:brightness(1.06)}
+  .btn-success{background:color-mix(in srgb,var(--ok) 16%,transparent);border:none;color:var(--ok)}
+  .btn-success:hover{background:color-mix(in srgb,var(--ok) 26%,transparent)}
+
+  /* fotos: one compact row */
+  .fotos-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .foto-cell{background:var(--inset);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .foto-cell h4{font-size:13px;font-weight:600;margin-bottom:2px}
+  .foto-cell p{font-size:11.5px;color:var(--text-3);margin-bottom:12px}
+  .foto-btns{display:flex;gap:8px}
+  .foto-add{flex:1;height:62px;border:1.5px dashed var(--line-2);border-radius:9px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:4px;color:var(--text-3);font-size:11px;cursor:pointer}
+  .foto-add:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* gastos table */
+  .tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+  .tbl th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--text-3);font-weight:500;padding:0 10px 10px}
+  .tbl td{padding:11px 10px;border-top:1px solid var(--line)}
+  .tbl .r{text-align:right}
+  .tbl .num{font-variant-numeric:tabular-nums}
+
+  /* ── rail cards ───────────────────────────────────────── */
+  .rail-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .rail-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);
+    font-weight:500;margin-bottom:14px}
+  .rail-card .field + .field{margin-top:14px}
+
+  .fin-rows{display:flex;flex-direction:column}
+  .fin-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+  .fin-row span{font-size:13px;color:var(--text-2)}
+  .fin-row b{font-size:14px;font-variant-numeric:tabular-nums}
+  .fin-row.total{border-bottom:none;padding-top:12px}
+  .fin-row.total span{color:var(--text);font-weight:600}
+  .fin-row.total b{font-size:19px;color:var(--ok)}
+
+  .rail-actions{display:flex;flex-direction:column;gap:9px}
+  .rail-actions .btn{width:100%;height:44px}
+  .rail-cancel{text-align:center;font-size:13px;color:var(--text-3);text-decoration:none;padding:6px}
+  .rail-cancel:hover{color:var(--text)}
+
+  /* ── handoff notes ────────────────────────────────────── */
+  .notes{max-width:1180px;margin:44px auto 0;background:var(--panel);border:1px solid var(--line);
+    border-radius:16px;padding:28px 32px}
+  .notes h2{font-family:var(--display);font-size:15px;font-weight:700;margin-bottom:18px;color:var(--accent)}
+  .notes ol{margin-left:18px;display:flex;flex-direction:column;gap:12px}
+  .notes li{font-size:13.5px;line-height:1.6;color:var(--text-2)}
+  .notes li b{color:var(--text);font-weight:600}
+  .notes code{font-family:var(--mono);font-size:12px;background:var(--inset);
+    border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--accent)}
+
+  @media (max-width:980px){
+    .wrap{grid-template-columns:1fr}
+    .col-rail{position:static}
+    .fotos-row{grid-template-columns:1fr}
+    .acceso-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="kicker">Rediseño · editar reparación</div>
+  <h1>Editar Reparación</h1>
+  <p>La columna principal cuenta la historia del trabajo (cliente → equipo → acceso → problema → fotos → gastos). Todo lo que es estado, dinero y acciones vive en una barra lateral fija que te acompaña al scrollear.</p>
+</div>
+
+<div class="wrap" data-screen-label="Editar reparación rediseñado">
+
+  <!-- ════════ COLUMNA PRINCIPAL ════════ -->
+  <div class="col-main">
+
+    <!-- 01 Cliente -->
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num">01</span><span class="sec-t">Cliente</span></div>
+      <div class="grid-2">
+        <div class="field wide">
+          <label>Cliente</label>
+          <select class="inp"><option>Graciela Zapata · 11 5521 9087</option><option>+ Nuevo cliente</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 Equipo -->
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num">02</span><span class="sec-t">Equipo</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Tipo de dispositivo</label>
+          <select class="inp"><option>Celular</option></select>
+        </div>
+        <div class="field">
+          <label>Marca</label>
+          <input class="inp" value="Samsung" />
+        </div>
+        <div class="field">
+          <label>Modelo</label>
+          <input class="inp" value="A04" />
+        </div>
+        <div class="field">
+          <label>IMEI / ESN / SN <span class="opt">· opcional</span></label>
+          <input class="inp" value="351663700107170" style="font-family:var(--mono);font-size:13px" />
+        </div>
+        <div class="field wide">
+          <label>Accesorios <span class="opt">· opcional</span></label>
+          <input class="inp" placeholder="Funda, cargador, SIM…" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 Acceso al equipo -->
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num">03</span><span class="sec-t">Acceso al equipo</span><span class="sec-sub">PIN y patrón, juntos</span></div>
+      <div class="acceso-grid">
+        <div class="pattern-box">
+          <div class="pattern-canvas">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <g fill="#343b4e"><circle cx="20" cy="20" r="7"/><circle cx="60" cy="20" r="7"/><circle cx="100" cy="20" r="7"/><circle cx="20" cy="60" r="7"/><circle cx="60" cy="60" r="7"/><circle cx="100" cy="60" r="7"/><circle cx="20" cy="100" r="7"/><circle cx="60" cy="100" r="7"/><circle cx="100" cy="100" r="7"/></g>
+              <path d="M20 20 L60 20 L100 60 L60 100" stroke="#c9b6f8" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <g fill="#c9b6f8"><circle cx="20" cy="20" r="7"/><circle cx="60" cy="20" r="7"/><circle cx="100" cy="60" r="7"/><circle cx="60" cy="100" r="7"/></g>
+            </svg>
+          </div>
+          <div class="pattern-actions">
+            <button class="btn btn-ghost" type="button">Limpiar patrón</button>
+            <button class="btn btn-ghost" type="button">Solicitar por WhatsApp</button>
+          </div>
+        </div>
+        <div class="field" style="align-self:start">
+          <label>Contraseña / PIN <span class="opt">· opcional</span></label>
+          <input class="inp" value="2580" style="font-family:var(--mono)" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 Trabajo -->
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num">04</span><span class="sec-t">Trabajo</span></div>
+      <div class="grid-2">
+        <div class="field wide">
+          <label>Descripción del problema</label>
+          <textarea class="inp" rows="3">Se cayó, se mojó. No da imagen.</textarea>
+        </div>
+        <div class="field wide">
+          <label>Observaciones adicionales <span class="opt">· opcional</span></label>
+          <textarea class="inp" rows="2" placeholder="Notas internas del taller…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 Fotos -->
+    <div class="sec">
+      <div class="sec-head"><span class="sec-num">05</span><span class="sec-t">Registro fotográfico</span></div>
+      <div class="fotos-row">
+        <div class="foto-cell">
+          <h4>Recepción</h4>
+          <p>Estado del equipo al ingresar</p>
+          <div class="foto-btns">
+            <span class="foto-add">📷<span>Cámara</span></span>
+            <span class="foto-add">🖼<span>Galería</span></span>
+          </div>
+        </div>
+        <div class="foto-cell">
+          <h4>Reparación</h4>
+          <p>Fotos durante el proceso</p>
+          <div class="foto-btns">
+            <span class="foto-add">📷<span>Cámara</span></span>
+            <span class="foto-add">🖼<span>Galería</span></span>
+          </div>
+        </div>
+        <div class="foto-cell">
+          <h4>Entrega</h4>
+          <p>Estado final al entregar</p>
+          <div class="foto-btns">
+            <span class="foto-add">📷<span>Cámara</span></span>
+            <span class="foto-add">🖼<span>Galería</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 Gastos -->
+    <div class="sec">
+      <div class="sec-head">
+        <span class="sec-num">06</span><span class="sec-t">Gastos registrados</span>
+        <button class="btn btn-soft" type="button" style="margin-left:auto">Registrar gasto</button>
+      </div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Concepto</th><th class="r">Monto unit.</th><th class="r">Cant.</th><th class="r">Total</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Módulo display A04</td><td class="r num">$ 14.200</td><td class="r num">1</td><td class="r num"><b>$ 14.200</b></td></tr>
+          <tr><td>Adhesivo B-7000</td><td class="r num">$ 1.900</td><td class="r num">1</td><td class="r num"><b>$ 1.900</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════ BARRA LATERAL FIJA ════════ -->
+  <div class="col-rail">
+
+    <div class="rail-card">
+      <div class="rail-h">Estado del trabajo</div>
+      <div class="field">
+        <select class="inp"><option>En espera</option><option>Activo</option><option>Finalizado</option><option>Entregado</option><option>Cancelado</option></select>
+      </div>
+    </div>
+
+    <div class="rail-card">
+      <div class="rail-h">Dinero</div>
+      <div class="field">
+        <label>Costo aproximado</label>
+        <input class="inp num" value="65000" type="number" />
+      </div>
+      <div class="field">
+        <label>Anticipo recibido <span class="opt">· opcional</span></label>
+        <input class="inp num" value="20000" type="number" />
+      </div>
+      <div class="fin-rows" style="margin-top:16px">
+        <div class="fin-row"><span>Costo reparación</span><b>$ 65.000</b></div>
+        <div class="fin-row"><span>Total gastos</span><b>− $ 16.100</b></div>
+        <div class="fin-row total"><span>Ganancia estimada</span><b>$ 48.900</b></div>
+      </div>
+    </div>
+
+    <div class="rail-card">
+      <div class="rail-h">Acciones</div>
+      <div class="rail-actions">
+        <button class="btn btn-accent" type="submit">Guardar cambios</button>
+        <button class="btn btn-success" type="button">✓ Finalizar reparación</button>
+        <button class="btn btn-ghost" type="button">Notificar por WhatsApp</button>
+        <a class="rail-cancel" href="#">Cancelar y volver</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ Notas para Claude Code ════════ -->
+<div class="notes" data-screen-label="Notas de handoff">
+  <h2>Notas de implementación (para Claude Code) — solo estética, NO tocar lógica</h2>
+  <ol>
+    <li><b>Reordenar sin renombrar:</b> mantené todos los <code>id</code>, <code>name</code>, inputs ocultos y handlers exactamente como están — solo se mueve el markup de lugar y se ajusta CSS. Los modales (gasto, finalizar, notificar) no cambian.</li>
+    <li><b>Layout de dos columnas:</b> <code>grid-template-columns: 1fr 330px</code>. Columna principal = historia del trabajo; barra lateral <code>position: sticky; top: 24px</code> con Estado, Dinero y Acciones. En &lt;980px la barra pasa abajo (una columna).</li>
+    <li><b>La sección "Cliente" queda solo con el cliente</b> (select + panel de nuevo cliente). <b>Estado, Costo aproximado y Anticipo se mudan a la barra lateral</b> — no son datos del cliente.</li>
+    <li><b>Acceso unificado:</b> "Contraseña / PIN" se muda de Dispositivo a la sección "Acceso al equipo", al lado del patrón de desbloqueo. Son dos métodos de la misma cosa.</li>
+    <li><b>Numeración consistente:</b> 01 Cliente · 02 Equipo · 03 Acceso · 04 Trabajo · 05 Fotos · 06 Gastos (se elimina el "01 / 03").</li>
+    <li><b>Resumen financiero en la barra lateral</b>, como filas (Costo / − Gastos / Ganancia en verde, 19px), debajo de los inputs de dinero — todo lo económico junto y siempre a la vista. La tabla de gastos queda en la sección 06.</li>
+    <li><b>Una sola acción primaria:</b> "Guardar cambios" en acento lleno. "Finalizar reparación" en tinte verde (es un evento, no el guardado), WhatsApp en ghost, "Cancelar y volver" como link de texto. Apiladas en la barra lateral; ya no hace falta la barra inferior de acciones.</li>
+    <li><b>Marcar opcionales, no requeridos:</b> los campos no obligatorios llevan sufijo gris "· opcional" en la etiqueta (IMEI, accesorios, PIN, observaciones, anticipo).</li>
+    <li><b>Fotos en una fila de 3 tarjetas</b> compactas (Recepción / Reparación / Entrega) con los mismos inputs de cámara/galería.</li>
+    <li>IMEI y PIN se muestran con <code>font-family</code> mono para lectura de dígitos.</li>
+  </ol>
+</div>
+
+</body>
+</html>

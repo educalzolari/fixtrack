@@ -891,9 +891,12 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 /* ── Orden pública ─────────────────────────────────────────────────────── */
 .orden-body{background:var(--bg);min-height:100vh;padding:32px 16px 80px;display:flex;flex-direction:column;align-items:center}
 .orden-wrap{width:100%;max-width:680px;background:var(--bg-1);border-radius:calc(var(--radius)+3px);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--line)}
-.orden-header{background:var(--bg-inset);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.orden-header{background:var(--bg-inset);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line)}
+.orden-logo{height:48px;width:auto;max-width:120px;object-fit:contain;border-radius:6px;flex-shrink:0}
+.orden-header-left{display:flex;flex-direction:column;gap:2px;min-width:0}
 .orden-taller-nombre{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.02em}
-.orden-meta{text-align:right}
+.orden-taller-tel{font-size:12px;color:var(--text-3);font-family:var(--font-mono)}
+.orden-meta{text-align:right;flex-shrink:0}
 .orden-meta strong{display:block;font-family:var(--font-display);font-size:14px;color:var(--text)}
 .orden-meta span{font-family:var(--font-mono);font-size:12px;color:var(--text-3)}
 .orden-section{padding:18px 28px;border-bottom:1px solid var(--line)}
@@ -908,6 +911,34 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .orden-footer{padding:16px 28px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--text-3);background:var(--bg-inset)}
 .orden-actions{margin-top:20px;display:flex;gap:12px}
 .orden-loading,.orden-empty{padding:40px 28px;text-align:center;color:var(--text-3)}
+/* Redes sociales en ticket */
+.orden-redes-list{display:flex;flex-wrap:wrap;gap:14px}
+.orden-red{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text-2)}
+/* Términos */
+.orden-terminos .orden-text{font-size:12px;color:var(--text-3);line-height:1.55}
+/* Tamaño de papel — clases en <html data-ticket-paper="..."> */
+@media print{
+  .orden-body{background:#fff;padding:0}
+  .orden-wrap{box-shadow:none;border-radius:0;max-width:100%;border:none}
+  .orden-header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print,.orden-actions{display:none!important}
+  /* 80mm */
+  :root[data-ticket-paper="80mm"]{--ticket-w:302px}
+  /* 58mm */
+  :root[data-ticket-paper="58mm"]{--ticket-w:219px}
+  :root[data-ticket-paper="80mm"] .orden-wrap,
+  :root[data-ticket-paper="58mm"] .orden-wrap{max-width:var(--ticket-w);font-size:12px}
+  :root[data-ticket-paper="58mm"] .orden-header,
+  :root[data-ticket-paper="80mm"] .orden-header{padding:12px 14px}
+  :root[data-ticket-paper="58mm"] .orden-section,
+  :root[data-ticket-paper="80mm"] .orden-section{padding:10px 14px}
+  :root[data-ticket-paper="58mm"] .orden-logo,
+  :root[data-ticket-paper="80mm"] .orden-logo{height:32px}
+  :root[data-ticket-paper="58mm"] .orden-taller-nombre,
+  :root[data-ticket-paper="80mm"] .orden-taller-nombre{font-size:14px}
+  :root[data-ticket-paper="58mm"] .orden-meta strong,
+  :root[data-ticket-paper="80mm"] .orden-meta strong{font-size:11px}
+}
 
 /* ── Patrón público ─────────────────────────────────────────────────────── */
 .patron-body{background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 48px}
@@ -1008,6 +1039,7 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .cfg-sec{margin-bottom:32px}
 .cfg-title{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
   color:var(--text-3);margin:0 0 14px}
+.cfg-desc{font-size:13px;color:var(--text-2);line-height:1.6;margin:-4px 0 18px;max-width:560px}
 
 /* seg-btn aliases (new pages use .seg-btn + .active) */
 .seg-btn{appearance:none;border:0;background:transparent;color:var(--text-2);font-family:var(--font-body);
@@ -1475,6 +1507,24 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 .cfg-input{width:100%;background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--radius);padding:8px 12px;color:var(--text);font-size:14px;font-family:var(--font-body);transition:border-color .15s}
 .cfg-input:focus{outline:none;border-color:var(--accent)}
 .cfg-input:disabled{opacity:.45;cursor:not-allowed}
+.cfg-textarea{resize:vertical;min-height:100px;line-height:1.55}
+.cfg-row--col{flex-direction:column;align-items:stretch;gap:10px}
+.cfg-row--col .cfg-lbl{width:100%}
+/* Toggle switch */
+.cfg-toggle{position:relative;display:inline-flex;align-items:center;cursor:pointer;flex-shrink:0}
+.cfg-toggle input{position:absolute;opacity:0;width:0;height:0}
+.cfg-toggle-track{display:inline-block;width:42px;height:24px;background:var(--line-2);border-radius:12px;transition:background .2s;position:relative}
+.cfg-toggle-track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
+.cfg-toggle input:checked+.cfg-toggle-track{background:var(--accent)}
+.cfg-toggle input:checked+.cfg-toggle-track::after{transform:translateX(18px)}
+/* Botón WhatsApp reseña */
+.btn-resena{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;background:oklch(0.52 0.18 145);color:#fff;transition:background .15s,opacity .15s;flex-shrink:0}
+.btn-resena:hover{background:oklch(0.44 0.18 145)}
+.btn-resena.resena-sent{background:var(--bg-2);color:var(--st-activo);border:1px solid var(--line-2)}
+.btn-resena.resena-sent:hover{background:var(--bg-1)}
+/* Botón WhatsApp en modal */
+.btn-wa{background:oklch(0.52 0.18 145);color:#fff;border-color:transparent;display:inline-flex;align-items:center;gap:7px}
+.btn-wa:hover{background:oklch(0.44 0.18 145)}
 
 /* ── Modal upgrade Pro ── */
 #_upgradeModal{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center}
@@ -1599,7 +1649,11 @@ textarea.inp{height:auto;padding:12px 14px;resize:vertical;min-height:84px;line-
 
 /* ── Historial garantía (editar-reparacion) ── */
 .garantia-historial{display:flex;gap:12px;align-items:flex-start;background:oklch(0.82 0.13 75/.12);border:1px solid oklch(0.82 0.13 75/.35);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px}
+.cancelacion-historial{background:oklch(0.65 0.2 25/.1);border-color:oklch(0.65 0.2 25/.35)}
+.cancelacion-historial .gh-title{color:oklch(0.55 0.2 25)}
 .gh-icon{font-size:20px;line-height:1;flex-shrink:0}
 .gh-body{display:grid;gap:3px}
 .gh-title{margin:0;font-size:12px;font-weight:700;color:oklch(0.65 0.13 75);text-transform:uppercase;letter-spacing:.03em}
 .gh-motivo{margin:0;font-size:13px;color:var(--text-2)}
+.btn-danger{background:oklch(0.55 0.2 25);color:#fff;border-color:transparent}
+.btn-danger:hover{background:oklch(0.48 0.2 25)}

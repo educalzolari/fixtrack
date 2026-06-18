@@ -1,101 +1,130 @@
 function _money(v) {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    minimumFractionDigits: 0,
-  }).format(Number(v) || 0);
+  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", minimumFractionDigits: 2 }).format(Number(v) || 0);
 }
-
 function _date(v) {
   if (!v) return "";
   const [y, m, d] = v.split("-");
   return `${d}/${m}/${y}`;
 }
-
 function _esc(v) {
-  return String(v || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
-
-function _statusClass(s) {
-  return { "En espera": "waiting", Activo: "active", Finalizado: "done", Cancelado: "cancelled" }[s] || "waiting";
+function _now() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
-
-function _row(label, value) {
-  if (!value) return "";
-  return `<div class="orden-row"><span>${label}</span><strong>${_esc(value)}</strong></div>`;
+function getTicketConfig() {
+  try { return JSON.parse(localStorage.getItem("fixtrack_ticket_config") || "{}"); } catch { return {}; }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const id = Number(new URLSearchParams(window.location.search).get("id"));
-  const content = document.getElementById("ordenContent");
+  const params   = new URLSearchParams(window.location.search);
+  const id       = Number(params.get("id"));
+  const autoprint = params.get("autoprint") === "1";
+  const wrap     = document.getElementById("ticketWrap");
 
-  if (!id) {
-    content.innerHTML = `<p class="orden-empty">Link invalido.</p>`;
-    return;
-  }
+  if (!id) { wrap.innerHTML = `<p class="tk-empty">Link inválido.</p>`; return; }
 
   const repair = await dbGetById(id);
+  if (!repair) { wrap.innerHTML = `<p class="tk-empty">Orden no encontrada.</p>`; return; }
 
-  if (!repair) {
-    content.innerHTML = `<p class="orden-empty">Orden no encontrada.</p>`;
-    return;
+  const cfg = getTicketConfig();
+  const tallerNombre = repair.tallerNombre || "1Fixtrack!";
+  document.title = `Ticket #${repair.id} · ${tallerNombre}`;
+
+  // Paper size class
+  document.body.dataset.paper = cfg.paperSize || "80mm";
+
+  // ── Sección: logo + encabezado ──────────────────────────
+  const logoHtml = cfg.logoUrl
+    ? `<img class="tk-logo" src="${_esc(cfg.logoUrl)}" alt="Logo">`
+    : "";
+
+  const subHeader = [
+    cfg.sucursal  ? `Sucursal: ${_esc(cfg.sucursal)}` : "",
+    cfg.domicilio ? `Domicilio: ${_esc(cfg.domicilio)}` : "",
+    cfg.mostrarTelefono && cfg.telefonoTaller ? `Tel: ${_esc(cfg.telefonoTaller)}` : "",
+  ].filter(Boolean).map(l => `<div>${l}</div>`).join("");
+
+  // ── Sección: datos del servicio ─────────────────────────
+  const device = [repair.dispositivo, repair.marca, repair.modelo].filter(Boolean).join(" ").toUpperCase();
+
+  function tkField(label, value) {
+    if (!value) return "";
+    return `<div class="tk-field">
+      <div class="tk-label">${label}:</div>
+      <div class="tk-value">${_esc(String(value))}</div>
+    </div>`;
   }
 
-  document.title = `Orden #${repair.id} | ${repair.tallerNombre || '1Fixtrack!'}`;
-  const tallerEl = document.getElementById("ordenTallerNombre");
-  if (tallerEl) tallerEl.textContent = repair.tallerNombre || '1Fixtrack!';
-  document.getElementById("ordenTitle").textContent = `Orden de Reparacion #${repair.id}`;
-  document.getElementById("ordenDate").textContent = `Ingreso: ${_date(repair.fechaIngreso)}`;
+  // ── Sección: redes ──────────────────────────────────────
+  const redesLines = cfg.mostrarRedes ? [
+    cfg.instagram ? `Instagram: ${cfg.instagram}` : "",
+    cfg.facebook  ? `Facebook: ${cfg.facebook}`   : "",
+    cfg.tiktok    ? `TikTok: ${cfg.tiktok}`       : "",
+  ].filter(Boolean) : [];
 
-  const balance = repair.costoAproximado - (repair.anticipo || 0);
+  const redesHtml = redesLines.length
+    ? `<div class="tk-redes">${redesLines.map(l => `<div>${_esc(l)}</div>`).join("")}</div>`
+    : "";
 
-  content.innerHTML = `
-    <div class="orden-section">
-      <p class="orden-section-title">Cliente</p>
-      ${_row("Nombre", repair.cliente)}
-      ${repair.telefono ? _row("Telefono", repair.telefono) : ""}
+  // ── Sección: firma ──────────────────────────────────────
+  const firmaHtml = cfg.mostrarFirma !== false
+    ? `<div class="tk-firma-wrap">
+        <div class="tk-firma-line"></div>
+        <div class="tk-firma-label">Firma del cliente</div>
+      </div>`
+    : "";
+
+  // ── Sección: términos ───────────────────────────────────
+  const terminosHtml = cfg.mostrarTerminos && cfg.terminos
+    ? `<div class="tk-section">
+        <div class="tk-section-title">Condiciones del Servicio</div>
+        <div class="tk-terminos">${_esc(cfg.terminos).replace(/\n/g, "<br>")}</div>
+      </div>`
+    : "";
+
+  // ── Pie ─────────────────────────────────────────────────
+  const pieTexto = cfg.pieMensaje || "Gracias por su preferencia\nVuelva pronto";
+
+  // ── Render ──────────────────────────────────────────────
+  wrap.innerHTML = `
+    <div class="tk-header">
+      ${logoHtml}
+      <div class="tk-taller-nombre">${_esc(tallerNombre)}</div>
+      ${subHeader ? `<div class="tk-subheader">${subHeader}</div>` : ""}
     </div>
 
-    <div class="orden-section">
-      <p class="orden-section-title">Dispositivo</p>
-      ${_row("Tipo", repair.dispositivo)}
-      ${_row("Marca / Modelo", `${repair.marca} ${repair.modelo}`)}
-      ${repair.identificador ? _row("IMEI / SN", repair.identificador) : ""}
-      ${repair.accesorios ? _row("Accesorios", repair.accesorios) : ""}
+    <div class="tk-service-meta">
+      <div class="tk-service-no">Servicio No. ${repair.id}</div>
+      <div class="tk-meta-row">Cliente - ${_esc(repair.cliente)}</div>
+      <div class="tk-meta-row">Fecha y hora - ${_now()}</div>
     </div>
 
-    <div class="orden-section">
-      <p class="orden-section-title">Problema reportado</p>
-      <p class="orden-text">${_esc(repair.problema)}</p>
-      ${repair.observaciones ? `<p class="orden-text orden-obs">${_esc(repair.observaciones)}</p>` : ""}
-    </div>
+    <div class="tk-divider"></div>
+    <div class="tk-section-title tk-section-title--center">Datos del Servicio</div>
+    <div class="tk-divider"></div>
 
-    <div class="orden-section">
-      <p class="orden-section-title">Presupuesto</p>
-      ${_row("Costo estimado", _money(repair.costoAproximado))}
-      ${repair.anticipo ? _row("Anticipo recibido", _money(repair.anticipo)) : ""}
-      ${repair.anticipo ? _row("Saldo pendiente", _money(balance)) : ""}
-      ${repair.fechaEntrega ? _row("Entrega estimada", _date(repair.fechaEntrega)) : ""}
-    </div>
+    ${tkField("Dispositivo", device)}
+    ${tkField("Descripcion del problema", repair.problema)}
+    ${repair.observaciones ? tkField("Observaciones", repair.observaciones) : tkField("Observaciones", "")}
+    ${tkField("Accesorios", repair.accesorios || "")}
+    ${tkField("Costo Aproximado", _money(repair.costoAproximado))}
+    ${tkField("Anticipo", _money(repair.anticipo || 0))}
+    ${repair.fechaEntrega ? tkField("Fecha Estimada de entrega", _date(repair.fechaEntrega)) : ""}
 
-    <div class="orden-section orden-status-row">
-      <span class="status-pill ${_statusClass(repair.estado)}">${_esc(repair.estado)}</span>
-    </div>
+    ${terminosHtml}
+    ${firmaHtml}
+    ${redesHtml}
 
-    ${repair.cierre ? `
-    <div class="orden-section">
-      <p class="orden-section-title">Trabajo realizado</p>
-      <p class="orden-text">${_esc(repair.cierre.solucionFinal)}</p>
-      ${_row("Costo final", _money(repair.cierre.costoFinal))}
-      ${_row("Fecha de cierre", _date(repair.cierre.fechaFinalizacion))}
-    </div>` : ""}
-
-    <div class="orden-footer">
-      <p>Conserva esta orden como comprobante de tu reparacion.</p>
+    <div class="tk-footer">
+      <div class="tk-pie">${_esc(pieTexto).replace(/\n/g, "<br>")}</div>
+      <div class="tk-branding">Generado con 1Fixtrack! · Gestión de talleres</div>
     </div>
   `;
+
+  if (autoprint) {
+    window.addEventListener("load", () => window.print(), { once: true });
+  }
 });

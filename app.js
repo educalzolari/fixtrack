@@ -333,6 +333,16 @@ function repairRow(repair) {
   const svcTitle  = serviceTitle(repair);
   const svcDetail = serviceDetail(repair);
 
+  const resenaEnabled = repair.estado === "Entregado" && getResenaConfig().enabled;
+  const resenaSent = resenaEnabled && isResenaSent(id);
+  const resenaBtn = resenaEnabled ? `
+    <button class="btn-resena${resenaSent ? " resena-sent" : ""} resena-icon" type="button" data-id="${id}" title="${resenaSent ? "Reseña ya solicitada — click para volver a enviar" : "Pedir reseña en Google"}">
+      ${resenaSent
+        ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+        : `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`
+      }
+    </button>` : "";
+
   return `
     <tr class="clickable-row" data-edit-id="${id}">
       <td>
@@ -355,10 +365,12 @@ function repairRow(repair) {
       <td class="rw-act">
         <div class="rw-act-inner">
           ${stepBtn}
+          ${resenaBtn}
           <div class="rw-more">
             <button class="rw-more-btn" type="button" aria-label="Más opciones">···</button>
             <div class="rw-more-menu">
               <a class="rw-more-item" href="editar-reparacion.html?id=${id}">Editar</a>
+              <button class="rw-more-item print-icon" type="button" data-id="${id}">Reimprimir ticket</button>
               ${repair.estado === "Entregado" ? `<button class="rw-more-item garantia-icon" type="button" data-id="${id}">Recibir en garantía</button>` : ""}
               <button class="rw-more-item rw-del delete-icon" type="button" data-id="${id}">Eliminar</button>
             </div>
@@ -760,6 +772,21 @@ async function setupEditForm() {
     editForm.insertAdjacentElement("beforebegin", banner);
   }
 
+  const existingCancelBanner = document.getElementById("cancelacionHistorialBanner");
+  if (existingCancelBanner) existingCancelBanner.remove();
+  if (repair.cancelacionFecha && repair.cancelacionMotivo) {
+    const banner = document.createElement("div");
+    banner.id = "cancelacionHistorialBanner";
+    banner.className = "garantia-historial cancelacion-historial";
+    banner.innerHTML = `
+      <div class="gh-icon">🚫</div>
+      <div class="gh-body">
+        <p class="gh-title">Cancelado · ${formatDate(repair.cancelacionFecha)}</p>
+        <p class="gh-motivo">${escapeHtml(repair.cancelacionMotivo)}</p>
+      </div>`;
+    editForm.insertAdjacentElement("beforebegin", banner);
+  }
+
   const enableEditButton = $("#enableEditButton");
   const saveEditButton   = $("#saveEditButton");
 
@@ -823,8 +850,12 @@ async function setupEditForm() {
     syncExpensesInput();
     const updatedRepair = formToRepair(new FormData(editForm), repair);
 
-    // si se está cancelando, preguntar por reposición de stock
+    // si se está cancelando, pedir motivo y registrar log
     if (updatedRepair.estado === "Cancelado" && repair.estado !== "Cancelado") {
+      const motivo = await openCancelModal();
+      if (motivo === null) return; // usuario canceló el modal
+      updatedRepair.cancelacionFecha = today;
+      updatedRepair.cancelacionMotivo = motivo;
       await restoreStockForExpenses(editingExpenses);
       await dbDeleteMovimientosByReparacion(repair.id);
       movimientos = movimientos.filter(m => m.reparacionId !== repair.id);
@@ -1545,6 +1576,8 @@ if (form) {
     if (sel) { sel.value = ""; $("#nuevoClienteFields").style.display = "none"; }
     renderAll();
 
+    window.open(`orden.html?id=${repair.id}&autoprint=1`, '_blank');
+
     const redirect = () => { window.location.href = "reparaciones.html"; };
     const waModal = document.getElementById('waOrderModal');
     if (waModal && repair.telefono) {
@@ -1621,6 +1654,25 @@ if (tableBody) {
         movimientos = [...saved, ...movimientos];
       }
       renderAll();
+      return;
+    }
+
+    const printBtn = event.target.closest(".print-icon");
+    if (printBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      window.open(`orden.html?id=${printBtn.dataset.id}&autoprint=1`, '_blank');
+      return;
+    }
+
+    const resenaBtn = event.target.closest(".resena-icon");
+    if (resenaBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const id = Number(resenaBtn.dataset.id);
+      const repair = repairs.find((r) => Number(r.id) === id);
+      if (!repair) return;
+      openResenaModal(repair);
       return;
     }
 
@@ -1840,6 +1892,71 @@ if (deliverForm) {
   });
 }
 
+// ── Reseña Google ─────────────────────────────────────────
+const RESENA_DEFAULT_MSG = `Hola {cliente} 😊, queríamos saber cómo te fue con la reparación de tu {dispositivo}. Esperamos que esté funcionando perfecto 🔧.
+
+Si quedaste conforme, nos ayudaría muchísimo que nos dejes una reseña en Google — ¡solo toma un minuto! 🙏
+
+{link}`;
+
+function getResenaConfig() {
+  try { return JSON.parse(localStorage.getItem("fixtrack_resena_config") || "{}"); } catch { return {}; }
+}
+function isResenaSent(id) {
+  return localStorage.getItem(`fixtrack_resena_sent_${id}`) === "1";
+}
+function markResenaSent(id) {
+  localStorage.setItem(`fixtrack_resena_sent_${id}`, "1");
+}
+
+function openResenaModal(repair) {
+  const cfg = getResenaConfig();
+  const raw = cfg.mensaje || RESENA_DEFAULT_MSG;
+  const device = [repair.marca, repair.modelo].filter(Boolean).join(" ") || repair.dispositivo || "equipo";
+  const previewMsg = raw
+    .replace(/\{cliente\}/g, repair.cliente || "")
+    .replace(/\{dispositivo\}/g, device)
+    .replace(/\{link\}/g, cfg.googleLink || "");
+
+  let modal = document.getElementById("resenaModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "resenaModal";
+    modal.className = "gm-backdrop";
+    modal.innerHTML = `
+      <div class="gm-box" role="dialog" aria-modal="true" style="max-width:500px">
+        <h3 class="gm-title">Solicitar reseña en Google</h3>
+        <p class="gm-sub" id="resenaModalSub"></p>
+        <textarea class="gm-textarea" id="resenaTextarea" rows="8"></textarea>
+        <div class="gm-actions">
+          <button class="btn btn-ghost" id="resenaModalClose" type="button">Cancelar</button>
+          <button class="btn btn-wa" id="resenaModalSend" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar por WhatsApp
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    document.getElementById("resenaModalClose").addEventListener("click", () => modal.classList.remove("open"));
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal.classList.contains("open")) modal.classList.remove("open"); });
+  }
+
+  document.getElementById("resenaModalSub").textContent = `Para ${repair.cliente} — #${repair.id}`;
+  document.getElementById("resenaTextarea").value = previewMsg;
+  modal.classList.add("open");
+
+  document.getElementById("resenaModalSend").onclick = () => {
+    const texto = document.getElementById("resenaTextarea").value.trim();
+    if (!texto) return;
+    const phone = (repair.telefono || "").replace(/\D/g, "");
+    _openWaLink(phone, [texto]);
+    markResenaSent(repair.id);
+    modal.classList.remove("open");
+    renderAll();
+  };
+}
+
 // ── Modal garantía ────────────────────────────────────────
 function openGarantiaModal(repair) {
   let modal = document.getElementById("garantiaModal");
@@ -1884,6 +2001,55 @@ function openGarantiaModal(repair) {
     movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Gasto de reparación"));
     renderAll();
   };
+}
+
+// ── Modal cancelación ────────────────────────────────────────
+function openCancelModal() {
+  return new Promise((resolve) => {
+    let modal = document.getElementById("cancelModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "cancelModal";
+      modal.className = "gm-backdrop";
+      modal.innerHTML = `
+        <div class="gm-box" role="dialog" aria-modal="true">
+          <h3 class="gm-title">Cancelar reparación</h3>
+          <p class="gm-sub">¿Por qué se cancela esta reparación? Dejá un registro del motivo.</p>
+          <textarea class="gm-textarea" id="cancelMotivoInput" rows="4" placeholder="Ej: El cliente retiró el equipo sin reparar, no quiso pagar el presupuesto..."></textarea>
+          <div class="gm-actions">
+            <button class="btn btn-ghost" id="cancelModalAbort" type="button">Volver</button>
+            <button class="btn btn-danger" id="cancelModalConfirm" type="button">Confirmar cancelación</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      modal.addEventListener("click", (e) => { if (e.target === modal) { modal.classList.remove("open"); resolve(null); } });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal.classList.contains("open")) { modal.classList.remove("open"); resolve(null); } });
+    }
+
+    const textarea = document.getElementById("cancelMotivoInput");
+    const abortBtn = document.getElementById("cancelModalAbort");
+    const confirmBtn = document.getElementById("cancelModalConfirm");
+
+    textarea.value = "";
+    modal.classList.add("open");
+    textarea.focus();
+
+    const cleanup = () => {
+      abortBtn.onclick = null;
+      confirmBtn.onclick = null;
+    };
+
+    abortBtn.onclick = () => { modal.classList.remove("open"); cleanup(); resolve(null); };
+
+    confirmBtn.onclick = () => {
+      const motivo = textarea.value.trim();
+      if (!motivo) { textarea.focus(); textarea.style.borderColor = "var(--accent)"; return; }
+      textarea.style.borderColor = "";
+      modal.classList.remove("open");
+      cleanup();
+      resolve(motivo);
+    };
+  });
 }
 
 // drawer handled by shell.js via #menuBtn
