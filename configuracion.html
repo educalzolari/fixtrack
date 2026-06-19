@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -16,6 +16,250 @@
     <script src="auth.js"></script>
     <script src="shell.js"></script>
     <script src="plan.js"></script>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         REDISEÑO · Configuración — tema Workshop OS, acento VIOLETA.
+         Estilos embebidos (autocontenidos) — no altera la funcionalidad ni los IDs.
+         ═══════════════════════════════════════════════════════════════════════ -->
+    <style id="cfg-redesign">
+      :root{
+        --font-display:'Space Grotesk',system-ui,sans-serif;
+        --font-body:'Hanken Grotesk',system-ui,sans-serif;
+        --font-mono:'JetBrains Mono',ui-monospace,monospace;
+        --num-font:var(--font-display);
+
+        /* acento VIOLETA (distintivo 1FixTrack) */
+        --accent:oklch(0.64 0.20 300);
+        --accent-2:oklch(0.72 0.17 305);
+        --accent-ink:oklch(0.99 0.01 300);
+
+        --st-espera:oklch(0.82 0.13 75);
+        --st-activo:oklch(0.72 0.15 240);
+        --st-finalizado:oklch(0.76 0.16 150);
+        --st-entregado:oklch(0.70 0.035 265);
+
+        /* base oscura (matizada a violeta) */
+        --bg:oklch(0.155 0.018 295);
+        --bg-1:oklch(0.198 0.022 295);
+        --bg-2:oklch(0.242 0.026 295);
+        --bg-inset:oklch(0.135 0.016 295);
+        --line:oklch(0.30 0.024 295);
+        --line-2:oklch(0.40 0.028 295);
+        --text:oklch(0.97 0.006 295);
+        --text-2:oklch(0.75 0.016 295);
+        --text-3:oklch(0.57 0.016 295);
+        --shadow:0 4px 24px rgba(0,0,0,.5);
+        --shadow-sm:0 1px 3px rgba(0,0,0,.4);
+        --grid-line:oklch(0.97 0.006 295 / .04);
+        --field-bg:oklch(0.185 0.02 295);
+        --radius:9px;
+      }
+      [data-theme="light"]{
+        --bg:oklch(0.965 0.006 300);
+        --bg-1:oklch(1 0 0);
+        --bg-2:oklch(0.982 0.005 300);
+        --bg-inset:oklch(0.945 0.008 300);
+        --line:oklch(0.905 0.008 300);
+        --line-2:oklch(0.84 0.012 300);
+        --text:oklch(0.22 0.02 300);
+        --text-2:oklch(0.46 0.018 300);
+        --text-3:oklch(0.62 0.015 300);
+        --shadow:0 6px 28px rgba(40,20,60,.10);
+        --shadow-sm:0 1px 2px rgba(40,20,60,.07);
+        --grid-line:oklch(0.22 0.02 300 / .045);
+        --field-bg:oklch(0.985 0.005 300);
+      }
+
+      *{box-sizing:border-box}
+      html,body{margin:0;height:100%}
+      body{font-family:var(--font-body);background:var(--bg);color:var(--text);
+        -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+      .num{font-family:var(--num-font);font-variant-numeric:tabular-nums}
+      .mono{font-family:var(--font-mono)}
+      ::selection{background:color-mix(in oklch,var(--accent) 40%,transparent)}
+      *::-webkit-scrollbar{width:11px;height:11px}
+      *::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+
+      /* ── App shell ── */
+      .app{display:grid;grid-template-columns:248px 1fr;height:100%;overflow:hidden}
+      .app::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+        background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+        background-size:54px 54px;-webkit-mask-image:radial-gradient(120% 120% at 80% 0%,#000 30%,transparent 75%);mask-image:radial-gradient(120% 120% at 80% 0%,#000 30%,transparent 75%)}
+      .scrim{display:none}
+
+      .sidebar{position:relative;z-index:3;display:flex;flex-direction:column;background:var(--bg-1);border-right:1px solid var(--line);height:100%}
+      .brand{display:flex;align-items:center;gap:11px;padding:20px 20px 18px}
+      .brand-mark{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--accent-ink);
+        display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-.04em;flex-shrink:0;
+        box-shadow:0 0 22px -6px var(--accent)}
+      .brand-name{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.02em;line-height:1}
+      .brand-sub{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;color:var(--text-3);text-transform:uppercase;margin-top:3px}
+      .nav{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:2px}
+      .nav-label{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);padding:16px 10px 7px}
+      .nav-item{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:var(--radius);color:var(--text-2);
+        font-weight:500;font-size:14px;cursor:pointer;border:1px solid transparent;position:relative;text-decoration:none;
+        transition:background .12s,color .12s}
+      .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+      .nav-item:hover{background:var(--bg-2);color:var(--text)}
+      .nav-item.active{background:color-mix(in oklch,var(--accent) 16%,transparent);color:var(--text);border-color:color-mix(in oklch,var(--accent) 32%,transparent)}
+      .nav-item.active svg{opacity:1;color:var(--accent)}
+      .nav-item.active::before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:3px;height:18px;border-radius:99px;background:var(--accent)}
+      .nav-badge{margin-left:auto;font-family:var(--num-font);font-size:11px;font-weight:700;min-width:20px;height:20px;padding:0 6px;
+        border-radius:99px;display:inline-grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+      .side-foot{border-top:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:3px}
+      .side-foot .nav-item{font-size:13px}
+      .side-foot .danger{color:oklch(0.68 0.2 18);background:none;border:1px solid transparent;font-family:var(--font-body);text-align:left;width:100%}
+      .side-foot .danger:hover{background:color-mix(in oklch,oklch(0.68 0.2 18) 14%,transparent)}
+
+      .main{position:relative;z-index:1;height:100%;overflow-y:auto}
+      .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:14px 30px;
+        background:color-mix(in oklch,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+      .topbar .crumb{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--text-3)}
+      .topbar .crumb b{color:var(--text-2);font-weight:500}
+      .topbar-spacer{flex:1}
+      .topbar .clock{font-family:var(--font-mono);font-size:11.5px;color:var(--text-2);display:flex;align-items:center;gap:8px}
+      .live-dot{width:7px;height:7px;border-radius:99px;background:var(--st-finalizado);
+        box-shadow:0 0 0 0 color-mix(in oklch,var(--st-finalizado) 70%,transparent);animation:pulse 2.4s infinite}
+      @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in oklch,var(--st-finalizado) 60%,transparent)}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+      .theme-btn{width:34px;height:34px;border-radius:var(--radius);background:var(--bg-2);border:1px solid var(--line);color:var(--text-2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+      .theme-btn:hover{color:var(--text);border-color:var(--line-2)}
+      .theme-btn::before{content:"◐";font-size:16px}
+      .menu-btn{display:none;width:36px;height:36px;border-radius:var(--radius);background:var(--bg-2);border:1px solid var(--line);color:var(--text);cursor:pointer;align-items:center;justify-content:center}
+
+      /* ── Buttons ── */
+      .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 18px;border-radius:var(--radius);
+        font-family:var(--font-body);font-weight:600;font-size:14px;cursor:pointer;border:1px solid transparent;white-space:nowrap;
+        transition:transform .08s,background .14s,border-color .14s,box-shadow .14s}
+      .btn:active{transform:translateY(1px)}
+      .btn:disabled{opacity:.6;cursor:progress}
+      .btn-accent{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 24px -8px var(--accent)}
+      .btn-accent:hover{background:color-mix(in oklch,var(--accent) 90%,white);box-shadow:0 0 34px -8px var(--accent)}
+      .btn-ghost{background:var(--bg-1);color:var(--text);border-color:var(--line-2)}
+      .btn-ghost:hover{background:var(--bg-2);border-color:var(--text-3)}
+      .btn-block{width:100%}
+
+      /* ── Page ── */
+      .page{padding:30px;max-width:1040px;margin:0 auto}
+      .page-head{margin-bottom:22px}
+      .page-kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+      .page-title{font-family:var(--font-display);font-weight:700;font-size:34px;letter-spacing:-.02em;margin:7px 0 0;line-height:1.05}
+
+      /* sub-nav de anclas */
+      .cfg-tabs{position:sticky;top:57px;z-index:15;display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin-bottom:8px;
+        background:linear-gradient(var(--bg) 70%,transparent)}
+      .cfg-tab{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 15px;border-radius:99px;text-decoration:none;
+        font-size:13.5px;font-weight:600;color:var(--text-2);background:var(--bg-1);border:1px solid var(--line);transition:.14s;cursor:pointer}
+      .cfg-tab svg{width:15px;height:15px;opacity:.8}
+      .cfg-tab:hover{color:var(--text);border-color:var(--line-2)}
+      .cfg-tab.on{background:color-mix(in oklch,var(--accent) 16%,transparent);border-color:color-mix(in oklch,var(--accent) 40%,transparent);color:var(--text)}
+      .cfg-tab.on svg{opacity:1;color:var(--accent)}
+
+      /* ── tarjeta de sección ── */
+      .cfg-sec{background:var(--bg-1);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-sm);
+        padding:26px 28px;margin-bottom:22px;scroll-margin-top:118px}
+      .cfg-sec-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:8px}
+      .cfg-sec-ico{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
+        background:color-mix(in oklch,var(--accent) 15%,transparent);color:var(--accent);border:1px solid color-mix(in oklch,var(--accent) 26%,transparent)}
+      .cfg-sec-ico svg{width:21px;height:21px}
+      .cfg-title{font-family:var(--font-display);font-weight:600;font-size:20px;letter-spacing:-.01em;margin:0;line-height:1.2}
+      .cfg-desc{color:var(--text-2);font-size:13.5px;line-height:1.55;margin:5px 0 0;max-width:68ch}
+      .cfg-sec-head + .cfg-desc{margin:-2px 0 4px 56px}
+
+      .cfg-opts{display:flex;flex-direction:column;margin-top:18px;border-top:1px solid var(--line)}
+      .cfg-row{display:flex;align-items:center;gap:22px;padding:16px 0;border-bottom:1px solid var(--line)}
+      .cfg-row:last-child{border-bottom:none}
+      .cfg-row--col{flex-direction:column;align-items:stretch;gap:11px}
+      .cfg-lbl{display:flex;flex-direction:column;gap:3px;min-width:0}
+      .cfg-lbl-main{font-size:14.5px;font-weight:600;color:var(--text)}
+      .cfg-lbl-sub{font-size:12.5px;color:var(--text-3);line-height:1.45}
+      .cfg-lbl-sub code{font-family:var(--font-mono);font-size:11px;background:var(--bg-inset);border:1px solid var(--line);
+        padding:1px 6px;border-radius:6px;color:var(--accent-2)}
+      .cfg-field-wrap{margin-left:auto;flex-shrink:0;width:min(360px,46%)}
+      .cfg-row--col .cfg-field-wrap{margin-left:0;width:100%}
+
+      .cfg-input,select.cfg-input{width:100%;height:44px;padding:0 14px;background:var(--field-bg);color:var(--text);
+        border:1px solid var(--line-2);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;outline:none;
+        transition:border-color .14s,box-shadow .14s}
+      .cfg-input::placeholder{color:var(--text-3)}
+      .cfg-input:focus,select.cfg-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklch,var(--accent) 22%,transparent)}
+      .cfg-input:disabled{opacity:.65;cursor:not-allowed;color:var(--text-2)}
+      .cfg-textarea{height:auto!important;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.55;font-family:var(--font-body)}
+      select.cfg-input{appearance:none;cursor:pointer;
+        background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23a78bda' d='M0 0h12L6 8z'/></svg>");
+        background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+
+      /* toggle */
+      .cfg-toggle{position:relative;display:inline-block;width:48px;height:28px;flex-shrink:0;margin-left:auto;cursor:pointer}
+      .cfg-toggle input{position:absolute;opacity:0;width:0;height:0}
+      .cfg-toggle-track{position:absolute;inset:0;border-radius:99px;background:var(--line-2);transition:background .18s}
+      .cfg-toggle-track::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:99px;background:#fff;
+        box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .18s cubic-bezier(.3,1.3,.5,1)}
+      .cfg-toggle input:checked + .cfg-toggle-track{background:var(--accent)}
+      .cfg-toggle input:checked + .cfg-toggle-track::after{transform:translateX(20px)}
+      .cfg-toggle input:focus-visible + .cfg-toggle-track{box-shadow:0 0 0 3px color-mix(in oklch,var(--accent) 30%,transparent)}
+
+      /* conditional field wrappers — indent so se ven anidados */
+      #ticketPhoneField,#ticketRedesFields,#ticketTerminosField,#resenaFields{
+        border-left:2px solid color-mix(in oklch,var(--accent) 35%,var(--line));margin:2px 0 2px 4px;padding-left:18px}
+      #ticketPhoneField .cfg-row:last-child,#ticketRedesFields .cfg-row:last-child,#ticketTerminosField .cfg-row:last-child,#resenaFields .cfg-row:last-child{border-bottom:none}
+
+      .cfg-actions{display:flex;gap:12px;align-items:center;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+
+      /* ── Mi plan ── */
+      .plan-badge{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 14px;border-radius:99px;
+        font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-left:auto}
+      .plan-badge.pro{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink);box-shadow:0 0 24px -8px var(--accent)}
+      .plan-badge.free{background:var(--bg-2);color:var(--text-2);border:1px solid var(--line-2)}
+      .plan-upgrade-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:18px}
+      .puc{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--bg-inset);border:1px solid var(--line);
+        border-radius:14px;padding:22px}
+      .puc.featured{border-color:color-mix(in oklch,var(--accent) 55%,var(--line));box-shadow:0 0 0 1px color-mix(in oklch,var(--accent) 40%,transparent),var(--shadow-sm)}
+      .puc-badge{position:absolute;top:-11px;left:22px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+        background:var(--accent);color:var(--accent-ink);padding:4px 11px;border-radius:99px}
+      .puc-name{font-family:var(--font-display);font-weight:600;font-size:16px}
+      .puc-price{font-family:var(--num-font);font-weight:700;font-size:34px;letter-spacing:-.03em;line-height:1}
+      .puc-price span{font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--text-3);letter-spacing:0}
+      .puc-sub{font-size:12px;color:var(--accent-2);font-family:var(--font-mono);margin-bottom:4px}
+      .puc-list{list-style:none;padding:0;margin:8px 0 16px;display:flex;flex-direction:column;gap:9px}
+      .puc-list li{position:relative;padding-left:24px;font-size:13.5px;color:var(--text-2)}
+      .puc-list li::before{content:"";position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:99px;
+        background:color-mix(in oklch,var(--accent) 18%,transparent);
+        background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a78bda' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6L9 17l-5-5'/></svg>");
+        background-repeat:no-repeat;background-position:center}
+      .puc .btn{margin-top:auto}
+
+      /* ── Responsive ── */
+      @media (max-width:900px){
+        .app{grid-template-columns:1fr}
+        .sidebar{position:fixed;top:0;left:0;bottom:0;width:280px;z-index:60;transform:translateX(-100%);
+          transition:transform .26s cubic-bezier(.3,.8,.3,1)}
+        .app.drawer-open .sidebar{transform:none;box-shadow:var(--shadow)}
+        .scrim{display:none;position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .26s}
+        .app.drawer-open .scrim{display:block;opacity:1;pointer-events:auto}
+        .menu-btn{display:inline-flex}
+        .app::before{display:none}
+        .page{padding:18px}
+        .topbar{padding:12px 18px}
+        .cfg-tabs{top:55px}
+      }
+      @media (max-width:680px){
+        .page-title{font-size:27px}
+        .cfg-sec{padding:20px}
+        .cfg-row{flex-direction:column;align-items:stretch;gap:10px}
+        .cfg-field-wrap{margin-left:0;width:100%}
+        .cfg-toggle{margin-left:0}
+        .cfg-row .cfg-toggle{align-self:flex-start}
+        .cfg-sec-head + .cfg-desc{margin-left:0}
+        .plan-upgrade-cards{grid-template-columns:1fr}
+        .plan-badge{margin-left:0}
+      }
+      @media (prefers-reduced-motion:no-preference){
+        .cfg-sec{animation:cfgRise .5s cubic-bezier(.2,.8,.3,1) both}
+        .cfg-sec:nth-child(2){animation-delay:.04s}.cfg-sec:nth-child(3){animation-delay:.08s}
+        .cfg-sec:nth-child(4){animation-delay:.12s}.cfg-sec:nth-child(5){animation-delay:.16s}
+        @keyframes cfgRise{from{transform:translateY(10px)}to{transform:none}}
+      }
+    </style>
   </head>
   <body>
     <div class="app" id="appRoot">
@@ -69,8 +313,20 @@
             <h1 class="page-title">Mi cuenta</h1>
           </div>
 
-          <section class="cfg-sec">
-            <h2 class="cfg-title">Datos del taller</h2>
+          <!-- sub-nav de anclas -->
+          <nav class="cfg-tabs" id="cfgTabs" aria-label="Secciones de configuración">
+            <a class="cfg-tab on" href="#sec-datos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Datos del taller</a>
+            <a class="cfg-tab" href="#sec-plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Mi plan</a>
+            <a class="cfg-tab" href="#sec-ticket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v13l-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>Ticket</a>
+            <a class="cfg-tab" href="#sec-resena"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9 12 2"/></svg>Reseña</a>
+            <a class="cfg-tab" href="#sec-password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Contraseña</a>
+          </nav>
+
+          <section class="cfg-sec" id="sec-datos">
+            <div class="cfg-sec-head">
+              <span class="cfg-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <div class="cfg-sec-heading"><h2 class="cfg-title">Datos del taller</h2></div>
+            </div>
             <div class="cfg-opts">
               <div class="cfg-row">
                 <span class="cfg-lbl">
@@ -100,21 +356,28 @@
                 </div>
               </div>
             </div>
-            <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+            <div class="cfg-actions">
               <button class="btn btn-accent" id="saveProfileBtn" type="button">Guardar cambios</button>
-              <span id="saveMsg" style="font-size:13px;color:var(--st-activo);display:none">✓ Guardado</span>
+              <span id="saveMsg" style="font-size:13px;color:var(--st-finalizado);display:none">✓ Guardado</span>
             </div>
           </section>
 
-          <section class="cfg-sec" id="plan">
-            <h2 class="cfg-title">Mi plan</h2>
+          <section class="cfg-sec" id="sec-plan">
+            <a id="plan" style="position:relative;top:-100px"></a>
+            <div class="cfg-sec-head">
+              <span class="cfg-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+              <div class="cfg-sec-heading"><h2 class="cfg-title">Mi plan</h2></div>
+            </div>
             <div id="planSection" class="cfg-opts">
               <div class="cfg-row"><span class="cfg-lbl"><span class="cfg-lbl-main">Cargando…</span></span></div>
             </div>
           </section>
 
-          <section class="cfg-sec">
-            <h2 class="cfg-title">Identidad del Ticket</h2>
+          <section class="cfg-sec" id="sec-ticket">
+            <div class="cfg-sec-head">
+              <span class="cfg-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v13l-2-1-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg></span>
+              <div class="cfg-sec-heading"><h2 class="cfg-title">Identidad del Ticket</h2></div>
+            </div>
             <p class="cfg-desc">Personalizá qué información aparece en el ticket de orden que se comparte con el cliente al momento de recibir o entregar el equipo.</p>
             <div class="cfg-opts">
               <div class="cfg-row">
@@ -228,21 +491,24 @@
                   <span class="cfg-lbl-main">Tamaño de papel</span>
                   <span class="cfg-lbl-sub">Formato de impresión del ticket</span>
                 </span>
-                <select class="cfg-input" id="cfgTicketPaper" style="width:auto;min-width:150px">
+                <select class="cfg-input" id="cfgTicketPaper" style="width:auto;min-width:170px">
                   <option value="80mm">80 mm (ticket estándar)</option>
                   <option value="58mm">58 mm (ticket compacto)</option>
                   <option value="A4">A4 / Carta</option>
                 </select>
               </div>
             </div>
-            <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+            <div class="cfg-actions">
               <button class="btn btn-accent" id="saveTicketBtn" type="button">Guardar</button>
-              <span id="ticketSaveMsg" style="font-size:13px;color:var(--st-activo);display:none">✓ Guardado</span>
+              <span id="ticketSaveMsg" style="font-size:13px;color:var(--st-finalizado);display:none">✓ Guardado</span>
             </div>
           </section>
 
-          <section class="cfg-sec">
-            <h2 class="cfg-title">Solicitud de reseña</h2>
+          <section class="cfg-sec" id="sec-resena">
+            <div class="cfg-sec-head">
+              <span class="cfg-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9 12 2"/></svg></span>
+              <div class="cfg-sec-heading"><h2 class="cfg-title">Solicitud de reseña</h2></div>
+            </div>
             <p class="cfg-desc">Cuando activás esta opción, aparece un botón de WhatsApp en cada equipo entregado. Al hacer click se abre una vista previa del mensaje — podés editarlo antes de enviarlo. Una vez enviado, el botón cambia a un tilde verde para que sepas a quién ya le pediste la reseña.</p>
             <div class="cfg-opts">
               <div class="cfg-row">
@@ -274,14 +540,17 @@
                 </div>
               </div>
             </div>
-            <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+            <div class="cfg-actions">
               <button class="btn btn-accent" id="saveResenaBtn" type="button">Guardar</button>
-              <span id="resenaSaveMsg" style="font-size:13px;color:var(--st-activo);display:none">✓ Guardado</span>
+              <span id="resenaSaveMsg" style="font-size:13px;color:var(--st-finalizado);display:none">✓ Guardado</span>
             </div>
           </section>
 
-          <section class="cfg-sec">
-            <h2 class="cfg-title">Contraseña</h2>
+          <section class="cfg-sec" id="sec-password">
+            <div class="cfg-sec-head">
+              <span class="cfg-sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <div class="cfg-sec-heading"><h2 class="cfg-title">Contraseña</h2></div>
+            </div>
             <div class="cfg-opts">
               <div class="cfg-row">
                 <span class="cfg-lbl">
@@ -575,6 +844,30 @@
           window.showToast('Email enviado', 'Revisá tu correo para cambiar la contraseña', 'var(--st-activo)');
         }
       });
+    </script>
+
+    <!-- Sub-nav: resaltado de sección activa al hacer scroll (solo estético) -->
+    <script>
+      (function cfgScrollSpy() {
+        const tabs = Array.from(document.querySelectorAll('.cfg-tab'));
+        if (!tabs.length) return;
+        const map = tabs.map(t => ({ tab: t, sec: document.querySelector(t.getAttribute('href')) })).filter(x => x.sec);
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              map.forEach(m => m.tab.classList.toggle('on', m.sec === e.target));
+            }
+          });
+        }, { rootMargin: '-130px 0px -55% 0px', threshold: 0 });
+        map.forEach(m => io.observe(m.sec));
+        // smooth scroll que respeta el header sticky
+        tabs.forEach(t => t.addEventListener('click', (ev) => {
+          const sec = document.querySelector(t.getAttribute('href'));
+          if (!sec) return;
+          ev.preventDefault();
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }));
+      })();
     </script>
   </body>
 </html>

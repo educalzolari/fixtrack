@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     ${tkField("Descripcion del problema", repair.problema)}
     ${repair.observaciones ? tkField("Observaciones", repair.observaciones) : tkField("Observaciones", "")}
     ${tkField("Accesorios", repair.accesorios || "")}
-    ${tkField("Costo Aproximado", _money(repair.costoAproximado))}
+    ${tkField("Costo Aproximado", repair.costoAproximado > 0 ? _money(repair.costoAproximado) : "A cotizar")}
     ${tkField("Anticipo", _money(repair.anticipo || 0))}
     ${repair.fechaEntrega ? tkField("Fecha Estimada de entrega", _date(repair.fechaEntrega)) : ""}
 
