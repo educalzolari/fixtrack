@@ -227,7 +227,7 @@ function renderStats() {
   monthCount.textContent = thisMonth.length;
   salesTotal.textContent = formatMoney(
     repairs
-      .filter((r) => (r.estado === "Entregado" || r.estado === "Garantía") && r.fechaEntregaReal && (() => {
+      .filter((r) => r.estado === "Entregado" && r.fechaEntregaReal && (() => {
         const d = new Date(`${r.fechaEntregaReal}T00:00:00`);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
       })())
@@ -1745,7 +1745,9 @@ function openGarantiaFinishModal(repair) {
     modal.innerHTML = `
       <div class="gm-box" role="dialog" aria-modal="true">
         <h3 class="gm-title">Finalizar reparación en garantía</h3>
-        <p class="gm-sub">El equipo ya fue cobrado. ¿Vas a cobrar algo adicional por esta reparación?</p>
+        <p class="gm-sub">¿Qué se realizó en esta garantía?</p>
+        <textarea class="gm-textarea" id="garantiaFinishSolucion" rows="3" placeholder="Describí brevemente qué se hizo o qué se detectó..."></textarea>
+        <p class="gm-sub" style="margin-top:12px">El equipo ya fue cobrado. ¿Vas a cobrar algo adicional?</p>
         <input class="inp" id="garantiaFinishExtra" type="number" min="0" placeholder="$0 — dejá vacío si no cobrás nada" />
         <div class="gm-actions">
           <button class="btn btn-ghost" id="garantiaFinishCancel" type="button">Cancelar</button>
@@ -1758,13 +1760,20 @@ function openGarantiaFinishModal(repair) {
   }
 
   document.getElementById("garantiaFinishExtra").value = "";
+  document.getElementById("garantiaFinishSolucion").value = "";
   modal.dataset.repairId = repair.id;
   modal.classList.add("open");
 
   document.getElementById("garantiaFinishConfirm").onclick = async () => {
     modal.classList.remove("open");
     const extra = Number(document.getElementById("garantiaFinishExtra").value || 0);
+    const solucion = document.getElementById("garantiaFinishSolucion").value.trim();
     repair.estado = "Finalizado";
+    repair.cierre = {
+      ...(repair.cierre || {}),
+      solucionFinal: solucion || repair.cierre?.solucionFinal || "",
+      fechaFinalizacion: today,
+    };
     await dbUpsert(repair);
     repairs = repairs.map(r => Number(r.id) === Number(repair.id) ? repair : r);
     if (extra > 0) {
