@@ -1751,7 +1751,7 @@ function openGarantiaFinishModal(repair) {
         <input class="inp" id="garantiaFinishExtra" type="number" min="0" placeholder="$0 — dejá vacío si no cobrás nada" />
         <div class="gm-actions">
           <button class="btn btn-ghost" id="garantiaFinishCancel" type="button">Cancelar</button>
-          <button class="btn btn-accent" id="garantiaFinishConfirm" type="button">Confirmar</button>
+          <button class="btn btn-accent" id="garantiaFinishConfirm" type="button">Finalizar y entregar</button>
         </div>
       </div>`;
     document.body.appendChild(modal);
@@ -1768,11 +1768,11 @@ function openGarantiaFinishModal(repair) {
     modal.classList.remove("open");
     const extra = Number(document.getElementById("garantiaFinishExtra").value || 0);
     const solucion = document.getElementById("garantiaFinishSolucion").value.trim();
-    repair.estado = "Finalizado";
+    repair.estado = "Entregado";
+    repair.fechaEntregaReal = today;
     repair.cierre = {
       ...(repair.cierre || {}),
       solucionFinal: solucion || repair.cierre?.solucionFinal || "",
-      fechaFinalizacion: today,
     };
     await dbUpsert(repair);
     repairs = repairs.map(r => Number(r.id) === Number(repair.id) ? repair : r);
@@ -1889,8 +1889,8 @@ if (deliverForm) {
     repair.fechaEntregaReal = fechaEntregaReal;
     await dbUpsert(repair);
 
-    const esGarantia = !!(repair.garantiaFecha);
-    if (!esGarantia) {
+    const yaFuePagado = movimientos.some(m => Number(m.reparacionId) === Number(repair.id) && m.tipo === "ingreso");
+    if (!yaFuePagado) {
       const entregaMov = await dbSyncEntregaMovimiento(repair);
       movimientos = movimientos.filter(m => !(m.reparacionId === repair.id && m.categoria === "Reparación"));
       if (entregaMov) movimientos = [entregaMov, ...movimientos];
@@ -2500,7 +2500,7 @@ function renderReportsDashboard() {
 
   // Facturado devengado: reparaciones finalizadas en el mes (por fecha de finalización)
   const inMonthFin = repairs.filter(r => {
-    if (r.estado === "Cancelado") return false;
+    if (r.estado === "Cancelado" || r.estado === "Garantía") return false;
     const fechaFin = r.cierre?.fechaFinalizacion || r.fechaEntregaReal;
     if (!fechaFin) return false;
     const d = new Date(`${fechaFin}T00:00:00`);
@@ -2508,7 +2508,7 @@ function renderReportsDashboard() {
   });
   const facturado = inMonthFin.reduce((s, r) => s + (r.cierre?.costoFinal || r.costoAproximado || 0), 0);
   const prevInMonthFin = repairs.filter(r => {
-    if (r.estado === "Cancelado") return false;
+    if (r.estado === "Cancelado" || r.estado === "Garantía") return false;
     const fechaFin = r.cierre?.fechaFinalizacion || r.fechaEntregaReal;
     if (!fechaFin) return false;
     const d = new Date(`${fechaFin}T00:00:00`);
